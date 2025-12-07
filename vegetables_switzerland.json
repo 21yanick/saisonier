@@ -1,0 +1,725 @@
+[
+    {
+        "name": "Nüsslisalat",
+        "type": "salad",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4
+        ],
+        "description": "Der nussige König der Schweizer Wintersalate.",
+        "hex_color": "#A6C48A"
+    },
+    {
+        "name": "Wirz",
+        "type": "vegetable",
+        "months": [
+            9,
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Krauser Kopf, perfekt für Eintöpfe und Rouladen.",
+        "hex_color": "#8DA399"
+    },
+    {
+        "name": "Federkohl",
+        "type": "vegetable",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Der 'Kale'. Superfood aus heimischem Anbau.",
+        "hex_color": "#4A6C48"
+    },
+    {
+        "name": "Randen",
+        "type": "vegetable",
+        "months": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Erdig, süss und färbt alles wunderschön rot.",
+        "hex_color": "#D68EAA"
+    },
+    {
+        "name": "Schwarzwurzel",
+        "type": "vegetable",
+        "months": [
+            10,
+            11,
+            12,
+            1,
+            2,
+            3,
+            4
+        ],
+        "description": "Der unterschätzte Spargel des Winters.",
+        "hex_color": "#C9BDAA"
+    },
+    {
+        "name": "Pastinake",
+        "type": "vegetable",
+        "months": [
+            10,
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Süsslich, nussig, perfekt für Pürees.",
+        "hex_color": "#EBE2C8"
+    },
+    {
+        "name": "Topinambur",
+        "type": "vegetable",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Die süsse Knolle mit Artischocken-Geschmack.",
+        "hex_color": "#E3D5B7"
+    },
+    {
+        "name": "Lauch",
+        "type": "vegetable",
+        "months": [
+            9,
+            10,
+            11,
+            12,
+            1,
+            2,
+            3,
+            4
+        ],
+        "description": "Der würzige Allrounder für Suppen und Wähen.",
+        "hex_color": "#B4CFB0"
+    },
+    {
+        "name": "Rosenkohl",
+        "type": "vegetable",
+        "months": [
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Klein, aber oho. Am besten geröstet.",
+        "hex_color": "#9CB071"
+    },
+    {
+        "name": "Chicorée",
+        "type": "salad",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Bitter-süsser knackiger Winterklassiker.",
+        "hex_color": "#FFFDD0"
+    },
+    {
+        "name": "Zuckerhut",
+        "type": "salad",
+        "months": [
+            9,
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Der lagerfähige, milde Herbstsalat.",
+        "hex_color": "#D0E8C4"
+    },
+    {
+        "name": "Portulak",
+        "type": "salad",
+        "months": [
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Winterpostelein. Zart, fleischig und sehr gesund.",
+        "hex_color": "#88B04B"
+    },
+    {
+        "name": "Bärlauch",
+        "type": "herb",
+        "months": [
+            3,
+            4
+        ],
+        "description": "Der wilde Frühlingsbote mit Knoblauch-Aroma.",
+        "hex_color": "#76B041"
+    },
+    {
+        "name": "Rhabarber",
+        "type": "fruit",
+        "months": [
+            4,
+            5,
+            6
+        ],
+        "description": "Sauer macht lustig – Start der Kuchen-Saison.",
+        "hex_color": "#E68593"
+    },
+    {
+        "name": "Spargel (Weiss)",
+        "type": "vegetable",
+        "months": [
+            4,
+            5,
+            6
+        ],
+        "description": "Das weisse Gold des Frühlings.",
+        "hex_color": "#F3EFE0"
+    },
+    {
+        "name": "Spargel (Grün)",
+        "type": "vegetable",
+        "months": [
+            4,
+            5,
+            6
+        ],
+        "description": "Knackig, unkompliziert und edel.",
+        "hex_color": "#A2C579"
+    },
+    {
+        "name": "Erdbeeren",
+        "type": "fruit",
+        "months": [
+            5,
+            6,
+            7
+        ],
+        "description": "Süsse Schweizer Sonnenkinder.",
+        "hex_color": "#FF8FA3"
+    },
+    {
+        "name": "Spinat",
+        "type": "vegetable",
+        "months": [
+            3,
+            4,
+            5,
+            9,
+            10
+        ],
+        "description": "Frisch vom Feld, nicht aus dem Block.",
+        "hex_color": "#2E7D32"
+    },
+    {
+        "name": "Radiesli",
+        "type": "vegetable",
+        "months": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Scharfer, knackiger Snack.",
+        "hex_color": "#FF5252"
+    },
+    {
+        "name": "Tomaten",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Aromatische Sonnenbomben.",
+        "hex_color": "#FF6B6B"
+    },
+    {
+        "name": "Zucchetti",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Vielseitig vom Grill bis zum Kuchen.",
+        "hex_color": "#94C973"
+    },
+    {
+        "name": "Auberginen",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Braucht Hitze und Öl für den vollen Geschmack.",
+        "hex_color": "#7B1FA2"
+    },
+    {
+        "name": "Peperoni",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Bunt, süss und knackig.",
+        "hex_color": "#F44336"
+    },
+    {
+        "name": "Fenchel",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "description": "Anis-Note, gut für den Magen, typisch italienisch.",
+        "hex_color": "#E0F2F1"
+    },
+    {
+        "name": "Krautstiel",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "description": "Mangold. Farbenfroh und vielseitig wie Spinat.",
+        "hex_color": "#F06292"
+    },
+    {
+        "name": "Broccoli",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "description": "Der gesunde grüne Klassiker.",
+        "hex_color": "#43A047"
+    },
+    {
+        "name": "Blumenkohl",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "description": "Mild, wandelbar, Low-Carb Liebling.",
+        "hex_color": "#FFF9C4"
+    },
+    {
+        "name": "Kohlrabi",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Der unkomplizierte Snack für zwischendurch.",
+        "hex_color": "#C5E1A5"
+    },
+    {
+        "name": "Kürbis",
+        "type": "vegetable",
+        "months": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Der leuchtende Herbst-Star.",
+        "hex_color": "#FF9F43"
+    },
+    {
+        "name": "Rotkraut",
+        "type": "vegetable",
+        "months": [
+            9,
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Rotkohl. Die klassische Wild-Beilage.",
+        "hex_color": "#6A1B9A"
+    },
+    {
+        "name": "Aprikosen",
+        "type": "fruit",
+        "months": [
+            7,
+            8
+        ],
+        "description": "Samtige Süsse aus dem Wallis.",
+        "hex_color": "#FFCC5C"
+    },
+    {
+        "name": "Kirschen",
+        "type": "fruit",
+        "months": [
+            6,
+            7
+        ],
+        "description": "Das süsse Gold von den Hochstammbäumen.",
+        "hex_color": "#880E4F"
+    },
+    {
+        "name": "Zwetschgen",
+        "type": "fruit",
+        "months": [
+            8,
+            9,
+            10
+        ],
+        "description": "Perfekt für Wähen und Kompott.",
+        "hex_color": "#4A148C"
+    },
+    {
+        "name": "Mirabellen",
+        "type": "fruit",
+        "months": [
+            8,
+            9
+        ],
+        "description": "Kleine, süsse, gelbe Verwandte der Pflaume.",
+        "hex_color": "#FFEB3B"
+    },
+    {
+        "name": "Äpfel",
+        "type": "fruit",
+        "months": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            1,
+            2,
+            3,
+            4
+        ],
+        "description": "Das liebste Obst der Schweizer. Frisch oder Lager.",
+        "hex_color": "#CDDC39"
+    },
+    {
+        "name": "Birnen",
+        "type": "fruit",
+        "months": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Saftig, süss, aromatisch.",
+        "hex_color": "#DCE775"
+    },
+    {
+        "name": "Himbeeren",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Zart und edel.",
+        "hex_color": "#E91E63"
+    },
+    {
+        "name": "Heidelbeeren",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "description": "Blaues Wunder für jedes Müesli.",
+        "hex_color": "#1A237E"
+    },
+    {
+        "name": "Brombeeren",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "description": "Wild, dunkel und aromatisch.",
+        "hex_color": "#311B92"
+    },
+    {
+        "name": "Johannisbeeren",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8
+        ],
+        "description": "Trübeli. Sauer und erfrischend.",
+        "hex_color": "#D32F2F"
+    },
+    {
+        "name": "Quitten",
+        "type": "fruit",
+        "months": [
+            10,
+            11
+        ],
+        "description": "Duftwunder. Muss gekocht werden.",
+        "hex_color": "#FFF176"
+    },
+    {
+        "name": "Maroni",
+        "type": "nut",
+        "months": [
+            10,
+            11,
+            12
+        ],
+        "description": "Heisse Edelkastanien. Winter pur.",
+        "hex_color": "#795548"
+    },
+    {
+        "name": "Baumnüsse",
+        "type": "nut",
+        "months": [
+            10,
+            11,
+            12,
+            1,
+            2
+        ],
+        "description": "Walnüsse. Knackig und gesund.",
+        "hex_color": "#8D6E63"
+    },
+    {
+        "name": "Kardy",
+        "type": "vegetable",
+        "months": [
+            11,
+            12,
+            1
+        ],
+        "description": "Genfer Distelspezialität, festlich und fein.",
+        "hex_color": "#B2DFDB"
+    },
+    {
+        "name": "Rucola",
+        "type": "salad",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "description": "Würzig, scharf, wächst wie verrückt.",
+        "hex_color": "#558B2F"
+    },
+    {
+        "name": "Löwenzahn",
+        "type": "salad",
+        "months": [
+            3,
+            4
+        ],
+        "description": "Nüssler/Chicorino. Bitterstoffe wecken die Geister.",
+        "hex_color": "#AED581"
+    },
+    {
+        "name": "Karotten",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "description": "Rüebli. Immer da, immer gut.",
+        "hex_color": "#FF9800"
+    },
+    {
+        "name": "Kartoffeln",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "description": "Härdöpfel. Die Basis der Schweizer Küche.",
+        "hex_color": "#FFCC80"
+    },
+    {
+        "name": "Knollensellerie",
+        "type": "vegetable",
+        "months": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            1,
+            2,
+            3
+        ],
+        "description": "Würzig, perfekt für Suppen und Schnitzel.",
+        "hex_color": "#E6EE9C"
+    },
+    {
+        "name": "Zwiebeln",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "description": "Ohne sie geht gar nichts.",
+        "hex_color": "#FFE0B2"
+    },
+    {
+        "name": "Knoblauch",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "description": "Frisch im Sommer, getrocknet das ganze Jahr.",
+        "hex_color": "#F5F5F5"
+    },
+    {
+        "name": "Mais",
+        "type": "vegetable",
+        "months": [
+            8,
+            9,
+            10
+        ],
+        "description": "Zuckermais. Süss direkt vom Kolben.",
+        "hex_color": "#FFEB3B"
+    },
+    {
+        "name": "Pilze",
+        "type": "mushroom",
+        "months": [
+            9,
+            10
+        ],
+        "description": "Waldpilze, Steinpilze, Eierschwämme.",
+        "hex_color": "#A1887F"
+    },
+    {
+        "name": "Weintrauben",
+        "type": "fruit",
+        "months": [
+            9,
+            10,
+            11
+        ],
+        "description": "Süss und saftig im Schweizer Herbst.",
+        "hex_color": "#9C27B0"
+    },
+    {
+        "name": "Kaki",
+        "type": "fruit",
+        "months": [
+            10,
+            11,
+            12
+        ],
+        "description": "Die süsse Frucht aus dem Tessin.",
+        "hex_color": "#FF7043"
+    }
+]
