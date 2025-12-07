@@ -507,15 +507,64 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
   late final GeneratedColumn<int> timeMin = GeneratedColumn<int>(
       'time_min', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _servingsMeta =
+      const VerificationMeta('servings');
+  @override
+  late final GeneratedColumn<int> servings = GeneratedColumn<int>(
+      'servings', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(4));
   static const VerificationMeta _vegetableIdMeta =
       const VerificationMeta('vegetableId');
   @override
   late final GeneratedColumn<String> vegetableId = GeneratedColumn<String>(
-      'vegetable_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'vegetable_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, title, description, steps, ingredients, image, timeMin, vegetableId];
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+      'source', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('curated'));
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _isPublicMeta =
+      const VerificationMeta('isPublic');
+  @override
+  late final GeneratedColumn<bool> isPublic = GeneratedColumn<bool>(
+      'is_public', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_public" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _difficultyMeta =
+      const VerificationMeta('difficulty');
+  @override
+  late final GeneratedColumn<String> difficulty = GeneratedColumn<String>(
+      'difficulty', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        description,
+        steps,
+        ingredients,
+        image,
+        timeMin,
+        servings,
+        vegetableId,
+        source,
+        userId,
+        isPublic,
+        difficulty
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -571,13 +620,33 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
     } else if (isInserting) {
       context.missing(_timeMinMeta);
     }
+    if (data.containsKey('servings')) {
+      context.handle(_servingsMeta,
+          servings.isAcceptableOrUnknown(data['servings']!, _servingsMeta));
+    }
     if (data.containsKey('vegetable_id')) {
       context.handle(
           _vegetableIdMeta,
           vegetableId.isAcceptableOrUnknown(
               data['vegetable_id']!, _vegetableIdMeta));
-    } else if (isInserting) {
-      context.missing(_vegetableIdMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(_sourceMeta,
+          source.isAcceptableOrUnknown(data['source']!, _sourceMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    }
+    if (data.containsKey('is_public')) {
+      context.handle(_isPublicMeta,
+          isPublic.isAcceptableOrUnknown(data['is_public']!, _isPublicMeta));
+    }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+          _difficultyMeta,
+          difficulty.isAcceptableOrUnknown(
+              data['difficulty']!, _difficultyMeta));
     }
     return context;
   }
@@ -602,8 +671,18 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
           .read(DriftSqlType.string, data['${effectivePrefix}image'])!,
       timeMin: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}time_min'])!,
+      servings: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}servings'])!,
       vegetableId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}vegetable_id'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}vegetable_id']),
+      source: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id']),
+      isPublic: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_public'])!,
+      difficulty: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}difficulty']),
     );
   }
 
@@ -621,7 +700,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
   final String ingredients;
   final String image;
   final int timeMin;
-  final String vegetableId;
+  final int servings;
+  final String? vegetableId;
+  final String source;
+  final String? userId;
+  final bool isPublic;
+  final String? difficulty;
   const Recipe(
       {required this.id,
       required this.title,
@@ -630,7 +714,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       required this.ingredients,
       required this.image,
       required this.timeMin,
-      required this.vegetableId});
+      required this.servings,
+      this.vegetableId,
+      required this.source,
+      this.userId,
+      required this.isPublic,
+      this.difficulty});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -641,7 +730,18 @@ class Recipe extends DataClass implements Insertable<Recipe> {
     map['ingredients'] = Variable<String>(ingredients);
     map['image'] = Variable<String>(image);
     map['time_min'] = Variable<int>(timeMin);
-    map['vegetable_id'] = Variable<String>(vegetableId);
+    map['servings'] = Variable<int>(servings);
+    if (!nullToAbsent || vegetableId != null) {
+      map['vegetable_id'] = Variable<String>(vegetableId);
+    }
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<String>(userId);
+    }
+    map['is_public'] = Variable<bool>(isPublic);
+    if (!nullToAbsent || difficulty != null) {
+      map['difficulty'] = Variable<String>(difficulty);
+    }
     return map;
   }
 
@@ -654,7 +754,17 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       ingredients: Value(ingredients),
       image: Value(image),
       timeMin: Value(timeMin),
-      vegetableId: Value(vegetableId),
+      servings: Value(servings),
+      vegetableId: vegetableId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vegetableId),
+      source: Value(source),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
+      isPublic: Value(isPublic),
+      difficulty: difficulty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difficulty),
     );
   }
 
@@ -669,7 +779,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       ingredients: serializer.fromJson<String>(json['ingredients']),
       image: serializer.fromJson<String>(json['image']),
       timeMin: serializer.fromJson<int>(json['timeMin']),
-      vegetableId: serializer.fromJson<String>(json['vegetableId']),
+      servings: serializer.fromJson<int>(json['servings']),
+      vegetableId: serializer.fromJson<String?>(json['vegetableId']),
+      source: serializer.fromJson<String>(json['source']),
+      userId: serializer.fromJson<String?>(json['userId']),
+      isPublic: serializer.fromJson<bool>(json['isPublic']),
+      difficulty: serializer.fromJson<String?>(json['difficulty']),
     );
   }
   @override
@@ -683,7 +798,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       'ingredients': serializer.toJson<String>(ingredients),
       'image': serializer.toJson<String>(image),
       'timeMin': serializer.toJson<int>(timeMin),
-      'vegetableId': serializer.toJson<String>(vegetableId),
+      'servings': serializer.toJson<int>(servings),
+      'vegetableId': serializer.toJson<String?>(vegetableId),
+      'source': serializer.toJson<String>(source),
+      'userId': serializer.toJson<String?>(userId),
+      'isPublic': serializer.toJson<bool>(isPublic),
+      'difficulty': serializer.toJson<String?>(difficulty),
     };
   }
 
@@ -695,7 +815,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           String? ingredients,
           String? image,
           int? timeMin,
-          String? vegetableId}) =>
+          int? servings,
+          Value<String?> vegetableId = const Value.absent(),
+          String? source,
+          Value<String?> userId = const Value.absent(),
+          bool? isPublic,
+          Value<String?> difficulty = const Value.absent()}) =>
       Recipe(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -704,7 +829,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
         ingredients: ingredients ?? this.ingredients,
         image: image ?? this.image,
         timeMin: timeMin ?? this.timeMin,
-        vegetableId: vegetableId ?? this.vegetableId,
+        servings: servings ?? this.servings,
+        vegetableId: vegetableId.present ? vegetableId.value : this.vegetableId,
+        source: source ?? this.source,
+        userId: userId.present ? userId.value : this.userId,
+        isPublic: isPublic ?? this.isPublic,
+        difficulty: difficulty.present ? difficulty.value : this.difficulty,
       );
   Recipe copyWithCompanion(RecipesCompanion data) {
     return Recipe(
@@ -717,8 +847,14 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           data.ingredients.present ? data.ingredients.value : this.ingredients,
       image: data.image.present ? data.image.value : this.image,
       timeMin: data.timeMin.present ? data.timeMin.value : this.timeMin,
+      servings: data.servings.present ? data.servings.value : this.servings,
       vegetableId:
           data.vegetableId.present ? data.vegetableId.value : this.vegetableId,
+      source: data.source.present ? data.source.value : this.source,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      isPublic: data.isPublic.present ? data.isPublic.value : this.isPublic,
+      difficulty:
+          data.difficulty.present ? data.difficulty.value : this.difficulty,
     );
   }
 
@@ -732,14 +868,31 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           ..write('ingredients: $ingredients, ')
           ..write('image: $image, ')
           ..write('timeMin: $timeMin, ')
-          ..write('vegetableId: $vegetableId')
+          ..write('servings: $servings, ')
+          ..write('vegetableId: $vegetableId, ')
+          ..write('source: $source, ')
+          ..write('userId: $userId, ')
+          ..write('isPublic: $isPublic, ')
+          ..write('difficulty: $difficulty')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
-      id, title, description, steps, ingredients, image, timeMin, vegetableId);
+      id,
+      title,
+      description,
+      steps,
+      ingredients,
+      image,
+      timeMin,
+      servings,
+      vegetableId,
+      source,
+      userId,
+      isPublic,
+      difficulty);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -751,7 +904,12 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           other.ingredients == this.ingredients &&
           other.image == this.image &&
           other.timeMin == this.timeMin &&
-          other.vegetableId == this.vegetableId);
+          other.servings == this.servings &&
+          other.vegetableId == this.vegetableId &&
+          other.source == this.source &&
+          other.userId == this.userId &&
+          other.isPublic == this.isPublic &&
+          other.difficulty == this.difficulty);
 }
 
 class RecipesCompanion extends UpdateCompanion<Recipe> {
@@ -762,7 +920,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
   final Value<String> ingredients;
   final Value<String> image;
   final Value<int> timeMin;
-  final Value<String> vegetableId;
+  final Value<int> servings;
+  final Value<String?> vegetableId;
+  final Value<String> source;
+  final Value<String?> userId;
+  final Value<bool> isPublic;
+  final Value<String?> difficulty;
   final Value<int> rowid;
   const RecipesCompanion({
     this.id = const Value.absent(),
@@ -772,7 +935,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     this.ingredients = const Value.absent(),
     this.image = const Value.absent(),
     this.timeMin = const Value.absent(),
+    this.servings = const Value.absent(),
     this.vegetableId = const Value.absent(),
+    this.source = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.isPublic = const Value.absent(),
+    this.difficulty = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RecipesCompanion.insert({
@@ -783,7 +951,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     required String ingredients,
     required String image,
     required int timeMin,
-    required String vegetableId,
+    this.servings = const Value.absent(),
+    this.vegetableId = const Value.absent(),
+    this.source = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.isPublic = const Value.absent(),
+    this.difficulty = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
@@ -791,8 +964,7 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
         steps = Value(steps),
         ingredients = Value(ingredients),
         image = Value(image),
-        timeMin = Value(timeMin),
-        vegetableId = Value(vegetableId);
+        timeMin = Value(timeMin);
   static Insertable<Recipe> custom({
     Expression<String>? id,
     Expression<String>? title,
@@ -801,7 +973,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     Expression<String>? ingredients,
     Expression<String>? image,
     Expression<int>? timeMin,
+    Expression<int>? servings,
     Expression<String>? vegetableId,
+    Expression<String>? source,
+    Expression<String>? userId,
+    Expression<bool>? isPublic,
+    Expression<String>? difficulty,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -812,7 +989,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
       if (ingredients != null) 'ingredients': ingredients,
       if (image != null) 'image': image,
       if (timeMin != null) 'time_min': timeMin,
+      if (servings != null) 'servings': servings,
       if (vegetableId != null) 'vegetable_id': vegetableId,
+      if (source != null) 'source': source,
+      if (userId != null) 'user_id': userId,
+      if (isPublic != null) 'is_public': isPublic,
+      if (difficulty != null) 'difficulty': difficulty,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -825,7 +1007,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
       Value<String>? ingredients,
       Value<String>? image,
       Value<int>? timeMin,
-      Value<String>? vegetableId,
+      Value<int>? servings,
+      Value<String?>? vegetableId,
+      Value<String>? source,
+      Value<String?>? userId,
+      Value<bool>? isPublic,
+      Value<String?>? difficulty,
       Value<int>? rowid}) {
     return RecipesCompanion(
       id: id ?? this.id,
@@ -835,7 +1022,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
       ingredients: ingredients ?? this.ingredients,
       image: image ?? this.image,
       timeMin: timeMin ?? this.timeMin,
+      servings: servings ?? this.servings,
       vegetableId: vegetableId ?? this.vegetableId,
+      source: source ?? this.source,
+      userId: userId ?? this.userId,
+      isPublic: isPublic ?? this.isPublic,
+      difficulty: difficulty ?? this.difficulty,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -864,8 +1056,23 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     if (timeMin.present) {
       map['time_min'] = Variable<int>(timeMin.value);
     }
+    if (servings.present) {
+      map['servings'] = Variable<int>(servings.value);
+    }
     if (vegetableId.present) {
       map['vegetable_id'] = Variable<String>(vegetableId.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (isPublic.present) {
+      map['is_public'] = Variable<bool>(isPublic.value);
+    }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<String>(difficulty.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -883,7 +1090,12 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
           ..write('ingredients: $ingredients, ')
           ..write('image: $image, ')
           ..write('timeMin: $timeMin, ')
+          ..write('servings: $servings, ')
           ..write('vegetableId: $vegetableId, ')
+          ..write('source: $source, ')
+          ..write('userId: $userId, ')
+          ..write('isPublic: $isPublic, ')
+          ..write('difficulty: $difficulty, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1135,7 +1347,12 @@ typedef $$RecipesTableCreateCompanionBuilder = RecipesCompanion Function({
   required String ingredients,
   required String image,
   required int timeMin,
-  required String vegetableId,
+  Value<int> servings,
+  Value<String?> vegetableId,
+  Value<String> source,
+  Value<String?> userId,
+  Value<bool> isPublic,
+  Value<String?> difficulty,
   Value<int> rowid,
 });
 typedef $$RecipesTableUpdateCompanionBuilder = RecipesCompanion Function({
@@ -1146,7 +1363,12 @@ typedef $$RecipesTableUpdateCompanionBuilder = RecipesCompanion Function({
   Value<String> ingredients,
   Value<String> image,
   Value<int> timeMin,
-  Value<String> vegetableId,
+  Value<int> servings,
+  Value<String?> vegetableId,
+  Value<String> source,
+  Value<String?> userId,
+  Value<bool> isPublic,
+  Value<String?> difficulty,
   Value<int> rowid,
 });
 
@@ -1180,8 +1402,23 @@ class $$RecipesTableFilterComposer
   ColumnFilters<int> get timeMin => $composableBuilder(
       column: $table.timeMin, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isPublic => $composableBuilder(
+      column: $table.isPublic, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnFilters(column));
 }
 
 class $$RecipesTableOrderingComposer
@@ -1214,8 +1451,23 @@ class $$RecipesTableOrderingComposer
   ColumnOrderings<int> get timeMin => $composableBuilder(
       column: $table.timeMin, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get source => $composableBuilder(
+      column: $table.source, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isPublic => $composableBuilder(
+      column: $table.isPublic, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnOrderings(column));
 }
 
 class $$RecipesTableAnnotationComposer
@@ -1248,8 +1500,23 @@ class $$RecipesTableAnnotationComposer
   GeneratedColumn<int> get timeMin =>
       $composableBuilder(column: $table.timeMin, builder: (column) => column);
 
+  GeneratedColumn<int> get servings =>
+      $composableBuilder(column: $table.servings, builder: (column) => column);
+
   GeneratedColumn<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isPublic =>
+      $composableBuilder(column: $table.isPublic, builder: (column) => column);
+
+  GeneratedColumn<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => column);
 }
 
 class $$RecipesTableTableManager extends RootTableManager<
@@ -1282,7 +1549,12 @@ class $$RecipesTableTableManager extends RootTableManager<
             Value<String> ingredients = const Value.absent(),
             Value<String> image = const Value.absent(),
             Value<int> timeMin = const Value.absent(),
-            Value<String> vegetableId = const Value.absent(),
+            Value<int> servings = const Value.absent(),
+            Value<String?> vegetableId = const Value.absent(),
+            Value<String> source = const Value.absent(),
+            Value<String?> userId = const Value.absent(),
+            Value<bool> isPublic = const Value.absent(),
+            Value<String?> difficulty = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               RecipesCompanion(
@@ -1293,7 +1565,12 @@ class $$RecipesTableTableManager extends RootTableManager<
             ingredients: ingredients,
             image: image,
             timeMin: timeMin,
+            servings: servings,
             vegetableId: vegetableId,
+            source: source,
+            userId: userId,
+            isPublic: isPublic,
+            difficulty: difficulty,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -1304,7 +1581,12 @@ class $$RecipesTableTableManager extends RootTableManager<
             required String ingredients,
             required String image,
             required int timeMin,
-            required String vegetableId,
+            Value<int> servings = const Value.absent(),
+            Value<String?> vegetableId = const Value.absent(),
+            Value<String> source = const Value.absent(),
+            Value<String?> userId = const Value.absent(),
+            Value<bool> isPublic = const Value.absent(),
+            Value<String?> difficulty = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               RecipesCompanion.insert(
@@ -1315,7 +1597,12 @@ class $$RecipesTableTableManager extends RootTableManager<
             ingredients: ingredients,
             image: image,
             timeMin: timeMin,
+            servings: servings,
             vegetableId: vegetableId,
+            source: source,
+            userId: userId,
+            isPublic: isPublic,
+            difficulty: difficulty,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

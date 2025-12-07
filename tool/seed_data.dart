@@ -155,7 +155,7 @@ Future<void> main() async {
     // 404 likely, so create
   }
 
-  // Create recipes
+  // Create recipes (supports both curated and user recipes)
   final createRecipesRes = await http.post(
     Uri.parse('$baseUrl/api/collections'),
     headers: headers,
@@ -164,14 +164,24 @@ Future<void> main() async {
       "type": "base",
       "fields": [
         {"name": "title", "type": "text", "required": true, "presentable": true},
-        {"name": "vegetable_id", "type": "relation", "required": true, "collectionId": vegCollectionId, "cascadeDelete": false, "maxSelect": 1},
-        {"name": "image", "type": "file", "maxSelect": 1, "maxSize": 5242880, "mimeTypes": ["image/png","image/jpeg","image/jpg"]},
+        {"name": "vegetable_id", "type": "relation", "required": false, "collectionId": vegCollectionId, "cascadeDelete": false, "maxSelect": 1},
+        {"name": "image", "type": "file", "maxSelect": 1, "maxSize": 5242880, "mimeTypes": ["image/png","image/jpeg","image/jpg","image/webp"]},
         {"name": "time_min", "type": "number", "required": false},
+        {"name": "servings", "type": "number", "required": false, "min": 1},
         {"name": "ingredients", "type": "json", "required": false},
-        {"name": "steps", "type": "json", "required": false}
+        {"name": "steps", "type": "json", "required": false},
+        // Phase 11: User Recipes
+        {"name": "source", "type": "select", "required": true, "maxSelect": 1, "values": ["curated", "user"]},
+        {"name": "user_id", "type": "relation", "required": false, "collectionId": "_pb_users_auth_", "cascadeDelete": true, "maxSelect": 1},
+        {"name": "is_public", "type": "bool", "required": false},
+        {"name": "difficulty", "type": "select", "required": false, "maxSelect": 1, "values": ["easy", "medium", "hard"]}
       ],
-      "listRule": "", // Public
-      "viewRule": ""  // Public
+      // Curated: public | User: owner-only or public if is_public=true
+      "listRule": "source = 'curated' || user_id = @request.auth.id || (is_public = true && user_id != '')",
+      "viewRule": "source = 'curated' || user_id = @request.auth.id || (is_public = true && user_id != '')",
+      "createRule": "@request.auth.id != ''",
+      "updateRule": "source = 'curated' || user_id = @request.auth.id",
+      "deleteRule": "user_id = @request.auth.id"
     }),
   );
   if (createRecipesRes.statusCode == 200) {
@@ -374,12 +384,15 @@ Future<void> main() async {
   // --- Seed Recipes ---
   print('Seeding Recipes...');
   
-  // Sample Recipes
+  // Sample Recipes (curated)
   final recipes = [
     {
       "vegetable": "Kartoffeln",
       "title": "Klassische Berner Rösti",
       "time_min": 45,
+      "servings": 4,
+      "difficulty": "easy",
+      "source": "curated",
       "ingredients": [
         {"item": "Festkochende Kartoffeln", "amount": "1kg"},
         {"item": "Butter", "amount": "2 EL"},
@@ -397,6 +410,9 @@ Future<void> main() async {
       "vegetable": "Karotten",
       "title": "Aargauer Rüeblisuppe",
       "time_min": 30,
+      "servings": 4,
+      "difficulty": "easy",
+      "source": "curated",
       "ingredients": [
         {"item": "Rüebli", "amount": "600g"},
         {"item": "Zwiebel", "amount": "1"},
@@ -415,6 +431,9 @@ Future<void> main() async {
       "vegetable": "Äpfel",
       "title": "Grossmutter's Apfelwähe",
       "time_min": 60,
+      "servings": 8,
+      "difficulty": "medium",
+      "source": "curated",
       "ingredients": [
         {"item": "Kuchenteig", "amount": "1 runde Form"},
         {"item": "Äpfel", "amount": "4 grosse"},
@@ -458,6 +477,9 @@ Future<void> main() async {
       "title": r['title'],
       "vegetable_id": vegId,
       "time_min": r['time_min'],
+      "servings": r['servings'],
+      "difficulty": r['difficulty'],
+      "source": r['source'],
       "ingredients": r['ingredients'],
       "steps": r['steps'],
     };

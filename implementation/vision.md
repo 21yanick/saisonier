@@ -537,43 +537,39 @@ class SubscriptionService extends _$SubscriptionService {
 
 ### Phase 9: Profile+ (Erweitertes User Profile)
 
-**Status:** Geplant  
-**Aufwand:** 1-2 Wochen
+**Status:** Done
 
 **Scope:**
-- [ ] UserProfile Datenmodell erweitern
-- [ ] Onboarding-Flow für Profilsetup
-- [ ] Settings-Screen mit allen Optionen
-- [ ] PocketBase Schema Update
-- [ ] Migration bestehender User
+- [x] UserProfile Datenmodell erweitern
+- [x] Onboarding-Flow für Profilsetup
+- [x] Settings-Screen mit allen Optionen
+- [x] PocketBase Schema Update
 
 ---
 
 ### Phase 10: Bring! Integration
 
-**Status:** Geplant  
-**Aufwand:** 1-2 Wochen
+**Status:** Done
 
 **Scope:**
-- [ ] BringApiClient implementieren
-- [ ] Login-Flow in Settings
-- [ ] Listen-Auswahl
-- [ ] "Zu Bring!" Button bei Rezepten
-- [ ] Credential Storage (encrypted)
+- [x] BringApiClient implementieren (mit API-Key Headers)
+- [x] Login-Flow in Settings (inkl. Social-Login Hilfe)
+- [x] Auto-Auswahl der Default-Liste
+- [x] "Auf Einkaufsliste" Button bei Rezepten
+- [x] Credential Storage (flutter_secure_storage)
 
 ---
 
 ### Phase 11: User Rezepte
 
-**Status:** Geplant  
-**Aufwand:** 2-3 Wochen
+**Status:** Done
 
 **Scope:**
-- [ ] Recipe Datenmodell erweitern
-- [ ] Rezept-Editor UI
-- [ ] Bild-Upload
-- [ ] Such- und Filter-Funktionen
-- [ ] "Meine Rezepte" Tab
+- [x] Recipe Datenmodell erweitern (source, userId, servings, difficulty)
+- [x] Rezept-Editor UI (dynamische Zutaten/Schritte)
+- [x] Bild-Upload (image_picker)
+- [x] "Meine Rezepte" Tab (3. Tab in Navigation)
+- [x] CRUD-Operationen (Create, Update, Delete)
 
 ---
 

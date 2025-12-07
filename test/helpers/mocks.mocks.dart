@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i20;
+import 'dart:io' as _i25;
 
 import 'package:http/http.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
@@ -1472,10 +1473,101 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
       ) as _i20.Stream<_i23.Recipe?>);
 
   @override
+  _i20.Stream<List<_i23.Recipe>> watchUserRecipes(String? userId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #watchUserRecipes,
+          [userId],
+        ),
+        returnValue: _i20.Stream<List<_i23.Recipe>>.empty(),
+      ) as _i20.Stream<List<_i23.Recipe>>);
+
+  @override
+  _i20.Future<_i23.Recipe?> getRecipe(String? id) => (super.noSuchMethod(
+        Invocation.method(
+          #getRecipe,
+          [id],
+        ),
+        returnValue: _i20.Future<_i23.Recipe?>.value(),
+      ) as _i20.Future<_i23.Recipe?>);
+
+  @override
   _i20.Future<void> sync() => (super.noSuchMethod(
         Invocation.method(
           #sync,
           [],
+        ),
+        returnValue: _i20.Future<void>.value(),
+        returnValueForMissingStub: _i20.Future<void>.value(),
+      ) as _i20.Future<void>);
+
+  @override
+  _i20.Future<_i23.Recipe?> createUserRecipe({
+    required String? userId,
+    required String? title,
+    required List<Map<String, dynamic>>? ingredients,
+    required List<String>? steps,
+    int? timeMin = 30,
+    int? servings = 4,
+    String? difficulty,
+    String? vegetableId,
+    _i25.File? imageFile,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUserRecipe,
+          [],
+          {
+            #userId: userId,
+            #title: title,
+            #ingredients: ingredients,
+            #steps: steps,
+            #timeMin: timeMin,
+            #servings: servings,
+            #difficulty: difficulty,
+            #vegetableId: vegetableId,
+            #imageFile: imageFile,
+          },
+        ),
+        returnValue: _i20.Future<_i23.Recipe?>.value(),
+      ) as _i20.Future<_i23.Recipe?>);
+
+  @override
+  _i20.Future<_i23.Recipe?> updateUserRecipe({
+    required String? recipeId,
+    required String? title,
+    required List<Map<String, dynamic>>? ingredients,
+    required List<String>? steps,
+    int? timeMin = 30,
+    int? servings = 4,
+    String? difficulty,
+    String? vegetableId,
+    _i25.File? imageFile,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateUserRecipe,
+          [],
+          {
+            #recipeId: recipeId,
+            #title: title,
+            #ingredients: ingredients,
+            #steps: steps,
+            #timeMin: timeMin,
+            #servings: servings,
+            #difficulty: difficulty,
+            #vegetableId: vegetableId,
+            #imageFile: imageFile,
+          },
+        ),
+        returnValue: _i20.Future<_i23.Recipe?>.value(),
+      ) as _i20.Future<_i23.Recipe?>);
+
+  @override
+  _i20.Future<void> deleteUserRecipe(String? recipeId) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteUserRecipe,
+          [recipeId],
         ),
         returnValue: _i20.Future<void>.value(),
         returnValueForMissingStub: _i20.Future<void>.value(),

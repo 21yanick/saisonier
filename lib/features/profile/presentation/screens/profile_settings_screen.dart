@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:saisonier/features/profile/presentation/state/user_profile_controller.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/auth/presentation/widgets/auth_form.dart';
+import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
+import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
 
 class ProfileSettingsScreen extends ConsumerWidget {
   const ProfileSettingsScreen({super.key});
@@ -12,6 +14,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
     final profileAsync = ref.watch(userProfileControllerProvider);
+    final bringConnectedAsync = ref.watch(shoppingListControllerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -74,6 +77,54 @@ class ProfileSettingsScreen extends ConsumerWidget {
                         Text('${profile.skill.label} • Max. ${profile.maxCookingTimeMin} Min'),
                     leading: const Icon(Icons.timer),
                     onTap: () => context.push('/profile/setup'),
+                  ),
+                  const Divider(),
+                  bringConnectedAsync.when(
+                    data: (isConnected) => ListTile(
+                      title: const Text('Bring! Einkaufsliste'),
+                      subtitle: Text(isConnected ? 'Verbunden' : 'Nicht verbunden'),
+                      leading: Icon(
+                        Icons.shopping_cart, 
+                        color: isConnected ? Colors.green : null
+                      ),
+                      trailing: isConnected 
+                        ? IconButton(
+                            icon: const Icon(Icons.link_off),
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Trennen?'),
+                                  content: const Text('Möchtest du die Verbindung zu Bring! trennen?'),
+                                  actions: [
+                                    TextButton(onPressed: () => context.pop(false), child: const Text('Abbrechen')),
+                                    TextButton(onPressed: () => context.pop(true), child: const Text('Trennen')),
+                                  ],
+                                ),
+                              );
+                              if (confirm == true) {
+                                ref.read(shoppingListControllerProvider.notifier).logout();
+                              }
+                            },
+                          )
+                        : null,
+                      onTap: isConnected ? null : () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const BringAuthDialog(),
+                        );
+                      },
+                    ),
+                    loading: () => const ListTile(
+                      title: Text('Bring! Einkaufsliste'),
+                      leading: Icon(Icons.shopping_cart),
+                      trailing: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                    ),
+                    error: (err, stack) => ListTile(
+                      title: const Text('Fehler bei Bring! Integration'),
+                      subtitle: Text(err.toString(), style: const TextStyle(color: Colors.red)),
+                      leading: const Icon(Icons.error, color: Colors.red),
+                    ),
                   ),
                   const Divider(),
                   ListTile(

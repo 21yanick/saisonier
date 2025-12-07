@@ -83,17 +83,23 @@ class _TogglePill extends StatelessWidget {
     required this.onTap,
   });
 
+  static const _labels = ['Saison', 'Katalog', 'Rezepte'];
+  static const _pillWidth = 280.0;
+  static const _segmentCount = 3;
+
   @override
   Widget build(BuildContext context) {
+    final segmentWidth = (_pillWidth - 8) / _segmentCount;
+
     return Container(
       height: 50,
-      width: 200,
+      width: _pillWidth,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1), // Fixed deprecation
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -102,54 +108,41 @@ class _TogglePill extends StatelessWidget {
       child: Stack(
         children: [
           // Animated Selection Background
-          AnimatedAlign(
+          AnimatedPositioned(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
-            alignment: currentIndex == 0 ? Alignment.centerLeft : Alignment.centerRight,
+            left: 4 + (currentIndex * segmentWidth),
+            top: 4,
+            bottom: 4,
+            width: segmentWidth,
             child: Container(
-              margin: const EdgeInsets.all(4),
-              width: 96, // (200 - 8) / 2
               decoration: BoxDecoration(
-                color: const Color(0xFF4A6C48), // Theme Seed Color
+                color: const Color(0xFF4A6C48),
                 borderRadius: BorderRadius.circular(21),
               ),
             ),
           ),
-          
+
           // Row of Buttons
           Row(
-            children: [
-              Expanded(
+            children: List.generate(_segmentCount, (index) {
+              return Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => onTap(0),
+                  onTap: () => onTap(index),
                   child: Center(
                     child: Text(
-                      'Saison',
+                      _labels[index],
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: currentIndex == 0 ? Colors.white : Colors.black87,
+                        fontSize: 13,
+                        color: currentIndex == index ? Colors.white : Colors.black87,
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onTap(1),
-                  child: Center(
-                    child: Text(
-                      'Katalog',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: currentIndex == 1 ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              );
+            }),
           ),
         ],
       ),

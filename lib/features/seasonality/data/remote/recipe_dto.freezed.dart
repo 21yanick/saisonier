@@ -22,15 +22,24 @@ RecipeDto _$RecipeDtoFromJson(Map<String, dynamic> json) {
 mixin _$RecipeDto {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'vegetable_id')
-  String get vegetableId =>
-      throw _privateConstructorUsedError; // Pocketbase Relation ID
+  String? get vegetableId =>
+      throw _privateConstructorUsedError; // Nullable for user recipes
   String get title => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
   @JsonKey(name: 'time_min')
   int get timeMin => throw _privateConstructorUsedError;
+  int get servings => throw _privateConstructorUsedError;
   List<dynamic> get ingredients =>
       throw _privateConstructorUsedError; // JSON array of objects
-  List<String> get steps => throw _privateConstructorUsedError;
+  List<String> get steps =>
+      throw _privateConstructorUsedError; // JSON array of strings
+// Phase 11: User Recipes
+  String get source => throw _privateConstructorUsedError; // 'curated' | 'user'
+  @JsonKey(name: 'user_id')
+  String? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_public')
+  bool get isPublic => throw _privateConstructorUsedError;
+  String? get difficulty => throw _privateConstructorUsedError;
 
   /// Serializes this RecipeDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,12 +58,17 @@ abstract class $RecipeDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'vegetable_id') String vegetableId,
+      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String title,
       String image,
       @JsonKey(name: 'time_min') int timeMin,
+      int servings,
       List<dynamic> ingredients,
-      List<String> steps});
+      List<String> steps,
+      String source,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'is_public') bool isPublic,
+      String? difficulty});
 }
 
 /// @nodoc
@@ -73,22 +87,27 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
   @override
   $Res call({
     Object? id = null,
-    Object? vegetableId = null,
+    Object? vegetableId = freezed,
     Object? title = null,
     Object? image = null,
     Object? timeMin = null,
+    Object? servings = null,
     Object? ingredients = null,
     Object? steps = null,
+    Object? source = null,
+    Object? userId = freezed,
+    Object? isPublic = null,
+    Object? difficulty = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      vegetableId: null == vegetableId
+      vegetableId: freezed == vegetableId
           ? _value.vegetableId
           : vegetableId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -101,6 +120,10 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
           ? _value.timeMin
           : timeMin // ignore: cast_nullable_to_non_nullable
               as int,
+      servings: null == servings
+          ? _value.servings
+          : servings // ignore: cast_nullable_to_non_nullable
+              as int,
       ingredients: null == ingredients
           ? _value.ingredients
           : ingredients // ignore: cast_nullable_to_non_nullable
@@ -109,6 +132,22 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
           ? _value.steps
           : steps // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
+              as bool,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -123,12 +162,17 @@ abstract class _$$RecipeDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'vegetable_id') String vegetableId,
+      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String title,
       String image,
       @JsonKey(name: 'time_min') int timeMin,
+      int servings,
       List<dynamic> ingredients,
-      List<String> steps});
+      List<String> steps,
+      String source,
+      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'is_public') bool isPublic,
+      String? difficulty});
 }
 
 /// @nodoc
@@ -145,22 +189,27 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? vegetableId = null,
+    Object? vegetableId = freezed,
     Object? title = null,
     Object? image = null,
     Object? timeMin = null,
+    Object? servings = null,
     Object? ingredients = null,
     Object? steps = null,
+    Object? source = null,
+    Object? userId = freezed,
+    Object? isPublic = null,
+    Object? difficulty = freezed,
   }) {
     return _then(_$RecipeDtoImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      vegetableId: null == vegetableId
+      vegetableId: freezed == vegetableId
           ? _value.vegetableId
           : vegetableId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -173,6 +222,10 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
           ? _value.timeMin
           : timeMin // ignore: cast_nullable_to_non_nullable
               as int,
+      servings: null == servings
+          ? _value.servings
+          : servings // ignore: cast_nullable_to_non_nullable
+              as int,
       ingredients: null == ingredients
           ? _value._ingredients
           : ingredients // ignore: cast_nullable_to_non_nullable
@@ -181,6 +234,22 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
           ? _value._steps
           : steps // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      source: null == source
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isPublic: null == isPublic
+          ? _value.isPublic
+          : isPublic // ignore: cast_nullable_to_non_nullable
+              as bool,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -190,12 +259,17 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
 class _$RecipeDtoImpl implements _RecipeDto {
   const _$RecipeDtoImpl(
       {required this.id,
-      @JsonKey(name: 'vegetable_id') required this.vegetableId,
+      @JsonKey(name: 'vegetable_id') this.vegetableId,
       required this.title,
-      required this.image,
+      this.image = '',
       @JsonKey(name: 'time_min') this.timeMin = 0,
+      this.servings = 4,
       final List<dynamic> ingredients = const [],
-      final List<String> steps = const []})
+      final List<String> steps = const [],
+      this.source = 'curated',
+      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'is_public') this.isPublic = false,
+      this.difficulty})
       : _ingredients = ingredients,
         _steps = steps;
 
@@ -206,15 +280,19 @@ class _$RecipeDtoImpl implements _RecipeDto {
   final String id;
   @override
   @JsonKey(name: 'vegetable_id')
-  final String vegetableId;
-// Pocketbase Relation ID
+  final String? vegetableId;
+// Nullable for user recipes
   @override
   final String title;
   @override
+  @JsonKey()
   final String image;
   @override
   @JsonKey(name: 'time_min')
   final int timeMin;
+  @override
+  @JsonKey()
+  final int servings;
   final List<dynamic> _ingredients;
   @override
   @JsonKey()
@@ -235,9 +313,24 @@ class _$RecipeDtoImpl implements _RecipeDto {
     return EqualUnmodifiableListView(_steps);
   }
 
+// JSON array of strings
+// Phase 11: User Recipes
+  @override
+  @JsonKey()
+  final String source;
+// 'curated' | 'user'
+  @override
+  @JsonKey(name: 'user_id')
+  final String? userId;
+  @override
+  @JsonKey(name: 'is_public')
+  final bool isPublic;
+  @override
+  final String? difficulty;
+
   @override
   String toString() {
-    return 'RecipeDto(id: $id, vegetableId: $vegetableId, title: $title, image: $image, timeMin: $timeMin, ingredients: $ingredients, steps: $steps)';
+    return 'RecipeDto(id: $id, vegetableId: $vegetableId, title: $title, image: $image, timeMin: $timeMin, servings: $servings, ingredients: $ingredients, steps: $steps, source: $source, userId: $userId, isPublic: $isPublic, difficulty: $difficulty)';
   }
 
   @override
@@ -251,9 +344,17 @@ class _$RecipeDtoImpl implements _RecipeDto {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.timeMin, timeMin) || other.timeMin == timeMin) &&
+            (identical(other.servings, servings) ||
+                other.servings == servings) &&
             const DeepCollectionEquality()
                 .equals(other._ingredients, _ingredients) &&
-            const DeepCollectionEquality().equals(other._steps, _steps));
+            const DeepCollectionEquality().equals(other._steps, _steps) &&
+            (identical(other.source, source) || other.source == source) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.isPublic, isPublic) ||
+                other.isPublic == isPublic) &&
+            (identical(other.difficulty, difficulty) ||
+                other.difficulty == difficulty));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -265,8 +366,13 @@ class _$RecipeDtoImpl implements _RecipeDto {
       title,
       image,
       timeMin,
+      servings,
       const DeepCollectionEquality().hash(_ingredients),
-      const DeepCollectionEquality().hash(_steps));
+      const DeepCollectionEquality().hash(_steps),
+      source,
+      userId,
+      isPublic,
+      difficulty);
 
   /// Create a copy of RecipeDto
   /// with the given fields replaced by the non-null parameter values.
@@ -287,12 +393,17 @@ class _$RecipeDtoImpl implements _RecipeDto {
 abstract class _RecipeDto implements RecipeDto {
   const factory _RecipeDto(
       {required final String id,
-      @JsonKey(name: 'vegetable_id') required final String vegetableId,
+      @JsonKey(name: 'vegetable_id') final String? vegetableId,
       required final String title,
-      required final String image,
+      final String image,
       @JsonKey(name: 'time_min') final int timeMin,
+      final int servings,
       final List<dynamic> ingredients,
-      final List<String> steps}) = _$RecipeDtoImpl;
+      final List<String> steps,
+      final String source,
+      @JsonKey(name: 'user_id') final String? userId,
+      @JsonKey(name: 'is_public') final bool isPublic,
+      final String? difficulty}) = _$RecipeDtoImpl;
 
   factory _RecipeDto.fromJson(Map<String, dynamic> json) =
       _$RecipeDtoImpl.fromJson;
@@ -301,7 +412,7 @@ abstract class _RecipeDto implements RecipeDto {
   String get id;
   @override
   @JsonKey(name: 'vegetable_id')
-  String get vegetableId; // Pocketbase Relation ID
+  String? get vegetableId; // Nullable for user recipes
   @override
   String get title;
   @override
@@ -310,9 +421,22 @@ abstract class _RecipeDto implements RecipeDto {
   @JsonKey(name: 'time_min')
   int get timeMin;
   @override
+  int get servings;
+  @override
   List<dynamic> get ingredients; // JSON array of objects
   @override
-  List<String> get steps;
+  List<String> get steps; // JSON array of strings
+// Phase 11: User Recipes
+  @override
+  String get source; // 'curated' | 'user'
+  @override
+  @JsonKey(name: 'user_id')
+  String? get userId;
+  @override
+  @JsonKey(name: 'is_public')
+  bool get isPublic;
+  @override
+  String? get difficulty;
 
   /// Create a copy of RecipeDto
   /// with the given fields replaced by the non-null parameter values.

@@ -6,6 +6,8 @@ import 'package:saisonier/core/database/app_database.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:saisonier/core/config/app_config.dart';
+import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
+import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
 
 final recipeProvider = StreamProvider.family.autoDispose<Recipe?, String>((ref, id) {
   return ref.watch(recipeRepositoryProvider).watchRecipe(id);
@@ -122,18 +124,91 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                        ),
                        const SizedBox(height: 24),
 
+                      // Actions
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.playlist_add),
+                              label: const Text('Auf Einkaufsliste'),
+                              onPressed: () async {
+                                final isConnected = await ref.read(shoppingListControllerProvider.future);
+                                if (!isConnected) {
+                                  if (context.mounted) {
+                                     final success = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => const BringAuthDialog(),
+                                    );
+                                    if (success != true) return;
+                                  } else {
+                                    return;
+                                  }
+                                }
+                                
+                                // Add all ingredients
+                                if (!context.mounted) return;
+
+                                int addedCount = 0;
+                                int skippedCount = 0;
+                                try {
+                                  final ingredients = jsonDecode(recipe.ingredients) as List<dynamic>;
+                                  for (var ing in ingredients) {
+                                    final i = ing as Map<String, dynamic>;
+                                    // Support both 'item' (PRD spec) and 'name' field names
+                                    final itemName = (i['item'] ?? i['name']) as String?;
+
+                                    if (itemName == null || itemName.isEmpty) {
+                                      skippedCount++;
+                                      continue;
+                                    }
+
+                                    final amount = i['amount']?.toString() ?? '';
+                                    final unit = i['unit']?.toString() ?? '';
+                                    final spec = '$amount $unit'.trim();
+
+                                    await ref.read(shoppingListControllerProvider.notifier).addItem(itemName, spec);
+                                    addedCount++;
+                                  }
+
+                                  if (context.mounted) {
+                                    final message = skippedCount > 0
+                                        ? '$addedCount Zutaten hinzugefügt ($skippedCount übersprungen)'
+                                        : '$addedCount Zutaten zu Bring! hinzugefügt';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(message)),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Fehler beim Hinzufügen: $e'), backgroundColor: Colors.red),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
                       // Ingredients
                       const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                       const SizedBox(height: 12),
                       ...ingredients.map((ing) {
                         final i = ing as Map<String, dynamic>;
+                        final itemName = (i['item'] ?? i['name'] ?? '') as String;
+                        final amount = i['amount']?.toString() ?? '';
+                        final unit = i['unit']?.toString() ?? '';
+                        final spec = '$amount$unit'.trim();
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Row(
                             children: [
                               Text('•  ', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
-                              Text('${i['amount'] ?? ''} ${i['unit'] ?? ''} ', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              Text(i['name'] ?? ''),
+                              if (spec.isNotEmpty)
+                                Text('$spec ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Expanded(child: Text(itemName)),
                             ],
                           ),
                         );

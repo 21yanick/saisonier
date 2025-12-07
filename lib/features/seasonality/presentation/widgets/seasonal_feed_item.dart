@@ -46,11 +46,11 @@ class SeasonalFeedItem extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.black.withValues(alpha: 0.8),
-                Colors.black.withValues(alpha: 0.1),
-                Colors.black.withValues(alpha: 0.9),
+                Colors.black.withValues(alpha: 0.25), // Oben: dezent für Status Bar
+                Colors.black.withValues(alpha: 0.0),  // Mitte: transparent - Bild sichtbar
+                Colors.black.withValues(alpha: 0.85), // Unten: stark für Text-Lesbarkeit
               ],
-              stops: const [0.5, 0.8, 1.0],
+              stops: const [0.0, 0.4, 1.0],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),

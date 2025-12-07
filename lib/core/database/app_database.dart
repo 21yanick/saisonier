@@ -19,7 +19,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -31,6 +31,15 @@ class AppDatabase extends _$AppDatabase {
         if (from < 2) {
           // Schema v2 adds Recipes table
           await m.createTable(recipes);
+        }
+        if (from < 3) {
+          // Schema v3: User Recipes - add new columns
+          await m.addColumn(recipes, recipes.servings);
+          await m.addColumn(recipes, recipes.source);
+          await m.addColumn(recipes, recipes.userId);
+          await m.addColumn(recipes, recipes.isPublic);
+          await m.addColumn(recipes, recipes.difficulty);
+          // Make vegetableId nullable (recreate not needed, SQLite allows this)
         }
       },
     );

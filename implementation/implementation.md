@@ -22,9 +22,8 @@ This document tracks the high-level progress of the MVP implementation.
 | Phase | Description | Status |
 | :--- | :--- | :--- |
 | **Phase 9** | Profile+ (Enhanced User Profile) | **Done** |
-
-| **Phase 10** | Bring! Integration | **Planned** |
-| **Phase 11** | User Recipes | **Planned** |
+| **Phase 10** | Bring! Integration | **Done** |
+| **Phase 11** | User Recipes | **Done** |
 | **Phase 12** | Week Plan Basic | **Planned** |
 | **Phase 13** | Shopping List Export | **Planned** |
 | **Phase 14** | AI Recipe Generator (Premium) | **Planned** |
@@ -42,6 +41,19 @@ This document tracks the high-level progress of the MVP implementation.
 ## Verification
 - **Automated Tests:** Comprehensive unit and widget tests implemented (`flutter test` passing).
 - **Manual Verification:** Documented in [walkthrough.md](../../.gemini/antigravity/brain/78a16d7b-501d-4fb4-a271-3db7ca4aef41/walkthrough.md).
+
+## Development Setup
+
+```bash
+./run.sh      # Startet Android Emulator + App
+make run      # Alternative
+make generate # Code-Generierung
+make help     # Alle Befehle
+```
+
+**Wichtig:** Linux Desktop-Build nicht möglich mit Flutter Snap (GLib/libsecret-Konflikt). Android Emulator nutzen.
+
+Emulator wechseln: `export SAISONIER_EMULATOR="Pixel_8_Pro"`
 
 ## Next Steps
 - Maintenance and bug fixing.

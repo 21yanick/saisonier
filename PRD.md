@@ -213,8 +213,22 @@ lib/
   * [x] Favoriten-Funktion ("Merkzettel") - *Implemented Local-First & Synced*.
   * [x] Suche und Filterung (z.B. "Nur Früchte anzeigen").
 
+### Phase 2.5: Profile & Shopping - **COMPLETED**
+
+  * [x] Erweitertes User Profile (Haushalt, Allergien, Diät, Koch-Skills).
+  * [x] Bring! Integration - Zutaten direkt auf Einkaufsliste senden.
+
+### Phase 2.6: User Recipes - **COMPLETED**
+
+  * [x] Eigene Rezepte erstellen, bearbeiten und löschen.
+  * [x] Bild-Upload für Rezepte.
+  * [x] "Meine Rezepte" als 3. Tab in der Navigation.
+  * [x] Dynamischer Rezept-Editor (Zutaten/Schritte hinzufügen/entfernen).
+
 ### Phase 3: "AI Chef" (Future Scope)
 
-  * Integration der OpenAI API.
-  * Feature: "Reste-Verwertung" (Input: 3 Zutaten -\> Output: Rezept).
-  * Monetarisierung (Premium Subscription für AI Features).
+  * Integration der Gemini API (via PocketBase Proxy).
+  * Feature: AI Wochenplaner, Rezept-Generator, Bildgenerierung.
+  * Monetarisierung (Premium/Pro Subscription).
+
+*Detaillierte Roadmap: siehe `implementation/vision.md`*

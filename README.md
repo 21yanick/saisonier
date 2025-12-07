@@ -66,24 +66,38 @@ graph LR
 
 ## 🚀 Quick Start
 
-Voraussetzungen: Flutter SDK (Stable), Docker (für Backend).
+**Voraussetzungen:** Flutter SDK, Android Studio (für Emulator), PocketBase (Backend).
 
-1.  **Repository klonen**
-    ```bash
-    git clone https://github.com/your-user/saisonier.git
-    cd saisonier
-    ```
+```bash
+# 1. Repository klonen
+git clone https://github.com/your-user/saisonier.git && cd saisonier
 
-2.  **Abhängigkeiten installieren**
-    ```bash
-    flutter pub get
-    ```
+# 2. Abhängigkeiten installieren
+flutter pub get
 
-3.  **App starten**
-    ```bash
-    flutter run
-    ```
-    *Hinweis: Die App nutzt im Standard-Modus die integrierte Mock-Datenbank oder den lokalen Cache, falls kein Backend konfiguriert ist.*
+# 3. App starten (startet Emulator automatisch)
+./run.sh          # oder: make run
+```
+
+### Entwicklungs-Befehle
+
+| Befehl | Beschreibung |
+|--------|--------------|
+| `./run.sh` | Startet Emulator + App |
+| `make run` | Alias für `./run.sh` |
+| `make generate` | Code-Generierung (Riverpod/Freezed) |
+| `make test` | Tests ausführen |
+| `make help` | Alle Befehle anzeigen |
+
+### Emulator konfigurieren
+
+Standardmässig wird `Medium_Phone_API_36.1` verwendet. Für einen anderen Emulator (z.B. Pixel 8 Pro):
+```bash
+# Einmalig in .bashrc/.zshrc
+export SAISONIER_EMULATOR="Pixel_8_Pro"
+```
+
+> **Hinweis:** Linux Desktop-Build funktioniert nicht mit Flutter Snap (GLib-Konflikt). Android Emulator verwenden.
 
 ## 📄 Lizenz
 

@@ -1,46 +1,72 @@
 # Phase 10: Bring! Integration
 
-**Status:** Geplant
+**Status:** Done
 **Ziel:** Verbindung mit der beliebten Einkaufslisten-App "Bring!" für nahtloses Einkaufen.
 
 > [!WARNING]
-> **Unofficial API:** Bring! bietet keine öffentliche API an. Diese Integration basiert auf Reverse-Engineering und kann jederzeit brechen. Robuste Fehlerbehandlung und Fallbacks sind essentiell.
+> **Unofficial API:** Bring! bietet keine öffentliche API an. Diese Integration basiert auf Reverse-Engineering und kann jederzeit brechen.
 
-## 1. Scope & Features
+## 1. Implementierte Features
 
-### 1.1 API Client Implementation (Hybrid Strategy)
-- **Primary:** Unofficial REST API for full sync (Read & Write).
-  - Auth: `https://api.getbring.com/rest/v2/bringauth`
-  - Lists: `https://api.getbring.com/rest/bringusers/{uuid}/lists`
-- **Fallback / Safe Mode:** Official "Web-to-App" Integration (Deep Linking).
-  - URL Scheme: `bring:import?url={url}&source=web` (oder ähnlich, gemäss Guide).
-  - Wenn API bricht, nutzt die App einfache Deep Links um Zutaten zu übergeben.
+### 1.1 API Client (`BringApiClient`)
+- **Auth Endpoint:** `POST https://api.getbring.com/rest/v2/bringauth`
+- **Lists Endpoint:** `GET https://api.getbring.com/rest/bringusers/{uuid}/lists`
+- **Add Item:** `PUT https://api.getbring.com/rest/v2/bringlists/{listUuid}`
 
-### 1.2 User Integration
-- Eingabe der Bring! Credentials (Email/Passwort) in den Settings.
-- Speicherung in `flutter_secure_storage`.
-- Auswahl der Ziel-Liste (Default List).
+**Erforderliche Headers:**
+```dart
+static const _defaultHeaders = {
+  'X-BRING-API-KEY': 'cof4Nc6D8saplXjE3h3HXqHH8m7VU2i1Gs0g85Sp',
+  'X-BRING-CLIENT': 'android',
+  'X-BRING-APPLICATION': 'bring',
+  'X-BRING-COUNTRY': 'CH',
+};
+```
 
-### 1.3 Add-to-List Logic
-- Button "Zutaten auf Einkaufsliste" auf der Rezept-Seite.
-- Übertrag der Zutaten auf die gewählte Bring! Liste.
+### 1.2 User Flow
+1. Profil → Bring! Einkaufsliste → Login Dialog
+2. Email/Passwort Eingabe (mit Hilfe für Social-Login User)
+3. Auto-Auswahl der ersten Liste als Default
+4. Credentials verschlüsselt in `flutter_secure_storage`
 
-## 2. Technical Details
+### 1.3 Rezept-Integration
+- Button "Auf Einkaufsliste" auf Rezept-Detail-Seite
+- Alle Zutaten werden einzeln an Bring! gesendet
+- Format: `{item}` mit Specification `{amount} {unit}`
 
-### 2.1 Dependencies
-- `http`: Für API Calls.
-- `flutter_secure_storage`: Für sichere Speicherung der Zugangsdaten.
+## 2. Architektur
 
-### 2.2 Error Handling Strategy
-- `BringApiException`: Eigene Exception-Klasse für API-Fehler (401 Unauthorized, 5xx Server Error).
-- **Graceful Degradation:** Wenn Bring! nicht erreichbar ist, darf die App nicht crashen.
+```
+lib/features/shopping_list/
+├── data/
+│   └── bring_api_client.dart      # API Client mit Headers
+├── application/
+│   └── listing_service.dart       # Business Logic + Secure Storage
+└── presentation/
+    ├── state/
+    │   └── shopping_list_controller.dart
+    └── widgets/ (in profile feature)
+        └── bring_auth_dialog.dart  # Login UI mit Social-Login Hilfe
+```
 
-## 3. UI/UX
-- **Login Screen:** Hinweis, dass dies eine experimentelle Funktion ist.
-- **Feedback:** Success/Error Snackbars ("Gesendet", "Fehler bei Verbindung").
+## 3. Social Login Workaround
+
+User die sich bei Bring! mit Google/Apple/Facebook angemeldet haben, müssen zuerst ein Passwort setzen:
+- **App:** Profil → Weitere Einstellungen → Passwort ändern
+- **Web:** web.getbring.com → Einstellungen → Passwort
+
+Der Login-Dialog enthält einen expandierbaren Hilfe-Bereich mit dieser Anleitung.
 
 ## 4. Acceptance Criteria
-- [ ] User kann sich einloggen und Listen laden.
-- [ ] Zutaten können erfolgreich gesendet werden.
-- [ ] Bei API-Änderungen/Fehlern stürzt die App nicht ab.
-- [ ] User wird gewarnt, dass das Feature experimentell ist.
+
+- [x] User kann sich einloggen und Listen laden
+- [x] Zutaten können erfolgreich gesendet werden
+- [x] Bei API-Fehlern stürzt die App nicht ab
+- [x] User wird gewarnt, dass das Feature experimentell ist
+- [x] Social-Login User erhalten Hilfe zum Passwort-Setup
+
+## 5. Bekannte Limitierungen
+
+- **Keine Batch-API:** Items werden sequentiell gesendet
+- **Keine Listen-Auswahl UI:** Erste Liste wird automatisch verwendet
+- **Token-Refresh:** Nicht implementiert (Token läuft nach ~7 Tagen ab)
