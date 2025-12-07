@@ -17,6 +17,22 @@ This document tracks the high-level progress of the MVP implementation.
 | **Phase 7** | User Auth & Cloud Sync | **Done** |
 | **Phase 8** | Test Infrastructure & QA | **Done** |
 
+## V2 Roadmap (Vision 2026) -> see `implementation/v2/`
+
+| Phase | Description | Status |
+| :--- | :--- | :--- |
+| **Phase 9** | Profile+ (Enhanced User Profile) | **Done** |
+
+| **Phase 10** | Bring! Integration | **Planned** |
+| **Phase 11** | User Recipes | **Planned** |
+| **Phase 12** | Week Plan Basic | **Planned** |
+| **Phase 13** | Shopping List Export | **Planned** |
+| **Phase 14** | AI Recipe Generator (Premium) | **Planned** |
+| **Phase 15** | AI Week Planner (Premium) | **Planned** |
+| **Phase 16** | AI Image Generation (Premium) | **Planned** |
+| **Phase 17** | Family Features (Pro) | **Planned** |
+| **Phase 18** | Monetization & Store Launch | **Planned** |
+
 ## Key Decisions
 - **Offline-First:** Riverpod + Drift (SQLite) used for reliable caching.
 - **UI:** Custom Material Design with "Saison" theme.

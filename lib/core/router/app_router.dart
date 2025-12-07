@@ -5,7 +5,10 @@ import 'package:saisonier/features/seasonality/presentation/screens/grid_screen.
 import 'package:saisonier/features/seasonality/presentation/screens/main_screen.dart';
 import 'package:saisonier/features/seasonality/presentation/screens/detail_screen.dart';
 import '../../features/seasonality/presentation/screens/recipe_detail_screen.dart';
-import '../../features/auth/presentation/screens/profile_screen.dart';
+import 'package:saisonier/features/profile/presentation/screens/profile_settings_screen.dart';
+
+import 'package:saisonier/features/profile/presentation/screens/onboarding_wizard_screen.dart';
+
 
 // Private navigator keys
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -57,11 +60,18 @@ final appRouter = GoRouter(
         return RecipeDetailScreen(recipeId: id);
       },
     ),
-    // Profile Route
+    // Profile Route (Main Settings)
     GoRoute(
       path: '/profile',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ProfileScreen(),
+      builder: (context, state) => const ProfileSettingsScreen(),
+      routes: [
+        GoRoute(
+          path: 'setup',
+          builder: (context, state) => const OnboardingWizardScreen(),
+        ),
+      ],
     ),
   ],
+
 );

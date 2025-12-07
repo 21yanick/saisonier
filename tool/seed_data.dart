@@ -191,6 +191,49 @@ Future<void> main() async {
     print('Failed to get recipes id: $e');
   }
 
+  // --- Collection: user_profiles ---
+  print('Ensuring collection "user_profiles"...');
+  try {
+    await http.get(Uri.parse('$baseUrl/api/collections/user_profiles'), headers: headers);
+  } catch (_) {
+    // 404 likely
+  }
+
+  // Create user_profiles
+  final createProfilesRes = await http.post(
+    Uri.parse('$baseUrl/api/collections'),
+    headers: headers,
+    body: jsonEncode({
+      "name": "user_profiles",
+      "type": "base",
+      "fields": [
+        {"name": "user_id", "type": "relation", "required": true, "collectionId": "_pb_users_auth_", "cascadeDelete": true, "maxSelect": 1},
+        {"name": "household_size", "type": "number", "required": true, "min": 1},
+        {"name": "children_count", "type": "number", "required": true, "min": 0},
+        {"name": "children_ages", "type": "json", "required": false},
+        {"name": "allergens", "type": "json", "required": false},
+        {"name": "diet", "type": "text", "required": true},
+        {"name": "dislikes", "type": "json", "required": false},
+        {"name": "skill", "type": "text", "required": true},
+        {"name": "max_cooking_time_min", "type": "number", "required": true},
+        {"name": "bring_email", "type": "email", "required": false},
+        {"name": "bring_list_uuid", "type": "text", "required": false}
+      ],
+      "listRule": "@request.auth.id = user_id.id",
+      "viewRule": "@request.auth.id = user_id.id",
+      "createRule": "@request.auth.id != ''",
+      "updateRule": "@request.auth.id = user_id.id",
+      "deleteRule": "@request.auth.id = user_id.id"
+    }),
+  );
+
+  if (createProfilesRes.statusCode == 200) {
+    print('Collection "user_profiles" created successfully!');
+  } else {
+    print('Note on "user_profiles": ${createProfilesRes.body}');
+    // Check if it failed because it exists, strict checking would be better but this aligns with existing script style
+  }
+
   // --- Collection: users (Update) ---
   print('Updating "users" schema...');
   try {

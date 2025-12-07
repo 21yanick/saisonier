@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
+  static const Color primaryGreen = Color(0xFFA6C48A);
+  static const Color cream = Color(0xFFFAFAF9);
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
