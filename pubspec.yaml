@@ -43,8 +43,14 @@ dev_dependencies:
   json_serializable: ^6.7.1
   mockito: ^5.4.6
   sqlite3: ^2.9.4
+  flutter_launcher_icons: ^0.14.3
 
-
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true

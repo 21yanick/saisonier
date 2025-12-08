@@ -10,6 +10,7 @@ import 'package:saisonier/features/profile/presentation/screens/onboarding_wizar
 import 'package:saisonier/features/recipes/presentation/screens/my_recipes_screen.dart';
 import 'package:saisonier/features/recipes/presentation/screens/recipe_editor_screen.dart';
 import 'package:saisonier/features/weekplan/presentation/screens/weekplan_screen.dart';
+import 'package:saisonier/features/shopping_list/presentation/screens/shopping_list_screen.dart';
 
 // Private navigator keys
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -103,6 +104,12 @@ final appRouter = GoRouter(
           builder: (context, state) => const OnboardingWizardScreen(),
         ),
       ],
+    ),
+    // Shopping List Route
+    GoRoute(
+      path: '/shopping-list',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ShoppingListScreen(),
     ),
   ],
 );

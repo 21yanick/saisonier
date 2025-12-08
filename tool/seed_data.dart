@@ -4,11 +4,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 Future<void> main() async {
-  final baseUrl = 'http://127.0.0.1:8091';
-  // Default Local Admin credentials (USER MUST CREATE THIS IN PB UI FIRST)
-  // Or we can try to create it if first run? No, PB requires UI for first admin.
-  final adminEmail = 'admin@saisonier.ch';
-  final adminPass = 'saisonier123';
+  // Support environment variables for live deployment
+  final baseUrl = Platform.environment['PB_URL'] ?? 'http://127.0.0.1:8091';
+  final adminEmail = Platform.environment['PB_EMAIL'] ?? 'admin@saisonier.ch';
+  final adminPass = Platform.environment['PB_PASS'] ?? 'saisonier123';
 
   print('Seeding data to $baseUrl...');
 
@@ -299,6 +298,44 @@ Future<void> main() async {
     print('Collection "planned_meals" created successfully!');
   } else {
     print('Note on "planned_meals": ${createPlannedMealsRes.body}');
+  }
+
+  // --- Collection: shopping_list_items ---
+  print('Ensuring collection "shopping_list_items"...');
+  try {
+    await http.get(Uri.parse('$baseUrl/api/collections/shopping_list_items'), headers: headers);
+  } catch (_) {
+    // 404 likely
+  }
+
+  final createShoppingRes = await http.post(
+    Uri.parse('$baseUrl/api/collections'),
+    headers: headers,
+    body: jsonEncode({
+      "name": "shopping_list_items",
+      "type": "base",
+      "fields": [
+        {"name": "user_id", "type": "relation", "required": true, "collectionId": "_pb_users_auth_", "cascadeDelete": true, "maxSelect": 1},
+        {"name": "item", "type": "text", "required": true},
+        {"name": "amount", "type": "number", "required": false},
+        {"name": "unit", "type": "text", "required": false},
+        {"name": "note", "type": "text", "required": false},
+        {"name": "is_checked", "type": "bool", "required": false},
+        {"name": "source_recipe_id", "type": "relation", "required": false, "collectionId": recipesCollectionId, "cascadeDelete": false, "maxSelect": 1}
+      ],
+      // Owner only rules
+      "listRule": "@request.auth.id = user_id.id",
+      "viewRule": "@request.auth.id = user_id.id",
+      "createRule": "@request.auth.id != ''",
+      "updateRule": "@request.auth.id = user_id.id",
+      "deleteRule": "@request.auth.id = user_id.id"
+    }),
+  );
+
+  if (createShoppingRes.statusCode == 200) {
+    print('Collection "shopping_list_items" created successfully!');
+  } else {
+    print('Note on "shopping_list_items": ${createShoppingRes.body}');
   }
 
   // --- Collection: users (Update) ---

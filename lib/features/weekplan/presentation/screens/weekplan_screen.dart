@@ -54,6 +54,11 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
                 },
               ),
             IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined),
+              tooltip: 'Einkaufsliste',
+              onPressed: () => context.push('/shopping-list'),
+            ),
+            IconButton(
               icon: const Icon(Icons.person_outline),
               onPressed: () => context.push('/profile'),
             ),

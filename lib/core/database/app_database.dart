@@ -11,15 +11,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/seasonality/data/local/vegetable_table.dart';
 import '../../features/seasonality/data/local/recipe_table.dart';
 import '../../features/weekplan/data/local/planned_meal_table.dart';
+import '../../features/shopping_list/data/local/shopping_item_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Vegetables, Recipes, PlannedMeals])
+@DriftDatabase(tables: [Vegetables, Recipes, PlannedMeals, ShoppingItems])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -74,6 +75,10 @@ class AppDatabase extends _$AppDatabase {
           await customStatement(
             'UPDATE recipes SET cook_time_min = time_min WHERE time_min IS NOT NULL',
           );
+        }
+        if (from < 6) {
+          // Schema v6: Shopping List
+          await m.createTable(shoppingItems);
         }
       },
     );
