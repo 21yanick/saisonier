@@ -575,15 +575,15 @@ class SubscriptionService extends _$SubscriptionService {
 
 ### Phase 12: Wochenplan Basic
 
-**Status:** Geplant  
-**Aufwand:** 2-3 Wochen
+**Status:** Done
 
 **Scope:**
-- [ ] WeekPlan Datenmodell
-- [ ] Kalender-UI (7-Tage-Ansicht)
-- [ ] Drag & Drop Rezepte
-- [ ] Portionen anpassen
-- [ ] Saisonale Filter
+- [x] WeekPlan Datenmodell (flache PlannedMeals Tabelle)
+- [x] Kalender-UI (7-Tage-Ansicht mit Wochen-Navigation)
+- [x] Rezepte zum Plan hinzufügen (via Dialog)
+- [x] Manuelle Einträge erstellen
+- [x] Portionen anpassen
+- [x] 4. Tab in Navigation
 
 ---
 

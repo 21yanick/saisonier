@@ -5,6 +5,7 @@ import 'package:saisonier/features/seasonality/data/repositories/recipe_reposito
 import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart';
 import 'package:saisonier/features/auth/application/auth_sync_service.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:saisonier/features/weekplan/presentation/state/weekplan_controller.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -38,6 +39,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // User just became active (login or startup restore)
         // Ensure sync runs
         ref.read(authSyncServiceProvider).syncOnLogin(next.value!);
+        // Sync week plan data
+        ref.read(weekplanControllerProvider.notifier).sync();
       }
     });
 
@@ -83,13 +86,14 @@ class _TogglePill extends StatelessWidget {
     required this.onTap,
   });
 
-  static const _labels = ['Saison', 'Katalog', 'Rezepte'];
-  static const _pillWidth = 280.0;
-  static const _segmentCount = 3;
+  static const _labels = ['Saison', 'Katalog', 'Rezepte', 'Plan'];
+  static const _pillWidth = 320.0;
+  static const _segmentCount = 4;
+  static const _segmentWidth = (_pillWidth - 8) / _segmentCount;
 
   @override
   Widget build(BuildContext context) {
-    final segmentWidth = (_pillWidth - 8) / _segmentCount;
+    const segmentWidth = _segmentWidth;
 
     return Container(
       height: 50,

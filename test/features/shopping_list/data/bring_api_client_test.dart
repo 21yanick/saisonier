@@ -19,7 +19,8 @@ void main() {
   group('BringApiClient', () {
     test('login returns token and uuid on success', () async {
       when(mockClient.post(
-        Uri.parse('https://api.getbring.com/rest/v2/bringauth'),
+        any,
+        headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response(
             '{"access_token": "token123", "uuid": "user-uuid-123", "refresh_token": "refresh"}',
@@ -30,12 +31,16 @@ void main() {
 
       expect(result.$1, 'token123');
       expect(result.$2, 'user-uuid-123');
-      verify(mockClient.post(any, body: {'email': 'test@email.com', 'password': 'password'})).called(1);
+      verify(mockClient.post(
+        Uri.parse('https://api.getbring.com/rest/v2/bringauth'),
+        headers: anyNamed('headers'),
+        body: {'email': 'test@email.com', 'password': 'password'},
+      )).called(1);
     });
 
     test('login throws BringApiException on failure', () async {
-      when(mockClient.post(any, body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('Unauthorized', 401));
+      when(mockClient.post(any, headers: anyNamed('headers'), body: anyNamed('body')))
+          .thenAnswer((_) async => http.Response('{"message": "Unauthorized"}', 401));
 
       expect(
         () => apiClient.login('test@email.com', 'password'),
@@ -72,7 +77,7 @@ void main() {
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response('', 204));
 
-      await apiClient.saveItem('token', 'list-id', 'Milk', '2 liters');
+      await apiClient.saveItem('token', 'user-uuid', 'list-id', 'Milk', '2 liters');
 
       verify(mockClient.put(
         Uri.parse('https://api.getbring.com/rest/v2/bringlists/list-id'),

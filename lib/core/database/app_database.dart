@@ -9,17 +9,17 @@ import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/seasonality/data/local/vegetable_table.dart';
-
 import '../../features/seasonality/data/local/recipe_table.dart';
+import '../../features/weekplan/data/local/planned_meal_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Vegetables, Recipes])
+@DriftDatabase(tables: [Vegetables, Recipes, PlannedMeals])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -39,7 +39,10 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(recipes, recipes.userId);
           await m.addColumn(recipes, recipes.isPublic);
           await m.addColumn(recipes, recipes.difficulty);
-          // Make vegetableId nullable (recreate not needed, SQLite allows this)
+        }
+        if (from < 4) {
+          // Schema v4: Week Plan - add PlannedMeals table
+          await m.createTable(plannedMeals);
         }
       },
     );

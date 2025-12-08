@@ -12,13 +12,14 @@
 - Edit-Modus für bestehende Rezepte
 - Löschen-Funktion mit Bestätigung
 
-### 1.2 "Meine Rezepte" Ansicht (`MyRecipesScreen`)
-- **Neuer 3. Tab** in der Navigation: "Saison" | "Katalog" | "Rezepte"
-- Liste aller selbst erstellten Rezepte mit Thumbnail
-- Empty State für nicht-eingeloggte User (Login-Prompt)
-- Empty State für User ohne Rezepte
-- FAB zum Erstellen neuer Rezepte
-- Direkter Zugang zum Editor via Edit-Button
+### 1.2 Rezepte-Ansicht (`MyRecipesScreen`)
+- **3. Tab** in der Navigation: "Saison" | "Katalog" | "Rezepte"
+- **Alle Rezepte** sichtbar (kuratierte + eigene)
+- **Segmented Control**: `[Alle] [Meine] [Entdecken]` zum Filtern
+- **Suchfeld** mit Clear-Button für schnelles Finden
+- Edit-Button nur bei **eigenen** Rezepten sichtbar
+- Empty States je nach Kontext (Suche, nicht eingeloggt, keine Rezepte)
+- FAB zum Erstellen neuer Rezepte (nur für eingeloggte User)
 
 ### 1.3 Daten-Erweiterung
 - `RecipeDto` erweitert: `source`, `userId`, `isPublic`, `servings`, `difficulty`
@@ -97,3 +98,27 @@ floatingActionButton: Padding(
   child: FloatingActionButton.extended(...),
 )
 ```
+
+### Sync-Strategie (Full Sync mit Cleanup)
+Beide Repositories (`recipe_repository`, `vegetable_repository`) verwenden eine Full-Sync-Strategie:
+```dart
+Future<void> sync() async {
+  try {
+    final records = await _pb.collection('...').getFullList();
+    final pbIds = records.map((r) => r.id).toSet();
+
+    await _db.transaction(() async {
+      // 1. Upsert alle Records von PocketBase
+      await _db.batch((batch) { ... });
+
+      // 2. Lösche lokale Records die nicht mehr in PB existieren
+      await (_db.delete(_db.table)
+            ..where((t) => t.id.isNotIn(pbIds)))
+          .go();
+    });
+  } catch (e) {
+    // Fail silently when offline
+  }
+}
+```
+**Warum:** Verhindert Duplikate wenn PocketBase neu geseeded wird (neue IDs).

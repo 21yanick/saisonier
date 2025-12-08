@@ -9,6 +9,7 @@ import 'package:saisonier/features/profile/presentation/screens/profile_settings
 import 'package:saisonier/features/profile/presentation/screens/onboarding_wizard_screen.dart';
 import 'package:saisonier/features/recipes/presentation/screens/my_recipes_screen.dart';
 import 'package:saisonier/features/recipes/presentation/screens/recipe_editor_screen.dart';
+import 'package:saisonier/features/weekplan/presentation/screens/weekplan_screen.dart';
 
 // Private navigator keys
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -46,6 +47,15 @@ final appRouter = GoRouter(
             GoRoute(
               path: '/my-recipes',
               builder: (context, state) => const MyRecipesScreen(),
+            ),
+          ],
+        ),
+        // Branch 4: Week Plan
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/weekplan',
+              builder: (context, state) => const WeekplanScreen(),
             ),
           ],
         ),

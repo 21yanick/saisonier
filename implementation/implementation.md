@@ -24,7 +24,7 @@ This document tracks the high-level progress of the MVP implementation.
 | **Phase 9** | Profile+ (Enhanced User Profile) | **Done** |
 | **Phase 10** | Bring! Integration | **Done** |
 | **Phase 11** | User Recipes | **Done** |
-| **Phase 12** | Week Plan Basic | **Planned** |
+| **Phase 12** | Week Plan Basic | **Done** |
 | **Phase 13** | Shopping List Export | **Planned** |
 | **Phase 14** | AI Recipe Generator (Premium) | **Planned** |
 | **Phase 15** | AI Week Planner (Premium) | **Planned** |

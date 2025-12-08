@@ -336,7 +336,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
 
                   // Difficulty
                   DropdownButtonFormField<RecipeDifficulty>(
-                    value: _difficulty,
+                    initialValue: _difficulty,
                     decoration: const InputDecoration(
                       labelText: 'Schwierigkeit',
                       border: OutlineInputBorder(),

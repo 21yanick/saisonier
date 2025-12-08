@@ -8,6 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:saisonier/core/config/app_config.dart';
 import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
 import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
+import 'package:saisonier/features/weekplan/presentation/widgets/add_to_plan_dialog.dart';
 
 final recipeProvider = StreamProvider.family.autoDispose<Recipe?, String>((ref, id) {
   return ref.watch(recipeRepositoryProvider).watchRecipe(id);
@@ -129,8 +130,30 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                         children: [
                           Expanded(
                             child: OutlinedButton.icon(
+                              icon: const Icon(Icons.calendar_month),
+                              label: const Text('Zum Plan'),
+                              onPressed: () async {
+                                final success = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AddToPlanDialog(
+                                    recipeId: recipe.id,
+                                    recipeTitle: recipe.title,
+                                    defaultServings: recipe.servings,
+                                  ),
+                                );
+                                if (success == true && context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Zum Wochenplan hinzugefügt')),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
                               icon: const Icon(Icons.playlist_add),
-                              label: const Text('Auf Einkaufsliste'),
+                              label: const Text('Einkauf'),
                               onPressed: () async {
                                 final isConnected = await ref.read(shoppingListControllerProvider.future);
                                 if (!isConnected) {

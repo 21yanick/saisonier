@@ -7,10 +7,26 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/database/app_database.dart';
 import '../../../../core/network/pocketbase_provider.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 
 import '../remote/recipe_dto.dart';
 
 part 'recipe_repository.g.dart';
+
+/// Provider for all available recipes (curated + user's own)
+/// Used by MyRecipesScreen and AddMealSheet
+final allRecipesProvider = StreamProvider.autoDispose<List<Recipe>>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final user = ref.watch(currentUserProvider).valueOrNull;
+  final userId = user?.id;
+
+  return (db.select(db.recipes)
+        ..where((t) =>
+            t.source.equals('curated') |
+            (userId != null ? t.userId.equals(userId) : const Constant(false)))
+        ..orderBy([(t) => OrderingTerm.asc(t.title)]))
+      .watch();
+});
 
 @riverpod
 RecipeRepository recipeRepository(Ref ref) {
@@ -52,19 +68,47 @@ class RecipeRepository {
   }
 
   /// Syncs recipes from Pocketbase (curated + user's own)
+  ///
+  /// This performs a full sync:
+  /// 1. Fetches all visible recipes from PocketBase
+  /// 2. Upserts them into local DB
+  /// 3. Deletes local recipes that no longer exist in PocketBase
+  ///
+  /// PocketBase Security Rules determine visibility:
+  /// - All curated recipes (public)
+  /// - User's own recipes (when logged in)
+  /// - Public user recipes from others
   Future<void> sync() async {
     try {
       final records = await _pb.collection('recipes').getFullList();
       final dtos = records.map((r) => RecipeDto.fromJson(r.toJson())).toList();
 
-      await _db.batch((batch) {
-        batch.insertAllOnConflictUpdate(
-          _db.recipes,
-          dtos.map((dto) => _dtoToCompanion(dto)).toList(),
-        );
+      // Collect all IDs from PocketBase response
+      final pbIds = dtos.map((dto) => dto.id).toSet();
+
+      await _db.transaction(() async {
+        // 1. Upsert all records from PocketBase
+        await _db.batch((batch) {
+          batch.insertAllOnConflictUpdate(
+            _db.recipes,
+            dtos.map((dto) => _dtoToCompanion(dto)).toList(),
+          );
+        });
+
+        // 2. Delete local records that no longer exist in PocketBase
+        // This handles: deleted recipes, re-seeded DB with new IDs, etc.
+        if (pbIds.isNotEmpty) {
+          await (_db.delete(_db.recipes)
+                ..where((t) => t.id.isNotIn(pbIds)))
+              .go();
+        } else {
+          // PocketBase returned empty → clear all local recipes
+          // This is correct: if PB has no recipes, local should match
+          await _db.delete(_db.recipes).go();
+        }
       });
     } catch (e) {
-      // Fail silently offline
+      // Fail silently when offline - keep existing local data
     }
   }
 

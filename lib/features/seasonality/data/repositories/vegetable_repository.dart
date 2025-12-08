@@ -104,44 +104,62 @@ class VegetableRepository {
   }
 
   /// Syncs data from Pocketbase to Local DB
+  ///
+  /// This performs a full sync:
+  /// 1. Fetches all vegetables from PocketBase
+  /// 2. Upserts them into local DB (preserving favorite status)
+  /// 3. Deletes local vegetables that no longer exist in PocketBase
   Future<void> sync() async {
     try {
       // 1. Fetch full list from Pocketbase
       final records = await _pb.collection('vegetables').getFullList();
       final dtos = records.map((r) => VegetableDto.fromJson(r.toJson())).toList();
 
-      // 2. Get existing favorites map
+      // Collect all IDs from PocketBase response
+      final pbIds = dtos.map((dto) => dto.id).toSet();
+
+      // 2. Get existing favorites map (to preserve local favorite status)
       final currentVegetables = await _db.select(_db.vegetables).get();
       final favoritesMap = {
         for (final v in currentVegetables) v.id: v.isFavorite
       };
 
       // 3. Transact to DB
-      await _db.batch((batch) {
-        batch.insertAllOnConflictUpdate(
-          _db.vegetables,
-          dtos.map((dto) {
-            // Preserve favorite status if it exists, default to false
-            final isFav = favoritesMap[dto.id] ?? false;
-            
-            return VegetablesCompanion(
-              id: Value(dto.id),
-              name: Value(dto.name),
-              type: Value(dto.type),
-              description: Value(dto.description),
-              image: Value(dto.image),
-              hexColor: Value(dto.hexColor),
-              months: Value(jsonEncode(dto.months)),
-              tier: Value(dto.tier),
-              isFavorite: Value(isFav), // Preserved!
-            );
-          }).toList(),
-        );
+      await _db.transaction(() async {
+        // 3a. Upsert all records from PocketBase
+        await _db.batch((batch) {
+          batch.insertAllOnConflictUpdate(
+            _db.vegetables,
+            dtos.map((dto) {
+              // Preserve favorite status if it exists, default to false
+              final isFav = favoritesMap[dto.id] ?? false;
+
+              return VegetablesCompanion(
+                id: Value(dto.id),
+                name: Value(dto.name),
+                type: Value(dto.type),
+                description: Value(dto.description),
+                image: Value(dto.image),
+                hexColor: Value(dto.hexColor),
+                months: Value(jsonEncode(dto.months)),
+                tier: Value(dto.tier),
+                isFavorite: Value(isFav), // Preserved!
+              );
+            }).toList(),
+          );
+        });
+
+        // 3b. Delete local records that no longer exist in PocketBase
+        if (pbIds.isNotEmpty) {
+          await (_db.delete(_db.vegetables)
+                ..where((t) => t.id.isNotIn(pbIds)))
+              .go();
+        } else {
+          await _db.delete(_db.vegetables).go();
+        }
       });
     } catch (e) {
-      // Allow silent failure in offline mode, but log it.
-      // print('Sync failed: $e');
-      rethrow;
+      // Fail silently when offline - keep existing local data
     }
   }
 

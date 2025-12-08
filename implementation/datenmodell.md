@@ -1,8 +1,9 @@
 # Saisonier Data Model & Schema
 
 **Status:** Definitive
-**Source of Truth:** PRD v1.0.0
+**Source of Truth:** PRD v1.0.0 + Vision v2.0
 **Technology:** Pocketbase (Remote), Drift (Local Cache), Freezed (Domain)
+**Schema Version:** 4
 
 ## 1. Domain Entities (Dart/Flutter)
 
@@ -54,6 +55,50 @@ class Ingredient with _$Ingredient {
 }
 ```
 
+### 1.3 `UserProfile` (Phase 9)
+User profile for personalization.
+```dart
+@freezed
+class UserProfile with _$UserProfile {
+  const factory UserProfile({
+    required String id,
+    required String viserId,
+    required int householdSize,
+    required int childrenCount,
+    List<int>? childrenAges,
+    required List<Allergen> allergens,
+    required DietType diet,
+    List<String>? dislikes,
+    required CookingSkill skill,
+    required int maxCookingTimeMin,
+    String? bringListUuid,
+  }) = _UserProfile;
+}
+
+enum Allergen { gluten, lactose, nuts, eggs, soy, shellfish, fish }
+enum DietType { omnivore, vegetarian, vegan, pescatarian, flexitarian }
+enum CookingSkill { beginner, intermediate, advanced }
+```
+
+### 1.4 `PlannedMeal` (Phase 12)
+Meal planning entity for week plans.
+```dart
+@freezed
+class PlannedMealDto with _$PlannedMealDto {
+  const factory PlannedMealDto({
+    required String id,
+    required String userId,
+    required DateTime date,
+    required String slot, // 'breakfast', 'lunch', 'dinner'
+    String? recipeId,     // null = custom entry
+    String? customTitle,  // "Pizza bestellen", "Reste"
+    @Default(2) int servings,
+  }) = _PlannedMealDto;
+}
+
+enum MealSlot { breakfast, lunch, dinner }
+```
+
 ## 2. Remote Schema (Pocketbase)
 
 ### 2.1 Collection: `vegetables`
@@ -72,39 +117,69 @@ class Ingredient with _$Ingredient {
 
 ### 2.2 Collection: `recipes`
 - **Type:** Base
-- **API Rules:** List/View = Public.
+- **API Rules:** List/View = Curated or Owner or Public, Create = Auth, Update/Delete = Owner.
 
 | Field | Type | Options | Notes |
 | :--- | :--- | :--- | :--- |
-| `vegetable_id` | Relation | Collection: `vegetables`, Max Select: 1 | Cascade Delete: False |
+| `vegetable_id` | Relation | Collection: `vegetables`, Max Select: 1, Nullable | Cascade Delete: False |
 | `title` | Text | Required | |
 | `image` | File | | |
 | `time_min` | Number | | |
+| `servings` | Number | Default: 4 | Phase 11 |
 | `ingredients` | JSON | | List of objects |
 | `steps` | JSON | | List of strings |
+| `source` | Select | `curated`, `user` | Phase 11 |
+| `user_id` | Relation | Collection: `users`, Nullable | Phase 11 |
+| `is_public` | Bool | Default: false | Phase 11 |
+| `difficulty` | Select | `easy`, `medium`, `hard`, Nullable | Phase 11 |
+
+### 2.3 Collection: `user_profiles` (Phase 9)
+- **Type:** Base
+- **API Rules:** Owner only.
+
+| Field | Type | Options | Notes |
+| :--- | :--- | :--- | :--- |
+| `user_id` | Relation | Collection: `users` | Unique |
+| `household_size` | Number | Default: 2 | |
+| `children_count` | Number | Default: 0 | |
+| `children_ages` | JSON | | Array of numbers |
+| `allergens` | JSON | | Array of enum strings |
+| `diet` | Select | `omnivore`, `vegetarian`, etc. | |
+| `dislikes` | JSON | | Array of strings |
+| `skill` | Select | `beginner`, `intermediate`, `advanced` | |
+| `max_cooking_time_min` | Number | Default: 60 | |
+| `bring_list_uuid` | Text | Nullable | Phase 10 |
+
+### 2.4 Collection: `planned_meals` (Phase 12)
+- **Type:** Base
+- **API Rules:** Owner only.
+
+| Field | Type | Options | Notes |
+| :--- | :--- | :--- | :--- |
+| `user_id` | Relation | Collection: `users` | Required |
+| `date` | Date | | Day of meal |
+| `slot` | Select | `breakfast`, `lunch`, `dinner` | |
+| `recipe_id` | Relation | Collection: `recipes`, Nullable | Null = custom entry |
+| `custom_title` | Text | Nullable | For non-recipe entries |
+| `servings` | Number | Default: 2 | |
 
 ## 3. Local Schema (Drift Database)
 
 For "Offline First" capability, we mirror the remote data into a local SQLite database using **Drift**.
 
+**Current Schema Version: 4**
+
 ### 3.1 `Vegetables` Table
 ```dart
 class Vegetables extends Table {
-  // Remote ID serves as Primary Key to ensure 1:1 mapping
-  TextColumn get id => text()(); 
-  
+  TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get type => text()(); // Enum stored as String
+  TextColumn get type => text()();
   TextColumn get description => text().nullable()();
-  TextColumn get image => text()(); // Stores filename
+  TextColumn get image => text()();
   TextColumn get hexColor => text()();
-  
-  // Stored as JSON String "[1,2,3]" because SQLite has no Array type
-  TextColumn get months => text()(); 
-  
+  TextColumn get months => text()(); // JSON "[1,2,3]"
   IntColumn get tier => integer()();
-  
-  // Local-only state
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
 
   @override
@@ -112,19 +187,38 @@ class Vegetables extends Table {
 }
 ```
 
-### 3.2 `Recipes` Table
+### 3.2 `Recipes` Table (Updated Phase 11)
 ```dart
 class Recipes extends Table {
   TextColumn get id => text()();
-  TextColumn get vegetableId => text().references(Vegetables, #id)(); // Foreign Key
-  
+  TextColumn get vegetableId => text().nullable()();
   TextColumn get title => text()();
   TextColumn get image => text()();
   IntColumn get timeMin => integer()();
-  
-  // JSON Blobs
-  TextColumn get ingredients => text()(); // List<Ingredient> as JSON
-  TextColumn get steps => text()(); // List<String> as JSON
+  IntColumn get servings => integer().withDefault(const Constant(4))();
+  TextColumn get ingredients => text()();
+  TextColumn get steps => text()();
+  // Phase 11: User Recipes
+  TextColumn get source => text().withDefault(const Constant('curated'))();
+  TextColumn get userId => text().nullable()();
+  BoolColumn get isPublic => boolean().withDefault(const Constant(false))();
+  TextColumn get difficulty => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+```
+
+### 3.3 `PlannedMeals` Table (Phase 12)
+```dart
+class PlannedMeals extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get slot => text()(); // 'breakfast', 'lunch', 'dinner'
+  TextColumn get recipeId => text().nullable()();
+  TextColumn get customTitle => text().nullable()();
+  IntColumn get servings => integer().withDefault(const Constant(2))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -143,3 +237,22 @@ class Recipes extends Table {
 3.  **Images:**
     *   Use `cached_network_image`.
     *   Construct URL: `BASE_URL/api/files/COLLECTION/ID/FILENAME`.
+
+## 5. Timezone Handling (PlannedMeals)
+
+All dates in `planned_meals` are stored and queried as **UTC** to avoid timezone mismatches between PocketBase and local storage:
+
+```dart
+// Normalize to UTC when storing
+final normalizedDate = DateTime.utc(date.year, date.month, date.day);
+
+// Query with UTC range
+final weekStartUtc = DateTime.utc(weekStart.year, weekStart.month, weekStart.day);
+```
+
+**Important:** PocketBase returns empty strings `""` instead of `null` for empty relation fields. Always check both:
+```dart
+if (meal.recipeId == null || meal.recipeId!.isEmpty) {
+  // Handle custom entry
+}
+```

@@ -1,0 +1,1341 @@
+[
+    {
+        "name": "Artischocke",
+        "type": "vegetable",
+        "months": [
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#8FBC8F",
+        "description": "Edle Distel aus dem Mittelmeer, neu auch aus der Schweiz. Das Herz ist das Beste – zart und nussig. Aufwändig, aber jede Minute wert. Perfekt mit Zitronenbutter."
+    },
+    {
+        "name": "Blumenkohl",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#F5F5DC",
+        "description": "Weisser Klassiker, neu entdeckt. Roh als Salat, geröstet mit Gewürzen, oder püriert als cremige Suppe. Vielseitiger als sein Ruf. Schweizer Blumenkohl von Juni bis November."
+    },
+    {
+        "name": "Bohnen",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#90EE90",
+        "description": "Knackiger Sommerklassiker. Grün, gelb oder violett – frische Bohnen sind eine andere Liga als Dosenfutter. Kurz blanchieren, Biss behalten. Perfekt zu Speck oder als Salat."
+    },
+    {
+        "name": "Brokkoli",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#6B8E23",
+        "description": "Grünes Powergemüse mit mildem Geschmack. Kurz blanchieren oder im Ofen rösten – bloß nicht totkochen. Stiel ist auch essbar. Voller Vitamine, vielseitig einsetzbar."
+    },
+    {
+        "name": "Erbsen",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#98FB98",
+        "description": "Kleine grüne Perlen des Sommers. Frisch gepalt schmecken sie süss und zart – nichts wie aus der Dose. Roh naschen erlaubt. Schnell verarbeiten, der Zucker wandelt sich."
+    },
+    {
+        "name": "Federkohl",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#556B2F",
+        "description": "Das Superfood aus Grossmutters Garten. Nach dem ersten Frost wird er süsser und milder. Roh im Smoothie, gebraten als Chips, oder klassisch geschmort. Unterschätzter Winter-Held."
+    },
+    {
+        "name": "Fenchel",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#E8F5E9",
+        "description": "Sanftes Anisaroma für Liebhaber. Roh hauchdünn im Salat, geschmort butterzart, oder gegrillt mit Parmesan. Das Grün als Garnitur nutzen. Ein mediterraner Charakter aus Schweizer Anbau."
+    },
+    {
+        "name": "Rotkabis",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#8B4789",
+        "description": "Violetter Kopf, das ganze Jahr. Roh im Salat knackig-süss, geschmort ein Klassiker zu Wild. Die Farbe färbt alles – Essig macht ihn rot, Natron blau. Lagerware mit Charakter."
+    },
+    {
+        "name": "Weisskabis",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#E8F5E9",
+        "description": "Der Sauerkraut-Kohl, ganzjährig verfügbar. Roh im Coleslaw, fermentiert als Sauerkraut, geschmort als Beilage. Günstig, haltbar, unterschätzt. Ein Grundnahrungsmittel mit Geschichte."
+    },
+    {
+        "name": "Kefen",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#7CFC00",
+        "description": "Die essbaren Schoten – knackig, süss und komplett verwertbar. Kurz anbraten im Wok, fertig. Oder roh als Snack. Zuckerschoten sind der perfekte Sommer-Gemüse-Quickie."
+    },
+    {
+        "name": "Knoblauch",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#FFFACD",
+        "description": "Aromawunder aus der Knolle. Frischer Sommerknoblauch ist mild und saftig, Lagerware kräftiger. Unverzichtbar in fast jeder Küche. Schweizer Knoblauch hat mehr Charakter als Importware."
+    },
+    {
+        "name": "Kohlrabi",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#DDA0DD",
+        "description": "Knackige Knolle, mild und süsslich. Roh in Stifte geschnitten der perfekte Snack, gedünstet eine feine Beilage. Blätter sind auch essbar. Grün oder violett – der Geschmack ist gleich."
+    },
+    {
+        "name": "Lauch",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#9ACD32",
+        "description": "Milde Zwiebel-Alternative, das ganze Jahr. Suppen, Quiches, Gratins – Lauch macht alles besser. Weiss und hellgrün verwenden, dunkelgrün für Bouillon. Vielseitiger Küchenhelfer."
+    },
+    {
+        "name": "Pak-Choi",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#90EE90",
+        "description": "Asiatischer Senfkohl, mild und knackig. Kurz im Wok anbraten, fertig. Blätter und Stiele haben unterschiedliche Texturen. Schweizer Anbau macht ihn zum lokalen Asia-Gemüse."
+    },
+    {
+        "name": "Pastinake",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#FFEFD5",
+        "description": "Süsse Winterwurzel, fast vergessen. Nussig und mild, perfekt als Püree, im Eintopf oder als Ofengemüse. Nach dem Frost noch süsser. Grossmutters Geheimnis, neu entdeckt."
+    },
+    {
+        "name": "Rhabarber",
+        "type": "vegetable",
+        "months": [
+            4,
+            5,
+            6,
+            7
+        ],
+        "tier": 1,
+        "hex_color": "#DB7093",
+        "description": "Frühlingsbote mit Charakter. Säuerlich-frisch, perfekt für Kuchen, Kompott oder als Schorle. Achtung: Nur die Stängel essen, Blätter sind giftig. Ab Juli ist traditionell Schluss."
+    },
+    {
+        "name": "Rosenkohl",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#8FBC8F",
+        "description": "Kleine Kohlköpfe mit grossem Charakter. Nach dem ersten Frost milder und süsser. Halbiert und scharf angebraten wird er zum Röstaromen-Wunder. Kindheitstrauma überwinden lohnt sich."
+    },
+    {
+        "name": "Spargel",
+        "type": "vegetable",
+        "months": [
+            4,
+            5,
+            6
+        ],
+        "tier": 1,
+        "hex_color": "#F5F5DC",
+        "description": "König des Frühlings. Weiss und zart oder grün und kräftig – am besten ganz frisch mit Butter. Nur wenige Wochen im Jahr, dann ist Schluss. Schweizer Spargel kommt aus dem Seeland."
+    },
+    {
+        "name": "Stangensellerie",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 3,
+        "hex_color": "#98FB98",
+        "description": "Knackig, frisch, kalorienarm. Der perfekte Snack mit Dip, unverzichtbar im Soffritto, erfrischend im Saft. Die Blätter als Kräuter nutzen. Wasserreich und voller Geschmack."
+    },
+    {
+        "name": "Süsskartoffel",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#E9967A",
+        "description": "Süsse Knolle aus dem Süden, neu auch aus der Schweiz. Im Ofen gebacken karamellisiert sie wunderbar. Als Pommes, Püree oder Suppe. Nicht verwandt mit der Kartoffel, aber genauso vielseitig."
+    },
+    {
+        "name": "Wirz",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#8FBC8F",
+        "description": "Wirsing mit den krausen Blättern. Milder als andere Kohlsorten, butterweich geschmort. Perfekt für Rouladen oder als Beilage. Ganzjährig aus der Schweiz, besonders gut im Winter."
+    },
+    {
+        "name": "Zuckermais",
+        "type": "vegetable",
+        "months": [
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#FFEB3B",
+        "description": "Süss direkt vom Kolben. Frisch geerntet schmeckt er am besten – der Zucker wandelt sich schnell in Stärke. Grillieren, kochen oder roh knabbern. Sommer-Feeling pur."
+    },
+    {
+        "name": "Zwiebel",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#DEB887",
+        "description": "Die Basis jeder Küche, das ganze Jahr. Gelb, weiss oder rot – jede mit eigenem Charakter. Karamellisiert süss, roh scharf. Ohne Zwiebeln geht fast nichts. Der stille Held."
+    },
+    {
+        "name": "Frühlingszwiebel",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 3,
+        "hex_color": "#90EE90",
+        "description": "Milde Zwiebel am Stiel. Grün und weiss – beides essbar, unterschiedlich intensiv. Roh im Salat, kurz angebraten, oder als Topping. Frischer und sanfter als die grosse Schwester."
+    },
+    {
+        "name": "Frühkartoffeln",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#F4E4BA",
+        "description": "Die ersten des Jahres – dünnschalig, buttrig, unvergleichlich. Schale mitessen ist Pflicht. Einfach mit Butter und Salz, mehr braucht es nicht. Ein kurzer Genuss, dann sind sie weg."
+    },
+    {
+        "name": "Kartoffeln festkochend",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#D4A574",
+        "description": "Die grüne Linie – perfekt für Salat, Bratkartoffeln und Gratin. Bleibt beim Kochen in Form. Charlotte, Annabelle oder Ditta sind bekannte Sorten. Schweizer Lagerkartoffel, immer verfügbar."
+    },
+    {
+        "name": "Kartoffeln mehligkochend",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#C4A46B",
+        "description": "Die blaue Linie – ideal für Püree, Suppen und Gnocchi. Zerfällt schön cremig beim Kochen. Bintje oder Agria sind Klassiker. Schweizer Lagerkartoffel, das ganze Jahr dein Freund."
+    },
+    {
+        "name": "Batavia",
+        "type": "salad",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#98FB98",
+        "description": "Knackiger Salat mit gewellten Blättern. Mild im Geschmack, robust in der Textur – bleibt länger frisch als andere. Grün oder rot erhältlich. Der zuverlässige Alltagssalat."
+    },
+    {
+        "name": "Chicorée",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#FFFACD",
+        "description": "Elegante Bitterkeit für Fortgeschrittene. Im Dunkeln gezogen, daher so blass. Roh im Salat, überbacken mit Käse, oder karamellisiert. Der Winter-Salat mit Charakter."
+    },
+    {
+        "name": "Chinakohl",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#F0FFF0",
+        "description": "Milder Kohl aus Asien, vielseitig einsetzbar. Roh im Salat knackig-frisch, gekocht zart und süsslich. Basis für Kimchi. Lange lagerfähig und fast das ganze Jahr verfügbar."
+    },
+    {
+        "name": "Cicorino rosso",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#CD5C5C",
+        "description": "Roter Italiener mit bitterem Charakter. Die auffällige Farbe macht jeden Salat zum Hingucker. Gegrillt wird er milder und süsser. Fast ganzjährig aus Schweizer Anbau."
+    },
+    {
+        "name": "Kopfsalat",
+        "type": "salad",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 3,
+        "hex_color": "#90EE90",
+        "description": "Der Klassiker unter den Salaten. Buttrig-zarte Blätter, mild im Geschmack. Schnell welk, also frisch verbrauchen. Mit einer einfachen Vinaigrette unschlagbar. Kindheitserinnerungen auf dem Teller."
+    },
+    {
+        "name": "Eisbergsalat",
+        "type": "salad",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 3,
+        "hex_color": "#E0FFE0",
+        "description": "Knackig und neutral – der Allrounder. Bleibt lange frisch, hält auch Sauce aus. Perfekt für Wraps, Burger oder als Basis. Wenig Eigengeschmack, aber maximaler Crunch."
+    },
+    {
+        "name": "Endiviensalat",
+        "type": "salad",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#F5F5DC",
+        "description": "Leicht bitter, herrlich knackig. Frisée oder glatte Endivie – beide mit Charakter. Perfekt mit Speck und Croutons. Die Bitterstoffe regen die Verdauung an. Herbstsalat mit Persönlichkeit."
+    },
+    {
+        "name": "Lollo",
+        "type": "salad",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#9ACD32",
+        "description": "Krause Blätter in Grün oder Rot. Lollo rosso bitter, Lollo bionda milder. Die gekräuselten Blätter fangen Dressing perfekt auf. Dekorativ und lecker – der fotogene Salat."
+    },
+    {
+        "name": "Nüsslisalat",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#6B8E23",
+        "description": "Nussig-milder Wintersalat, ganzjährig verfügbar. Kleine Rosetten, zarte Blätter, volles Aroma. Reich an Vitaminen für die kalte Jahreszeit. Der Schweizer Feldsalat schlechthin."
+    },
+    {
+        "name": "Portulak",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#98FB98",
+        "description": "Vergessenes Blattgemüse, reich an Omega-3. Knackig, leicht säuerlich, erfrischend anders. Perfekt im Wintersalat oder als Topping. Gesund und unterschätzt – ein Geheimtipp."
+    },
+    {
+        "name": "Rucola",
+        "type": "salad",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#6B8E23",
+        "description": "Pfeffrig-scharf mit nussiger Note. Auf Pizza, zu Pasta, im Salat oder als Pesto. Wilde Rauke ist intensiver als Zucht-Rucola. Ein mediterraner Klassiker aus Schweizer Anbau."
+    },
+    {
+        "name": "Spinat",
+        "type": "salad",
+        "months": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#228B22",
+        "description": "Grünes Blattgemüse, roh oder gekocht. Babyspinat zart im Salat, grosser Spinat kurz blanchiert. Schrumpft stark beim Kochen. Popeyes Geheimnis – Eisen inklusive."
+    },
+    {
+        "name": "Zuckerhut",
+        "type": "salad",
+        "months": [
+            1,
+            2,
+            3,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#F0FFF0",
+        "description": "Länglicher Wintersalat mit feiner Bitterkeit. Der Name täuscht – süss ist er nicht. Knackig und robust, hält sich gut. Perfekt mit Baumnüssen und Birnen. Unterschätzter Saisonheld."
+    },
+    {
+        "name": "Aubergine",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#9370DB",
+        "description": "Mediterrane Schönheit in Violett. Braucht Hitze und Fett, dann wird sie cremig und aromatisch. Gegrillt, gebacken oder als Baba Ganoush. Schweizer Anbau im Sommer möglich."
+    },
+    {
+        "name": "Gurken",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#98FB98",
+        "description": "Erfrischung pur, zu 95% aus Wasser. Knackig, mild, der perfekte Sommer-Snack. Roh im Salat, als Tzatziki oder einfach mit Salz. Schweizer Gurken haben mehr Geschmack als Importware."
+    },
+    {
+        "name": "Kürbis",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#FFA500",
+        "description": "Herbst-Star in Orange. Von cremiger Suppe bis zum Ofengemüse – Kürbis kann alles. Butternut, Hokkaido, Muskat: jede Sorte ein eigener Charakter. Lange lagerfähig bis ins neue Jahr."
+    },
+    {
+        "name": "Peperoni",
+        "type": "vegetable",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#FF6347",
+        "description": "Süsse Farbenpracht in Rot, Gelb und Orange. Roh am knackigsten, geröstet am aromatischsten. Paprika aus der Schweiz im Sommer: intensiver als Gewächshaus-Importe. Vitamin-C-Bombe."
+    },
+    {
+        "name": "Tomaten",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 1,
+        "hex_color": "#FF6347",
+        "description": "Sommer pur. Reif geerntet, sonnengewärmt – so schmeckt eine echte Tomate. Vergiss die Winterimporte. Roh mit etwas Salz und Olivenöl ist unschlagbar."
+    },
+    {
+        "name": "Zucchetti",
+        "type": "vegetable",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#9ACD32",
+        "description": "Der milde Allrounder des Sommers. Grillieren, braten, roh als Salat oder Zoodles. Klein und fest sind sie am besten. Wächst so schnell, dass Nachbarn oft welche verschenken."
+    },
+    {
+        "name": "Karotten",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#FFA07A",
+        "description": "Orange Alleskönner, immer verfügbar. Roh geknabbert, im Kuchen, als Suppe oder Beilage. Bundkarotten im Sommer sind süsser. Der Klassiker im Gemüsefach – nie falsch, nie langweilig."
+    },
+    {
+        "name": "Knollensellerie",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#FFEFD5",
+        "description": "Würzige Knolle für Suppen und Schmorgerichte. Roh als Salat (Sellerie-Remoulade), püriert oder im Eintopf. Intensives Aroma, unverzichtbar für Bouillon. Lagerfähiger Winterklassiker."
+    },
+    {
+        "name": "Radieschen",
+        "type": "vegetable",
+        "months": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#FF6B6B",
+        "description": "Kleine rote Kugeln mit Schärfe. Knackig, pfeffrig, erfrischend. Mit Butter und Salz ein Klassiker, im Salat ein Hingucker. Die Blätter sind auch essbar. Frühlingsbote bis Herbst."
+    },
+    {
+        "name": "Randen",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#8B0000",
+        "description": "Rote Bete, erdig-süss und intensiv. Roh geraffelt, gebacken oder als Suppe. Färbt alles rot – Handschuhe tragen. Reich an Eisen und Folsäure. Unterschätzt, aber großartig."
+    },
+    {
+        "name": "Rettich",
+        "type": "vegetable",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#F5F5F5",
+        "description": "Scharfe Wurzel in Weiss oder Schwarz. Roh geraffelt scharf und erfrischend, perfekt zu Brotzeit. Schwarzer Rettich noch intensiver. Gut für die Verdauung und herrlich ehrlich im Geschmack."
+    },
+    {
+        "name": "Schwarzwurzel",
+        "type": "vegetable",
+        "months": [
+            1,
+            2,
+            3,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#D2B48C",
+        "description": "Winterspargel aus der Erde. Unter der dunklen Schale versteckt sich zartes, nussiges Fleisch. Schälen mit Handschuhen – der Saft klebt. Klassisch in Rahmsauce ein vergessener Genuss."
+    },
+    {
+        "name": "Basilikum",
+        "type": "herb",
+        "months": [
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#228B22",
+        "description": "Duft des Sommers in Grün. Zu Tomaten geboren, unverzichtbar für Pesto. Nie mitkochen, immer frisch dazu. Frisches Basilikum vom Balkon schlägt jede Supermarkt-Pflanze um Längen."
+    },
+    {
+        "name": "Petersilie",
+        "type": "herb",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#2E8B57",
+        "description": "Das Universalkraut der Schweizer Küche. Glatt oder kraus, beide voller Aroma. Frisch gehackt über fast alles. Reich an Vitamin C und Chlorophyll. Ohne Petersilie fehlt immer etwas."
+    },
+    {
+        "name": "Schnittlauch",
+        "type": "herb",
+        "months": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 3,
+        "hex_color": "#9ACD32",
+        "description": "Feine Röhrchen mit mildem Zwiebelaroma. Frisch geschnitten über Quark, Eier oder Salat. Die violetten Blüten sind auch essbar. Wächst im Topf auf jeder Fensterbank."
+    },
+    {
+        "name": "Birnen Herbst",
+        "type": "fruit",
+        "months": [
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#D4E157",
+        "description": "Saftig-süss vom Baum. Williams, Conférence, Gute Luise – jede Sorte ein eigener Genuss. Reif sind sie schnell überreif. Perfekt zu Käse oder einfach pur. Schweizer Birnen im Herbst sind unschlagbar."
+    },
+    {
+        "name": "Birnen Lager",
+        "type": "fruit",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#C5E1A5",
+        "description": "Birnen aus dem Kühllager – auch im Winter süss und saftig. Kaiser Alexander, Conférence und Co. halten sich gut. Nicht ganz so aromatisch wie frisch, aber trotzdem ein Genuss."
+    },
+    {
+        "name": "Quitten",
+        "type": "fruit",
+        "months": [
+            10,
+            11
+        ],
+        "tier": 1,
+        "hex_color": "#FFD54F",
+        "description": "Goldene Rarität im Spätherbst. Roh ungeniessbar, aber eingekocht ein Traum: Gelee, Quittenbrot, Likör. Der Duft allein ist ein Erlebnis. Geduld wird belohnt."
+    },
+    {
+        "name": "Äpfel Früh",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#AED581",
+        "description": "Die ersten Äpfel des Jahres – leicht, frisch, oft säuerlich. Gravensteiner und Klarapfel sind Klassiker. Nicht lagerfähig, sofort geniessen. Der Geschmack des Spätsommers."
+    },
+    {
+        "name": "Äpfel Herbst",
+        "type": "fruit",
+        "months": [
+            2,
+            3,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#F44336",
+        "description": "Die Haupternte – Gala, Elstar, Boskoop und mehr. Knackig, aromatisch, perfekt zum Lagern. Jede Sorte mit eigenem Charakter. Schweizer Äpfel aus dem Thurgau und der Ostschweiz."
+    },
+    {
+        "name": "Äpfel Lager",
+        "type": "fruit",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#FFCDD2",
+        "description": "Schweizer Äpfel das ganze Jahr. Im Kühllager bleiben Gala, Braeburn und Golden knackig. An apple a day – dank moderner Lagerung immer möglich. Importäpfeln vorzuziehen."
+    },
+    {
+        "name": "Aprikosen",
+        "type": "fruit",
+        "months": [
+            7,
+            8
+        ],
+        "tier": 1,
+        "hex_color": "#FFAB91",
+        "description": "Walliser Gold. Samtig, süss und nur wenige Wochen verfügbar. Direkt essen oder kurz auf den Grill. Die besten kommen aus dem Wallis – kurze Wege, voller Geschmack."
+    },
+    {
+        "name": "Kirschen",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8
+        ],
+        "tier": 1,
+        "hex_color": "#C62828",
+        "description": "Der süsseste Moment des Sommers. Dunkelrot und prall, direkt vom Baum am besten. Baselbiet und Zug sind Kirschenland. Nicht lange warten – die Saison ist kurz."
+    },
+    {
+        "name": "Mirabellen",
+        "type": "fruit",
+        "months": [
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#FFF59D",
+        "description": "Kleine gelbe Pflaumen, gross im Geschmack. Honigsüss und saftig. Perfekt für Kuchen, Konfitüre oder Schnaps. Sehr kurze Saison – wer sie findet, sollte zugreifen."
+    },
+    {
+        "name": "Nektarinen",
+        "type": "fruit",
+        "months": [
+            7,
+            8
+        ],
+        "tier": 2,
+        "hex_color": "#FFCC80",
+        "description": "Pfirsich ohne Flaum – glatte Haut, saftiges Fleisch. Süss-säuerlich und erfrischend. Am besten reif und weich geniessen. Schweizer Nektarinen sind selten, aber ein Volltreffer."
+    },
+    {
+        "name": "Pfirsiche",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#FFCCBC",
+        "description": "Samtige Verführung im Hochsommer. Reif und saftig ist er unwiderstehlich – der Saft läuft am Kinn herunter. Weissfleischig oder gelbfleischig, beide köstlich. Sommer pur."
+    },
+    {
+        "name": "Pflaumen",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#7E57C2",
+        "description": "Saftig, süss, rund – der Sommerklassiker in Blau. Frisch vom Baum am besten, aber auch als Kompott oder Kuchen ein Genuss. Vielfältige Sorten, jede mit eigenem Charakter."
+    },
+    {
+        "name": "Zwetschgen",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#5E35B1",
+        "description": "Die Backpflaume schlechthin. Länglich, fest, löst sich gut vom Stein. Zwetschgenkuchen ist Spätsommer-Pflicht. Auch als Schnaps legendär. Schweizer Tradition auf dem Teller."
+    },
+    {
+        "name": "Brombeeren",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#4A148C",
+        "description": "Dunkel, intensiv, wild. Am Wegrand pflücken oder auf dem Markt kaufen. Süss-herb mit dunklem Aroma. Perfekt zu Joghurt, im Kuchen oder als Konfitüre. Finger werden violett."
+    },
+    {
+        "name": "Cassis",
+        "type": "fruit",
+        "months": [
+            7,
+            8
+        ],
+        "tier": 2,
+        "hex_color": "#311B92",
+        "description": "Schwarze Johannisbeere mit Charakter. Intensiv, herb, unverkennbar. Roh sehr sauer, aber als Sirup, Likör oder Konfitüre ein Traum. Das dunkle Aroma ist unverwechselbar."
+    },
+    {
+        "name": "Erdbeeren",
+        "type": "fruit",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9
+        ],
+        "tier": 1,
+        "hex_color": "#EF5350",
+        "description": "Duft des Frühsommers. Schweizer Erdbeeren sind kleiner, aber aromatischer als die Importware. Am besten pur, noch warm von der Sonne. Saison nicht verpassen."
+    },
+    {
+        "name": "Heidelbeeren",
+        "type": "fruit",
+        "months": [
+            7,
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#5C6BC0",
+        "description": "Blaue Kraftpakete voller Antioxidantien. Kulturheidelbeeren sind grösser, Waldheidelbeeren intensiver. Perfekt im Müesli, Smoothie oder einfach pur. Färben alles blau – auch die Zunge."
+    },
+    {
+        "name": "Himbeeren",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8,
+            9,
+            10
+        ],
+        "tier": 1,
+        "hex_color": "#EC407A",
+        "description": "Zart und intensiv. Zergeht auf der Zunge, hinterlässt pures Sommeraroma. Extrem empfindlich – am besten direkt ab Hof. Perfekt zu Joghurt oder einfach pur."
+    },
+    {
+        "name": "Holunder",
+        "type": "fruit",
+        "months": [
+            9,
+            10
+        ],
+        "tier": 2,
+        "hex_color": "#4A148C",
+        "description": "Wildbeere für Kenner. Roh geniessbar, aber erst richtig gut als Sirup, Gelee oder Likör. Die Blüten im Frühling, die Beeren im Herbst. Tiefdunkles Aroma, voller Charakter."
+    },
+    {
+        "name": "Johannisbeeren",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8
+        ],
+        "tier": 2,
+        "hex_color": "#D32F2F",
+        "description": "Kleine rote Perlen, süss-sauer und erfrischend. Direkt von der Rispe naschen oder zu Gelee verarbeiten. Reich an Vitamin C. Der klassische Schweizer Gartenstrauch."
+    },
+    {
+        "name": "Preiselbeeren",
+        "type": "fruit",
+        "months": [
+            8,
+            9
+        ],
+        "tier": 2,
+        "hex_color": "#B71C1C",
+        "description": "Wilde Bergbeere, herb und intensiv. Roh zu sauer, aber als Kompott oder Konfitüre perfekt zu Wild und Käse. Klassiker der Alpenküche. Sammeln im Wald ist Meditation."
+    },
+    {
+        "name": "Stachelbeeren",
+        "type": "fruit",
+        "months": [
+            6,
+            7,
+            8
+        ],
+        "tier": 2,
+        "hex_color": "#C5E1A5",
+        "description": "Süss-saure Sommerbeere, fast vergessen. Grün, gelb oder rot – jede Farbe schmeckt anders. Perfekt für Kuchen, Kompott oder mutig roh. Der stachelige Strauch lohnt sich."
+    },
+    {
+        "name": "Baumnüsse",
+        "type": "nut",
+        "months": [
+            1,
+            2,
+            3,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#8D6E63",
+        "description": "Schweizer Walnüsse, frisch oder getrocknet. Im Herbst grün und mild, getrocknet intensiv-nussig. Perfekt zu Käse, im Salat oder zum Backen. Baumnussbäume prägen unsere Landschaft."
+    },
+    {
+        "name": "Kiwi",
+        "type": "fruit",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#8BC34A",
+        "description": "Exot aus der Schweiz – ja, wirklich. Die grüne Frucht mit der pelzigen Schale wächst auch bei uns. Süss-säuerlich, voller Vitamin C. Mit Löffel auslöffeln oder Schale mitessen bei Mini-Kiwis."
+    },
+    {
+        "name": "Trauben",
+        "type": "fruit",
+        "months": [
+            9,
+            10
+        ],
+        "tier": 1,
+        "hex_color": "#7B1FA2",
+        "description": "Herbstsüsse vom Rebstock. Knackig, saftig, in allen Farben. Schweizer Tafeltrauben sind selten, aber es lohnt sich zu suchen. Tessin und Wallis liefern die besten."
+    },
+    {
+        "name": "Gitzi",
+        "type": "meat",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 2,
+        "hex_color": "#FFCCBC",
+        "description": "Junges Zicklein, zart und fein. Traditionell zu Ostern, aber das ganze Jahr erhältlich. Mild im Geschmack, mager und delikat. Ein Stück Schweizer Alpwirtschaft auf dem Teller."
+    },
+    {
+        "name": "Hirsch",
+        "type": "meat",
+        "months": [
+            9,
+            10,
+            11
+        ],
+        "tier": 1,
+        "hex_color": "#6D4C41",
+        "description": "Wild aus Schweizer Jagd. Kräftig, mager, aromatisch – das Fleisch für besondere Herbstabende. Als Pfeffer, Braten oder zartes Filet. Kurze Saison, grosser Genuss."
+    },
+    {
+        "name": "Kalbfleisch",
+        "type": "meat",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "tier": 3,
+        "hex_color": "#FFAB91",
+        "description": "Zartes, helles Fleisch mit feinem Geschmack. Schnitzel, Geschnetzeltes oder als Braten. Schweizer Kalbfleisch hat Tradition und Qualität. Milchig-mild und unvergleichlich zart."
+    },
+    {
+        "name": "Lammfleisch",
+        "type": "meat",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#D7CCC8",
+        "description": "Würzig-aromatisches Fleisch mit Charakter. Frühlings- und Herbstlamm am zartesten. Schweizer Alplamm ist besonders fein. Vom Rack bis zum Gigot – vielseitig und festlich."
+    },
+    {
+        "name": "Poulet",
+        "type": "meat",
+        "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 3,
+        "hex_color": "#FFE0B2",
+        "description": "Beliebtes Geflügel, mild und vielseitig. Schweizer Poulet kommt vor allem ab Frühsommer. Vom Grillhähnchen bis zum Coq au Vin. Auf Herkunft achten – Schweizer Qualität schmeckt man."
+    },
+    {
+        "name": "Rindfleisch",
+        "type": "meat",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#A1887F",
+        "description": "Kräftiges Fleisch für alle Zubereitungen. Vom Steak bis zum Schmoren – Rind ist vielseitig. Schweizer Weidefleisch hat Qualität. Fast ganzjährig verfügbar, ausser kurz im Herbst."
+    },
+    {
+        "name": "Schweinefleisch",
+        "type": "meat",
+        "months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+        ],
+        "tier": 4,
+        "hex_color": "#FFCCBC",
+        "description": "Vielseitigstes Fleisch, ganzjährig verfügbar. Vom Schnitzel über Braten bis zur Wurst. Schweizer Schweinefleisch kommt aus artgerechter Haltung. Günstig, lecker, ein Alltagsklassiker."
+    }
+]
