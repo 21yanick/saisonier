@@ -33,15 +33,14 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark, // Dunkle Icons auf hellem Hintergrund
-        statusBarBrightness: Brightness.light,
-      ),
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Wochenplan'),
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
           leading: _selectedDayIndex != null
               ? null  // Back button is in day detail view
               : null,
@@ -74,7 +73,6 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Fehler: $e')),
         ),
-      ),
     );
   }
 

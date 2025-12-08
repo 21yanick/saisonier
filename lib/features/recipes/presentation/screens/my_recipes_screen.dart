@@ -35,15 +35,14 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
     final recipesAsync = ref.watch(allRecipesProvider);
     final userId = userAsync.valueOrNull?.id;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark, // Dunkle Icons auf hellem Hintergrund
-        statusBarBrightness: Brightness.light,
-      ),
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Rezepte'),
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.person_outline),
@@ -107,7 +106,6 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
               ),
             )
           : null,
-      ),
     );
   }
 

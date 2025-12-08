@@ -70,9 +70,6 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(recipes, recipes.category);
           await m.addColumn(recipes, recipes.tags);
 
-          // === Beschreibung (falls noch nicht vorhanden) ===
-          await m.addColumn(recipes, recipes.description);
-
           // === Datenmigration: timeMin → cookTimeMin ===
           await customStatement(
             'UPDATE recipes SET cook_time_min = time_min WHERE time_min IS NOT NULL',
