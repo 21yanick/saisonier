@@ -377,7 +377,7 @@ class _RecipeListItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        '${recipe.timeMin} Min • ${recipe.servings} Portionen',
+        '${recipe.prepTimeMin + recipe.cookTimeMin} Min • ${recipe.servings} Portionen',
         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
       ),
       trailing: const Icon(Icons.add_circle_outline),

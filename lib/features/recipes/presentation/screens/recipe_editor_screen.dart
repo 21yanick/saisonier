@@ -65,7 +65,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     if (recipe == null || !mounted) return;
 
     _titleController.text = recipe.title;
-    _timeController.text = recipe.timeMin.toString();
+    _timeController.text = (recipe.prepTimeMin + recipe.cookTimeMin).toString();
     _servingsController.text = recipe.servings.toString();
 
     if (recipe.difficulty != null) {
@@ -186,7 +186,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           title: _titleController.text.trim(),
           ingredients: ingredients,
           steps: steps,
-          timeMin: int.tryParse(_timeController.text) ?? 30,
+          cookTimeMin: int.tryParse(_timeController.text) ?? 30,
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
           imageFile: _imageFile,
@@ -197,7 +197,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           title: _titleController.text.trim(),
           ingredients: ingredients,
           steps: steps,
-          timeMin: int.tryParse(_timeController.text) ?? 30,
+          cookTimeMin: int.tryParse(_timeController.text) ?? 30,
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
           imageFile: _imageFile,

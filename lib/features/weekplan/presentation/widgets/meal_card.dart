@@ -106,7 +106,7 @@ class _RecipeMealCard extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${recipe.timeMin} Min · ${meal.servings} Portionen',
+                      '${recipe.prepTimeMin + recipe.cookTimeMin} Min · ${meal.servings} Portionen',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],

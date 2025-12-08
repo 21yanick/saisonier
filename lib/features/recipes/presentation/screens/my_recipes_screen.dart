@@ -342,7 +342,7 @@ class _RecipeListTile extends StatelessWidget {
                             size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipe.timeMin} Min',
+                          '${recipe.prepTimeMin + recipe.cookTimeMin} Min',
                           style: TextStyle(color: Colors.grey[600], fontSize: 13),
                         ),
                         const SizedBox(width: 12),

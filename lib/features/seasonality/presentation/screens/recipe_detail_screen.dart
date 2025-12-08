@@ -123,7 +123,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                          children: [
                            const Icon(Icons.timer_outlined, size: 20, color: Colors.grey),
                            const SizedBox(width: 8),
-                           Text('${recipe.timeMin} Min', style: const TextStyle(color: Colors.grey)),
+                           Text('${recipe.prepTimeMin + recipe.cookTimeMin} Min', style: const TextStyle(color: Colors.grey)),
                          ],
                        ),
                        const SizedBox(height: 24),
