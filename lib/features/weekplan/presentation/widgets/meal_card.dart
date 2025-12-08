@@ -57,7 +57,7 @@ class _RecipeMealCard extends ConsumerWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () => context.push('/recipes/${recipe.id}'),
+        onTap: () => context.push('/recipes/${recipe.id}?servings=${meal.servings}'),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -117,7 +117,7 @@ class _RecipeMealCard extends ConsumerWidget {
               ),
               // Menu button
               _MenuButton(
-                onShowRecipe: () => context.push('/recipes/${recipe.id}'),
+                onShowRecipe: () => context.push('/recipes/${recipe.id}?servings=${meal.servings}'),
                 onChangeServings: () => _showServingsDialog(context, ref),
                 onDelete: () => _deleteMeal(ref),
               ),

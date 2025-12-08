@@ -43,7 +43,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
         title: const Text('Profil & Einstellungen'),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => context.go('/feed'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: userAsync.when(

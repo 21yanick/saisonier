@@ -38,6 +38,7 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Einkaufsliste'),
+        automaticallyImplyLeading: false, // Kein Back-Button als Tab
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
@@ -56,6 +57,10 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
                 child: Text('Alles löschen'),
               ),
             ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => context.push('/profile'),
           ),
         ],
       ),
@@ -223,28 +228,27 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
   Widget _buildBottomActions(List<ShoppingItem> items) {
     final hasUnchecked = items.any((item) => !item.isChecked);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: hasUnchecked ? _exportToBring : null,
-                icon: const Icon(Icons.send),
-                label: const Text('An Bring senden'),
-              ),
+    return Padding(
+      // 90px bottom für die Pills (30px position + 50px höhe + 10px abstand)
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: hasUnchecked ? _exportToBring : null,
+              icon: const Icon(Icons.send),
+              label: const Text('An Bring senden'),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: hasUnchecked ? () => _shareAsText(items) : null,
-                icon: const Icon(Icons.share),
-                label: const Text('Teilen'),
-              ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: hasUnchecked ? () => _shareAsText(items) : null,
+              icon: const Icon(Icons.share),
+              label: const Text('Teilen'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

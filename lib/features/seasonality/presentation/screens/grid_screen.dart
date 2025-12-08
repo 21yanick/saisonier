@@ -136,11 +136,11 @@ class GridScreen extends ConsumerWidget {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             floating: true,
             snap: true,
-            expandedHeight: 160,
+            expandedHeight: 200, // Mehr Platz für Mini-Toggle oben
             flexibleSpace: FlexibleSpaceBar(
               background: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 48, 16, 0), // 48px top für Toggle
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

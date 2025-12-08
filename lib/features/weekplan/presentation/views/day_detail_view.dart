@@ -235,7 +235,7 @@ class _DayContent extends StatelessWidget {
             );
           }),
           // Extra space for navigation pill
-          const SizedBox(height: 80),
+          const SizedBox(height: 100),
         ],
       ),
     );

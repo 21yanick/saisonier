@@ -7,6 +7,7 @@ import 'package:saisonier/core/config/app_config.dart';
 import 'package:saisonier/core/database/app_database.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
+import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
 
 /// Filter options for the recipe list
 enum RecipeFilter { all, mine, curated }
@@ -98,7 +99,7 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
       ),
       floatingActionButton: userId != null
           ? Padding(
-              padding: const EdgeInsets.only(bottom: 60),
+              padding: const EdgeInsets.only(bottom: 90), // Platz für Pills
               child: FloatingActionButton.extended(
                 onPressed: () => context.push('/recipes/new'),
                 icon: const Icon(Icons.add),
@@ -283,6 +284,10 @@ class _RecipeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final difficulty = recipe.difficulty != null
+        ? RecipeDifficulty.values.where((d) => d.name == recipe.difficulty).firstOrNull
+        : null;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       clipBehavior: Clip.antiAlias,
@@ -313,8 +318,7 @@ class _RecipeListTile extends StatelessWidget {
                     )
                   : Container(
                       color: Colors.grey[200],
-                      child:
-                          const Icon(Icons.restaurant, size: 40, color: Colors.grey),
+                      child: const Icon(Icons.restaurant, size: 40, color: Colors.grey),
                     ),
             ),
             // Content
@@ -324,6 +328,7 @@ class _RecipeListTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title
                     Text(
                       recipe.title,
                       style: const TextStyle(
@@ -333,24 +338,56 @@ class _RecipeListTile extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
+                    // Time + Portionen
                     Row(
                       children: [
-                        Icon(Icons.timer_outlined,
-                            size: 16, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
+                        Icon(Icons.timer_outlined, size: 14, color: Colors.grey[600]),
+                        const SizedBox(width: 3),
                         Text(
-                          '${recipe.prepTimeMin + recipe.cookTimeMin} Min',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          _buildTimeString(),
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
-                        const SizedBox(width: 12),
-                        Icon(Icons.people_outline,
-                            size: 16, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 10),
+                        Icon(Icons.people_outline, size: 14, color: Colors.grey[600]),
+                        const SizedBox(width: 3),
                         Text(
-                          '${recipe.servings} Portionen',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          '${recipe.servings}',
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    // Badges Row
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        // Difficulty Badge
+                        if (difficulty != null)
+                          _DifficultyChip(difficulty: difficulty),
+                        // Mein Rezept Badge
+                        if (showEditButton)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Mein Rezept',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue[700],
+                              ),
+                            ),
+                          ),
+                        // Vegetarisch/Vegan
+                        if (recipe.isVegan)
+                          _InfoChip(label: 'Vegan', color: Colors.green)
+                        else if (recipe.isVegetarian)
+                          _InfoChip(label: 'Vegetarisch', color: Colors.green),
                       ],
                     ),
                   ],
@@ -364,6 +401,70 @@ class _RecipeListTile extends StatelessWidget {
                 onPressed: () => context.push('/recipes/${recipe.id}/edit'),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  String _buildTimeString() {
+    if (recipe.prepTimeMin > 0 && recipe.cookTimeMin > 0) {
+      return '${recipe.prepTimeMin}+${recipe.cookTimeMin} Min';
+    }
+    return '${recipe.prepTimeMin + recipe.cookTimeMin} Min';
+  }
+}
+
+class _DifficultyChip extends StatelessWidget {
+  final RecipeDifficulty difficulty;
+
+  const _DifficultyChip({required this.difficulty});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseColor(difficulty.color);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        difficulty.label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Color _parseColor(String hex) {
+    final hexCode = hex.replaceAll('#', '');
+    return Color(int.parse('FF$hexCode', radix: 16));
+  }
+}
+
+class _InfoChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _InfoChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
         ),
       ),
     );

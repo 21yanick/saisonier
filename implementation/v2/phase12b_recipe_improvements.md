@@ -462,51 +462,55 @@ class RecipeDto with _$RecipeDto {
 
 ## 6. Implementierungsreihenfolge
 
-### Step 1: Schema & Models
-- [ ] `recipe_table.dart` - Neue Spalten, timeMin entfernen
-- [ ] `app_database.dart` - Schema v5 Migration
-- [ ] `recipe_dto.dart` - Neue Felder
-- [ ] `ingredient.dart` - Neues Model erstellen
-- [ ] `dart run build_runner build`
-- [ ] PocketBase Schema anpassen
+### Step 1: Schema & Models ✅ (bereits erledigt)
+- [x] `recipe_table.dart` - Neue Spalten, timeMin entfernen
+- [x] `app_database.dart` - Schema v5 Migration
+- [x] `recipe_dto.dart` - Neue Felder
+- [x] `ingredient.dart` - Neues Model erstellen
+- [x] `dart run build_runner build`
+- [x] PocketBase Schema anpassen
 
-### Step 2: Repository
-- [ ] `recipe_repository.dart` - Sync mit neuen Feldern
-- [ ] `recipe_repository.dart` - `watchFiltered(profile)` Methode
-- [ ] `recipe_repository.dart` - `toggleFavorite()` Methode
+### Step 2: Repository ✅ (bereits erledigt)
+- [x] `recipe_repository.dart` - Sync mit neuen Feldern
+- [x] `recipe_repository.dart` - `watchFiltered(profile)` Methode
+- [x] `recipe_repository.dart` - `toggleFavorite()` Methode
 
-### Step 3: RecipeDetailScreen
-- [ ] `initialServings` Parameter hinzufügen
-- [ ] Portionen-Stepper UI
-- [ ] Skalierungslogik
-- [ ] Beschreibung anzeigen
-- [ ] Getrennte Zeiten anzeigen
-- [ ] Difficulty-Badge
-- [ ] Link zum Gemüse
-- [ ] Favorit-Toggle
-- [ ] Einkauf mit skalierten Mengen
+### Step 3: RecipeDetailScreen ✅ (08.12.2025)
+- [x] `initialServings` Parameter hinzufügen
+- [x] Portionen-Stepper UI
+- [x] Skalierungslogik (nutzt `scaleIngredients()`)
+- [x] Beschreibung anzeigen
+- [x] Getrennte Zeiten anzeigen (Vorb/Kochen/Gesamt)
+- [x] Difficulty-Badge mit Farben
+- [ ] Link zum Gemüse (optional, nicht kritisch)
+- [x] Favorit-Toggle
+- [x] Einkauf mit skalierten Mengen
+- [x] Vegetarisch/Vegan Badges
+- [x] Ingredient Notes anzeigen
 
-### Step 4: Router
-- [ ] `app_router.dart` - Query-Parameter `servings` parsen
+### Step 4: Router ✅ (08.12.2025)
+- [x] `app_router.dart` - Query-Parameter `servings` parsen
 
-### Step 5: MealCard
-- [ ] Navigation mit `?servings=` Parameter
+### Step 5: MealCard ✅ (08.12.2025)
+- [x] Navigation mit `?servings=` Parameter
 
-### Step 6: RecipeEditorScreen
-- [ ] Getrennte Zeit-Felder
-- [ ] Zutaten: 4 Felder (Menge, Einheit, Zutat, Notiz)
-- [ ] Einheiten-Dropdown
-- [ ] Ernährungs-Toggles
-- [ ] Allergen-Checkboxen
-- [ ] Kategorie-Dropdown
+### Step 6: RecipeEditorScreen ✅ (08.12.2025)
+- [x] Getrennte Zeit-Felder (Vorbereitung + Kochzeit)
+- [x] Zutaten: 4 Felder (Menge, Einheit, Zutat, Notiz)
+- [x] Einheiten-Dropdown
+- [x] Ernährungs-Toggles (Vegetarisch/Vegan)
+- [ ] Allergen-Checkboxen (optional, nicht kritisch für MVP)
+- [x] Kategorie-Dropdown
+- [x] Beschreibung-Feld
 
-### Step 7: MyRecipesScreen
-- [ ] "Mein Rezept" Badge
-- [ ] Difficulty-Indikator
-- [ ] Getrennte Zeiten in Liste
+### Step 7: MyRecipesScreen ✅ (08.12.2025)
+- [x] "Mein Rezept" Badge
+- [x] Difficulty-Indikator (farbcodiert)
+- [x] Getrennte Zeiten in Liste (15+30 Min Format)
+- [x] Vegetarisch/Vegan Badges
 
 ### Step 8: DetailScreen (Gemüse)
-- [ ] Cooking Mode entfernen
+- [ ] Cooking Mode entfernen (optional)
 
 ### Step 9: User Profile Integration
 - [ ] Portionen-Default aus `householdSize`

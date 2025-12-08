@@ -1,67 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saisonier/features/seasonality/presentation/screens/feed_screen.dart';
-import 'package:saisonier/features/seasonality/presentation/screens/grid_screen.dart';
 import 'package:saisonier/features/seasonality/presentation/screens/main_screen.dart';
 import 'package:saisonier/features/seasonality/presentation/screens/detail_screen.dart';
 import '../../features/seasonality/presentation/screens/recipe_detail_screen.dart';
 import 'package:saisonier/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:saisonier/features/profile/presentation/screens/onboarding_wizard_screen.dart';
-import 'package:saisonier/features/recipes/presentation/screens/my_recipes_screen.dart';
 import 'package:saisonier/features/recipes/presentation/screens/recipe_editor_screen.dart';
-import 'package:saisonier/features/weekplan/presentation/screens/weekplan_screen.dart';
-import 'package:saisonier/features/shopping_list/presentation/screens/shopping_list_screen.dart';
 
 // Private navigator keys
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouter = GoRouter(
-  initialLocation: '/feed',
+  initialLocation: '/',
   navigatorKey: _rootNavigatorKey,
   routes: [
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) {
-        return MainScreen(navigationShell: navigationShell);
-      },
-      branches: [
-        // Branch 1: Feed
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/feed',
-              builder: (context, state) => const FeedScreen(),
-            ),
-          ],
-        ),
-        // Branch 2: Grid
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/grid',
-              builder: (context, state) => const GridScreen(),
-            ),
-          ],
-        ),
-        // Branch 3: My Recipes
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/my-recipes',
-              builder: (context, state) => const MyRecipesScreen(),
-            ),
-          ],
-        ),
-        // Branch 4: Week Plan
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/weekplan',
-              builder: (context, state) => const WeekplanScreen(),
-            ),
-          ],
-        ),
-      ],
+    // Main Screen mit PageView (Feed, Katalog, Rezepte, Plan, Einkauf)
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const MainScreen(),
     ),
+
+    // Modal Routes (über dem MainScreen)
     GoRoute(
       path: '/details/:id',
       parentNavigatorKey: _rootNavigatorKey,
@@ -90,7 +49,13 @@ final appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        return RecipeDetailScreen(recipeId: id);
+        final servingsParam = state.uri.queryParameters['servings'];
+        final initialServings =
+            servingsParam != null ? int.tryParse(servingsParam) : null;
+        return RecipeDetailScreen(
+          recipeId: id,
+          initialServings: initialServings,
+        );
       },
     ),
     // Profile Route (Main Settings)
@@ -104,12 +69,6 @@ final appRouter = GoRouter(
           builder: (context, state) => const OnboardingWizardScreen(),
         ),
       ],
-    ),
-    // Shopping List Route
-    GoRoute(
-      path: '/shopping-list',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ShoppingListScreen(),
     ),
   ],
 );

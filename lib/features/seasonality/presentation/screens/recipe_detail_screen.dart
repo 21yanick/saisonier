@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saisonier/core/database/app_database.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
+import 'package:saisonier/features/seasonality/domain/models/ingredient.dart';
+import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:saisonier/core/config/app_config.dart';
+import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
-import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
 import 'package:saisonier/features/weekplan/presentation/widgets/add_to_plan_dialog.dart';
 
 final recipeProvider = StreamProvider.family.autoDispose<Recipe?, String>((ref, id) {
@@ -16,10 +18,12 @@ final recipeProvider = StreamProvider.family.autoDispose<Recipe?, String>((ref, 
 
 class RecipeDetailScreen extends ConsumerStatefulWidget {
   final String recipeId;
+  final int? initialServings;
 
   const RecipeDetailScreen({
     super.key,
     required this.recipeId,
+    this.initialServings,
   });
 
   @override
@@ -28,19 +32,25 @@ class RecipeDetailScreen extends ConsumerStatefulWidget {
 
 class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
   bool _cookingMode = false;
+  int _currentServings = 4;
+  bool _servingsInitialized = false;
 
   void _toggleCookingMode() {
-    setState(() {
-      _cookingMode = !_cookingMode;
-    });
+    setState(() => _cookingMode = !_cookingMode);
     if (_cookingMode) {
       WakelockPlus.enable();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cooking Mode Active: Screen will stay on.')),
+        const SnackBar(content: Text('Kochmodus aktiv: Display bleibt an')),
       );
     } else {
       WakelockPlus.disable();
     }
+  }
+
+  void _initServings(Recipe recipe) {
+    if (_servingsInitialized) return;
+    _servingsInitialized = true;
+    _currentServings = widget.initialServings ?? recipe.servings;
   }
 
   @override
@@ -52,222 +62,67 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final recipeAsync = ref.watch(recipeProvider(widget.recipeId));
+    final theme = Theme.of(context);
 
     return Scaffold(
       body: recipeAsync.when(
         data: (recipe) {
-          if (recipe == null) return const Center(child: Text('Recipe not found'));
-
-          // Parse JSON lists
-          List<dynamic> ingredients = [];
-          List<String> steps = [];
-          try {
-            ingredients = jsonDecode(recipe.ingredients) as List<dynamic>;
-            steps = (jsonDecode(recipe.steps) as List<dynamic>).map((e) => e.toString()).toList();
-          } catch (e) {
-            // Fallback or log if needed
-            ingredients = [];
-            steps = [];
+          if (recipe == null) {
+            return const Center(child: Text('Rezept nicht gefunden'));
           }
+
+          // Initialize servings once
+          _initServings(recipe);
+
+          // Parse ingredients & steps
+          final ingredients = _parseIngredients(recipe.ingredients);
+          final scaledIngredients = scaleIngredients(
+            ingredients,
+            recipe.servings,
+            _currentServings,
+          );
+          final steps = _parseSteps(recipe.steps);
 
           return CustomScrollView(
             slivers: [
-              SliverAppBar(
-                expandedHeight: 250,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text(recipe.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [Shadow(color: Colors.black, blurRadius: 10)],
-                      )),
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
-                        fit: BoxFit.cover,
-                        memCacheWidth: 800,
-                        memCacheHeight: 500,
-                        fadeInDuration: const Duration(milliseconds: 150),
-                      ),
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black54],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(_cookingMode ? Icons.wb_sunny : Icons.wb_sunny_outlined),
-                    tooltip: 'Cooking Mode',
-                    onPressed: _toggleCookingMode,
-                  ),
-                ],
-              ),
+              // === HEADER ===
+              _buildAppBar(recipe, theme),
+
+              // === CONTENT ===
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       // Meta
-                       Row(
-                         children: [
-                           const Icon(Icons.timer_outlined, size: 20, color: Colors.grey),
-                           const SizedBox(width: 8),
-                           Text('${recipe.prepTimeMin + recipe.cookTimeMin} Min', style: const TextStyle(color: Colors.grey)),
-                         ],
-                       ),
-                       const SizedBox(height: 24),
-
-                      // Actions
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.calendar_month),
-                              label: const Text('Zum Plan'),
-                              onPressed: () async {
-                                final success = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => AddToPlanDialog(
-                                    recipeId: recipe.id,
-                                    recipeTitle: recipe.title,
-                                    defaultServings: recipe.servings,
-                                  ),
-                                );
-                                if (success == true && context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Zum Wochenplan hinzugefügt')),
-                                  );
-                                }
-                              },
-                            ),
+                      // Beschreibung
+                      if (recipe.description.isNotEmpty) ...[
+                        Text(
+                          recipe.description,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.grey[700],
+                            height: 1.4,
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.playlist_add),
-                              label: const Text('Einkauf'),
-                              onPressed: () async {
-                                final isConnected = await ref.read(shoppingListControllerProvider.future);
-                                if (!isConnected) {
-                                  if (context.mounted) {
-                                     final success = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => const BringAuthDialog(),
-                                    );
-                                    if (success != true) return;
-                                  } else {
-                                    return;
-                                  }
-                                }
-                                
-                                // Add all ingredients
-                                if (!context.mounted) return;
+                        ),
+                        const SizedBox(height: 16),
+                      ],
 
-                                int addedCount = 0;
-                                int skippedCount = 0;
-                                try {
-                                  final ingredients = jsonDecode(recipe.ingredients) as List<dynamic>;
-                                  for (var ing in ingredients) {
-                                    final i = ing as Map<String, dynamic>;
-                                    // Support both 'item' (PRD spec) and 'name' field names
-                                    final itemName = (i['item'] ?? i['name']) as String?;
+                      // Meta-Info Row
+                      _buildMetaRow(recipe, theme),
+                      const SizedBox(height: 20),
 
-                                    if (itemName == null || itemName.isEmpty) {
-                                      skippedCount++;
-                                      continue;
-                                    }
-
-                                    final amount = i['amount']?.toString() ?? '';
-                                    final unit = i['unit']?.toString() ?? '';
-                                    final spec = '$amount $unit'.trim();
-
-                                    await ref.read(shoppingListControllerProvider.notifier).addItem(itemName, spec);
-                                    addedCount++;
-                                  }
-
-                                  if (context.mounted) {
-                                    final message = skippedCount > 0
-                                        ? '$addedCount Zutaten hinzugefügt ($skippedCount übersprungen)'
-                                        : '$addedCount Zutaten zu Bring! hinzugefügt';
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(message)),
-                                    );
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Fehler beim Hinzufügen: $e'), backgroundColor: Colors.red),
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Action Buttons
+                      _buildActionButtons(recipe, scaledIngredients),
                       const SizedBox(height: 24),
 
-                      // Ingredients
-                      const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                      const SizedBox(height: 12),
-                      ...ingredients.map((ing) {
-                        final i = ing as Map<String, dynamic>;
-                        final itemName = (i['item'] ?? i['name'] ?? '') as String;
-                        final amount = i['amount']?.toString() ?? '';
-                        final unit = i['unit']?.toString() ?? '';
-                        final spec = '$amount$unit'.trim();
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              Text('•  ', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
-                              if (spec.isNotEmpty)
-                                Text('$spec ', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              Expanded(child: Text(itemName)),
-                            ],
-                          ),
-                        );
-                      }),
-                      
-                      const SizedBox(height: 32),
+                      // Portionen-Stepper + Zutaten
+                      _buildIngredientsSection(recipe, scaledIngredients, theme),
+                      const SizedBox(height: 28),
 
-                      // Steps
-                      const Text('Zubereitung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                      const SizedBox(height: 16),
-                      ...steps.asMap().entries.map((entry) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 24),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(child: Text('${entry.key + 1}', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: 12))),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(child: Text(entry.value, style: const TextStyle(height: 1.5, fontSize: 16))),
-                            ],
-                          ),
-                        );
-                      }),
-
-                      const SizedBox(height: 60),
+                      // Zubereitung
+                      _buildStepsSection(steps, theme),
+                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
@@ -276,8 +131,491 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, s) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text('Fehler: $e')),
       ),
     );
+  }
+
+  // === APP BAR ===
+  SliverAppBar _buildAppBar(Recipe recipe, ThemeData theme) {
+    return SliverAppBar(
+      expandedHeight: 250,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          recipe.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            shadows: [Shadow(color: Colors.black, blurRadius: 10)],
+          ),
+        ),
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (recipe.image.isNotEmpty)
+              CachedNetworkImage(
+                imageUrl: '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
+                fit: BoxFit.cover,
+                memCacheWidth: 800,
+                fadeInDuration: const Duration(milliseconds: 150),
+                errorWidget: (_, __, ___) => Container(color: Colors.grey[300]),
+              )
+            else
+              Container(color: Colors.grey[300]),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black54],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        // Favorit-Toggle
+        IconButton(
+          icon: Icon(
+            recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: recipe.isFavorite ? Colors.red[400] : null,
+          ),
+          tooltip: 'Favorit',
+          onPressed: () => _toggleFavorite(recipe),
+        ),
+        // Kochmodus
+        IconButton(
+          icon: Icon(_cookingMode ? Icons.wb_sunny : Icons.wb_sunny_outlined),
+          tooltip: 'Kochmodus',
+          onPressed: _toggleCookingMode,
+        ),
+      ],
+    );
+  }
+
+  // === META ROW ===
+  Widget _buildMetaRow(Recipe recipe, ThemeData theme) {
+    final difficulty = recipe.difficulty != null
+        ? RecipeDifficulty.values.where((d) => d.name == recipe.difficulty).firstOrNull
+        : null;
+
+    return Wrap(
+      spacing: 16,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        // Vorbereitungszeit
+        if (recipe.prepTimeMin > 0)
+          _MetaChip(
+            icon: Icons.content_cut,
+            label: 'Vorb: ${recipe.prepTimeMin} Min',
+          ),
+
+        // Kochzeit
+        if (recipe.cookTimeMin > 0)
+          _MetaChip(
+            icon: Icons.local_fire_department_outlined,
+            label: 'Kochen: ${recipe.cookTimeMin} Min',
+          ),
+
+        // Gesamtzeit (falls beides > 0)
+        if (recipe.prepTimeMin > 0 && recipe.cookTimeMin > 0)
+          _MetaChip(
+            icon: Icons.timer_outlined,
+            label: 'Gesamt: ${recipe.prepTimeMin + recipe.cookTimeMin} Min',
+          ),
+
+        // Nur Gesamtzeit wenn eines 0 ist
+        if ((recipe.prepTimeMin == 0) != (recipe.cookTimeMin == 0))
+          _MetaChip(
+            icon: Icons.timer_outlined,
+            label: '${recipe.prepTimeMin + recipe.cookTimeMin} Min',
+          ),
+
+        // Schwierigkeit
+        if (difficulty != null)
+          _DifficultyBadge(difficulty: difficulty),
+
+        // Vegetarisch/Vegan
+        if (recipe.isVegan)
+          _MetaChip(
+            icon: Icons.eco,
+            label: 'Vegan',
+            color: Colors.green,
+          )
+        else if (recipe.isVegetarian)
+          _MetaChip(
+            icon: Icons.eco_outlined,
+            label: 'Vegetarisch',
+            color: Colors.green,
+          ),
+      ],
+    );
+  }
+
+  // === ACTION BUTTONS ===
+  Widget _buildActionButtons(Recipe recipe, List<Ingredient> scaledIngredients) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.calendar_month),
+            label: const Text('Zum Plan'),
+            onPressed: () => _addToPlan(recipe),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.playlist_add),
+            label: const Text('Einkauf'),
+            onPressed: () => _addToShoppingList(scaledIngredients),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // === INGREDIENTS SECTION ===
+  Widget _buildIngredientsSection(
+    Recipe recipe,
+    List<Ingredient> scaledIngredients,
+    ThemeData theme,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header mit Portionen-Stepper
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Zutaten',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            // Portionen-Stepper
+            Container(
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove, size: 20),
+                    onPressed: _currentServings > 1
+                        ? () => setState(() => _currentServings--)
+                        : null,
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      '$_currentServings',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add, size: 20),
+                    onPressed: _currentServings < 20
+                        ? () => setState(() => _currentServings++)
+                        : null,
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        // Hinweis wenn skaliert
+        if (_currentServings != recipe.servings) ...[
+          const SizedBox(height: 4),
+          Text(
+            'Originalrezept: ${recipe.servings} Portionen',
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+        ],
+
+        const SizedBox(height: 12),
+
+        // Zutaten-Liste
+        ...scaledIngredients.map((ing) => _buildIngredientRow(ing, theme)),
+      ],
+    );
+  }
+
+  Widget _buildIngredientRow(Ingredient ing, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '•  ',
+            style: TextStyle(
+              color: theme.primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (ing.amount != null || ing.unit != null)
+            Text(
+              '${_formatAmount(ing.amount)}${ing.unit ?? ''} ',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: ing.item),
+                  if (ing.note != null && ing.note!.isNotEmpty)
+                    TextSpan(
+                      text: ' (${ing.note})',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // === STEPS SECTION ===
+  Widget _buildStepsSection(List<String> steps, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Zubereitung',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        const SizedBox(height: 16),
+        ...steps.asMap().entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: theme.primaryColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${entry.key + 1}',
+                      style: TextStyle(
+                        color: theme.primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    entry.value,
+                    style: const TextStyle(height: 1.5, fontSize: 15),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  // === ACTIONS ===
+  Future<void> _toggleFavorite(Recipe recipe) async {
+    await ref.read(recipeRepositoryProvider).toggleFavorite(recipe.id);
+  }
+
+  Future<void> _addToPlan(Recipe recipe) async {
+    final success = await showDialog<bool>(
+      context: context,
+      builder: (context) => AddToPlanDialog(
+        recipeId: recipe.id,
+        recipeTitle: recipe.title,
+        defaultServings: _currentServings,
+      ),
+    );
+    if (success == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Zum Wochenplan hinzugefügt')),
+      );
+    }
+  }
+
+  Future<void> _addToShoppingList(List<Ingredient> scaledIngredients) async {
+    final user = ref.read(currentUserProvider).valueOrNull;
+    if (user == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bitte melde dich an, um die Einkaufsliste zu nutzen.')),
+        );
+      }
+      return;
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Füge Zutaten hinzu...')),
+    );
+
+    int addedCount = 0;
+    int skippedCount = 0;
+
+    try {
+      final controller = ref.read(nativeShoppingControllerProvider.notifier);
+
+      for (final ing in scaledIngredients) {
+        if (ing.item.isEmpty) {
+          skippedCount++;
+          continue;
+        }
+
+        await controller.addManualItem(
+          ing.item,
+          amount: ing.amount,
+          unit: ing.unit,
+        );
+        addedCount++;
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        final message = skippedCount > 0
+            ? '$addedCount Zutaten hinzugefügt ($skippedCount übersprungen)'
+            : '$addedCount Zutaten zur Einkaufsliste hinzugefügt';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // === HELPERS ===
+  List<Ingredient> _parseIngredients(String json) {
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list.map((e) {
+        final map = e as Map<String, dynamic>;
+        return Ingredient(
+          item: (map['item'] ?? map['name'] ?? '') as String,
+          amount: (map['amount'] is num) ? (map['amount'] as num).toDouble() : null,
+          unit: map['unit'] as String?,
+          note: map['note'] as String?,
+        );
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  List<String> _parseSteps(String json) {
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list.map((e) => e.toString()).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  String _formatAmount(double? amount) {
+    if (amount == null) return '';
+    if (amount == amount.roundToDouble()) {
+      return amount.toInt().toString();
+    }
+    return amount.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  }
+}
+
+// === WIDGETS ===
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color? color;
+
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: color ?? Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: color ?? Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DifficultyBadge extends StatelessWidget {
+  final RecipeDifficulty difficulty;
+
+  const _DifficultyBadge({required this.difficulty});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseColor(difficulty.color);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        difficulty.label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Color _parseColor(String hex) {
+    final hexCode = hex.replaceAll('#', '');
+    return Color(int.parse('FF$hexCode', radix: 16));
   }
 }

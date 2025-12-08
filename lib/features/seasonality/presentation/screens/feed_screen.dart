@@ -78,15 +78,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Widget build(BuildContext context) {
     final vegetablesAsync = ref.watch(seasonalVegetablesProvider);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light, // Weiße Icons auf schwarzem Hintergrund
-        statusBarBrightness: Brightness.dark,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black, // Immersive background
-        body: vegetablesAsync.when(
+    // Kein AnnotatedRegion hier - wird vom DiscoverScreen gehandhabt
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: vegetablesAsync.when(
         data: (vegetables) {
           if (vegetables.isEmpty) {
             return const Center(child: Text('Keine Saison-Highlights gefunden.', style: TextStyle(color: Colors.white)));
@@ -133,7 +128,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         },
         error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
         loading: () => const Center(child: CircularProgressIndicator()),
-        ),
       ),
     );
   }

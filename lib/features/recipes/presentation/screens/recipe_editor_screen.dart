@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
 import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
+import 'package:saisonier/features/seasonality/domain/models/ingredient.dart';
 
 class RecipeEditorScreen extends ConsumerStatefulWidget {
   final String? recipeId;
@@ -21,15 +22,20 @@ class RecipeEditorScreen extends ConsumerStatefulWidget {
 class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _timeController = TextEditingController(text: '30');
+  final _descriptionController = TextEditingController();
+  final _prepTimeController = TextEditingController(text: '15');
+  final _cookTimeController = TextEditingController(text: '30');
   final _servingsController = TextEditingController(text: '4');
 
   RecipeDifficulty _difficulty = RecipeDifficulty.easy;
+  RecipeCategory? _category;
+  bool _isVegetarian = false;
+  bool _isVegan = false;
+
   File? _imageFile;
   bool _isLoading = false;
   bool _isInitialized = false;
 
-  // Dynamic lists
   final List<IngredientEntry> _ingredients = [];
   final List<TextEditingController> _stepControllers = [];
 
@@ -38,7 +44,6 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   @override
   void initState() {
     super.initState();
-    // Add initial empty entries
     _addIngredient();
     _addStep();
   }
@@ -46,7 +51,9 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   @override
   void dispose() {
     _titleController.dispose();
-    _timeController.dispose();
+    _descriptionController.dispose();
+    _prepTimeController.dispose();
+    _cookTimeController.dispose();
     _servingsController.dispose();
     for (final ing in _ingredients) {
       ing.dispose();
@@ -65,7 +72,9 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     if (recipe == null || !mounted) return;
 
     _titleController.text = recipe.title;
-    _timeController.text = (recipe.prepTimeMin + recipe.cookTimeMin).toString();
+    _descriptionController.text = recipe.description;
+    _prepTimeController.text = recipe.prepTimeMin.toString();
+    _cookTimeController.text = recipe.cookTimeMin.toString();
     _servingsController.text = recipe.servings.toString();
 
     if (recipe.difficulty != null) {
@@ -75,6 +84,10 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
       );
     }
 
+    _category = RecipeCategory.fromValue(recipe.category);
+    _isVegetarian = recipe.isVegetarian;
+    _isVegan = recipe.isVegan;
+
     // Load ingredients
     _ingredients.clear();
     try {
@@ -82,7 +95,10 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
       for (final ing in ingList) {
         final entry = IngredientEntry();
         entry.itemController.text = (ing['item'] ?? ing['name'] ?? '') as String;
-        entry.amountController.text = (ing['amount'] ?? '') as String;
+        final amount = ing['amount'];
+        entry.amountController.text = amount != null ? amount.toString() : '';
+        entry.unit = ing['unit'] as String?;
+        entry.noteController.text = (ing['note'] ?? '') as String;
         _ingredients.add(entry);
       }
     } catch (_) {}
@@ -105,9 +121,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   }
 
   void _addIngredient() {
-    setState(() {
-      _ingredients.add(IngredientEntry());
-    });
+    setState(() => _ingredients.add(IngredientEntry()));
   }
 
   void _removeIngredient(int index) {
@@ -120,9 +134,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   }
 
   void _addStep() {
-    setState(() {
-      _stepControllers.add(TextEditingController());
-    });
+    setState(() => _stepControllers.add(TextEditingController()));
   }
 
   void _removeStep(int index) {
@@ -143,9 +155,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
       imageQuality: 85,
     );
     if (picked != null) {
-      setState(() {
-        _imageFile = File(picked.path);
-      });
+      setState(() => _imageFile = File(picked.path));
     }
   }
 
@@ -163,16 +173,23 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Build ingredients list
+      // Build ingredients list with proper format
       final ingredients = _ingredients
           .where((ing) => ing.itemController.text.trim().isNotEmpty)
-          .map((ing) => {
-                'item': ing.itemController.text.trim(),
-                'amount': ing.amountController.text.trim(),
-              })
+          .map((ing) {
+            final amountText = ing.amountController.text.trim();
+            final amount = double.tryParse(amountText);
+            return {
+              'item': ing.itemController.text.trim(),
+              'amount': amount,
+              'unit': ing.unit,
+              'note': ing.noteController.text.trim().isEmpty
+                  ? null
+                  : ing.noteController.text.trim(),
+            };
+          })
           .toList();
 
-      // Build steps list
       final steps = _stepControllers
           .map((c) => c.text.trim())
           .where((s) => s.isNotEmpty)
@@ -184,22 +201,32 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
         await repo.updateUserRecipe(
           recipeId: widget.recipeId!,
           title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
           ingredients: ingredients,
           steps: steps,
-          cookTimeMin: int.tryParse(_timeController.text) ?? 30,
+          prepTimeMin: int.tryParse(_prepTimeController.text) ?? 0,
+          cookTimeMin: int.tryParse(_cookTimeController.text) ?? 30,
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
+          category: _category?.value,
+          isVegetarian: _isVegetarian,
+          isVegan: _isVegan,
           imageFile: _imageFile,
         );
       } else {
         await repo.createUserRecipe(
           userId: user.id,
           title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
           ingredients: ingredients,
           steps: steps,
-          cookTimeMin: int.tryParse(_timeController.text) ?? 30,
+          prepTimeMin: int.tryParse(_prepTimeController.text) ?? 0,
+          cookTimeMin: int.tryParse(_cookTimeController.text) ?? 30,
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
+          category: _category?.value,
+          isVegetarian: _isVegetarian,
+          isVegan: _isVegan,
           imageFile: _imageFile,
         );
       }
@@ -264,7 +291,6 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Load existing recipe if editing
     if (isEditing && !_isInitialized) {
       _loadExistingRecipe();
     }
@@ -287,11 +313,11 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Image picker
+                  // === Bild ===
                   _buildImagePicker(),
                   const SizedBox(height: 24),
 
-                  // Title
+                  // === Titel ===
                   TextFormField(
                     controller: _titleController,
                     decoration: const InputDecoration(
@@ -299,19 +325,33 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                       hintText: 'z.B. Omas Apfelkuchen',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (v) => v == null || v.trim().isEmpty ? 'Titel erforderlich' : null,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Titel erforderlich' : null,
                     textCapitalization: TextCapitalization.sentences,
                   ),
                   const SizedBox(height: 16),
 
-                  // Time, Servings, Difficulty
+                  // === Beschreibung ===
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Beschreibung',
+                      hintText: 'Kurze Beschreibung des Rezepts...',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // === Zeiten (getrennt) ===
                   Row(
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: _timeController,
+                          controller: _prepTimeController,
                           decoration: const InputDecoration(
-                            labelText: 'Zeit (Min)',
+                            labelText: 'Vorbereitung (Min)',
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
@@ -319,6 +359,24 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _cookTimeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Kochzeit (Min)',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // === Portionen + Schwierigkeit ===
+                  Row(
+                    children: [
                       Expanded(
                         child: TextFormField(
                           controller: _servingsController,
@@ -330,37 +388,83 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DropdownButtonFormField<RecipeDifficulty>(
+                          initialValue: _difficulty,
+                          decoration: const InputDecoration(
+                            labelText: 'Schwierigkeit',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: RecipeDifficulty.values
+                              .map((d) => DropdownMenuItem(value: d, child: Text(d.label)))
+                              .toList(),
+                          onChanged: (v) =>
+                              setState(() => _difficulty = v ?? RecipeDifficulty.easy),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
 
-                  // Difficulty
-                  DropdownButtonFormField<RecipeDifficulty>(
-                    initialValue: _difficulty,
+                  // === Kategorie ===
+                  DropdownButtonFormField<RecipeCategory?>(
+                    initialValue: _category,
                     decoration: const InputDecoration(
-                      labelText: 'Schwierigkeit',
+                      labelText: 'Kategorie',
                       border: OutlineInputBorder(),
                     ),
-                    items: RecipeDifficulty.values
-                        .map((d) => DropdownMenuItem(value: d, child: Text(d.label)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _difficulty = v ?? RecipeDifficulty.easy),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('Keine Kategorie')),
+                      ...RecipeCategory.values
+                          .map((c) => DropdownMenuItem(value: c, child: Text(c.label))),
+                    ],
+                    onChanged: (v) => setState(() => _category = v),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // === Ernährung ===
+                  const Text(
+                    'Ernährung',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      FilterChip(
+                        label: const Text('Vegetarisch'),
+                        selected: _isVegetarian,
+                        onSelected: (v) => setState(() {
+                          _isVegetarian = v;
+                          if (!v) _isVegan = false;
+                        }),
+                      ),
+                      FilterChip(
+                        label: const Text('Vegan'),
+                        selected: _isVegan,
+                        onSelected: (v) => setState(() {
+                          _isVegan = v;
+                          if (v) _isVegetarian = true;
+                        }),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
 
-                  // Ingredients
+                  // === Zutaten ===
                   _buildSectionHeader('Zutaten', onAdd: _addIngredient),
                   const SizedBox(height: 8),
                   ..._ingredients.asMap().entries.map((e) => _buildIngredientRow(e.key)),
                   const SizedBox(height: 24),
 
-                  // Steps
+                  // === Zubereitung ===
                   _buildSectionHeader('Zubereitung', onAdd: _addStep),
                   const SizedBox(height: 8),
                   ..._stepControllers.asMap().entries.map((e) => _buildStepRow(e.key)),
                   const SizedBox(height: 32),
 
-                  // Save button
+                  // === Speichern ===
                   FilledButton.icon(
                     onPressed: _isLoading ? null : _save,
                     icon: const Icon(Icons.save),
@@ -385,10 +489,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
           image: _imageFile != null
-              ? DecorationImage(
-                  image: FileImage(_imageFile!),
-                  fit: BoxFit.cover,
-                )
+              ? DecorationImage(image: FileImage(_imageFile!), fit: BoxFit.cover)
               : null,
         ),
         child: _imageFile == null
@@ -397,10 +498,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                 children: [
                   Icon(Icons.add_a_photo, size: 48, color: Colors.grey[500]),
                   const SizedBox(height: 8),
-                  Text(
-                    'Foto hinzufügen',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
+                  Text('Foto hinzufügen', style: TextStyle(color: Colors.grey[600])),
                 ],
               )
             : Align(
@@ -424,14 +522,8 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          icon: const Icon(Icons.add_circle_outline),
-          onPressed: onAdd,
-        ),
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: onAdd),
       ],
     );
   }
@@ -439,36 +531,86 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   Widget _buildIngredientRow(int index) {
     final entry = _ingredients[index];
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
         children: [
-          SizedBox(
-            width: 80,
-            child: TextField(
-              controller: entry.amountController,
-              decoration: const InputDecoration(
-                hintText: 'Menge',
-                isDense: true,
-                border: OutlineInputBorder(),
+          Row(
+            children: [
+              // Menge
+              SizedBox(
+                width: 64,
+                child: TextField(
+                  controller: entry.amountController,
+                  decoration: const InputDecoration(
+                    hintText: 'Menge',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: entry.itemController,
-              decoration: const InputDecoration(
-                hintText: 'Zutat',
-                isDense: true,
-                border: OutlineInputBorder(),
+              const SizedBox(width: 8),
+              // Einheit
+              SizedBox(
+                width: 80,
+                child: DropdownButtonFormField<String?>(
+                  initialValue: entry.unit,
+                  decoration: const InputDecoration(
+                    hintText: 'Einheit',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  ),
+                  items: [
+                    const DropdownMenuItem(value: null, child: Text('-')),
+                    ...availableUnits.map(
+                      (u) => DropdownMenuItem(value: u, child: Text(u)),
+                    ),
+                  ],
+                  onChanged: (v) => setState(() => entry.unit = v),
+                ),
               ),
-              textCapitalization: TextCapitalization.sentences,
-            ),
+              const SizedBox(width: 8),
+              // Zutat
+              Expanded(
+                child: TextField(
+                  controller: entry.itemController,
+                  decoration: const InputDecoration(
+                    hintText: 'Zutat *',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                onPressed: () => _removeIngredient(index),
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-            onPressed: () => _removeIngredient(index),
-            visualDensity: VisualDensity.compact,
+          const SizedBox(height: 6),
+          // Notiz (optional)
+          Row(
+            children: [
+              const SizedBox(width: 152), // Platzhalter für Menge + Einheit
+              Expanded(
+                child: TextField(
+                  controller: entry.noteController,
+                  decoration: InputDecoration(
+                    hintText: 'Notiz (optional)',
+                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+              ),
+              const SizedBox(width: 48), // Platzhalter für Remove-Button
+            ],
           ),
         ],
       ),
@@ -524,13 +666,16 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   }
 }
 
-/// Helper class for ingredient entry
+/// Helper class for ingredient entry with 4 fields
 class IngredientEntry {
   final TextEditingController itemController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
+  String? unit;
 
   void dispose() {
     itemController.dispose();
     amountController.dispose();
+    noteController.dispose();
   }
 }

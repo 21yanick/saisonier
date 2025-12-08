@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../seasonality/presentation/screens/main_screen.dart';
 import '../state/weekplan_controller.dart';
 import '../views/week_overview_view.dart';
 import '../views/day_detail_view.dart';
@@ -56,7 +57,10 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
             IconButton(
               icon: const Icon(Icons.shopping_cart_outlined),
               tooltip: 'Einkaufsliste',
-              onPressed: () => context.push('/shopping-list'),
+              onPressed: () {
+                // Navigiere zum Einkauf-Tab (Index 4)
+                ref.read(mainPageIndexProvider.notifier).state = 4;
+              },
             ),
             IconButton(
               icon: const Icon(Icons.person_outline),
