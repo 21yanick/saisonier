@@ -21,25 +21,56 @@ RecipeDto _$RecipeDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$RecipeDto {
   String get id => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get image =>
+      throw _privateConstructorUsedError; // === Zeiten (getrennt) ===
+  @JsonKey(name: 'prep_time_min')
+  int get prepTimeMin => throw _privateConstructorUsedError;
+  @JsonKey(name: 'cook_time_min')
+  int get cookTimeMin =>
+      throw _privateConstructorUsedError; // === Portionen & Schwierigkeit ===
+  int get servings => throw _privateConstructorUsedError;
+  String? get difficulty =>
+      throw _privateConstructorUsedError; // 'easy' | 'medium' | 'hard'
+  String? get category =>
+      throw _privateConstructorUsedError; // 'main' | 'side' | 'dessert' | 'snack' | 'breakfast' | 'soup' | 'salad'
+// === Inhalte (JSON) ===
+  List<dynamic> get ingredients =>
+      throw _privateConstructorUsedError; // JSON array: [{item, amount, unit, note}]
+  List<dynamic> get steps =>
+      throw _privateConstructorUsedError; // JSON array of strings
+// === Tags ===
+  String get tags =>
+      throw _privateConstructorUsedError; // JSON array: ["schnell", "günstig"]
+// === Beziehungen ===
   @JsonKey(name: 'vegetable_id')
   String? get vegetableId =>
-      throw _privateConstructorUsedError; // Nullable for user recipes
-  String get title => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
-  @JsonKey(name: 'time_min')
-  int get timeMin => throw _privateConstructorUsedError;
-  int get servings => throw _privateConstructorUsedError;
-  List<dynamic> get ingredients =>
-      throw _privateConstructorUsedError; // JSON array of objects
-  List<String> get steps =>
-      throw _privateConstructorUsedError; // JSON array of strings
-// Phase 11: User Recipes
+      throw _privateConstructorUsedError; // === Ownership ===
   String get source => throw _privateConstructorUsedError; // 'curated' | 'user'
   @JsonKey(name: 'user_id')
   String? get userId => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_public')
-  bool get isPublic => throw _privateConstructorUsedError;
-  String? get difficulty => throw _privateConstructorUsedError;
+  bool get isPublic => throw _privateConstructorUsedError; // === Ernährung ===
+  @JsonKey(name: 'is_vegetarian')
+  bool get isVegetarian => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_vegan')
+  bool get isVegan =>
+      throw _privateConstructorUsedError; // === Allergene (contains = true wenn enthalten) ===
+  @JsonKey(name: 'contains_gluten')
+  bool get containsGluten => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_lactose')
+  bool get containsLactose => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_nuts')
+  bool get containsNuts => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_eggs')
+  bool get containsEggs => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_soy')
+  bool get containsSoy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_fish')
+  bool get containsFish => throw _privateConstructorUsedError;
+  @JsonKey(name: 'contains_shellfish')
+  bool get containsShellfish => throw _privateConstructorUsedError;
 
   /// Serializes this RecipeDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,17 +89,30 @@ abstract class $RecipeDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String title,
+      String description,
       String image,
-      @JsonKey(name: 'time_min') int timeMin,
+      @JsonKey(name: 'prep_time_min') int prepTimeMin,
+      @JsonKey(name: 'cook_time_min') int cookTimeMin,
       int servings,
+      String? difficulty,
+      String? category,
       List<dynamic> ingredients,
-      List<String> steps,
+      List<dynamic> steps,
+      String tags,
+      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String source,
       @JsonKey(name: 'user_id') String? userId,
       @JsonKey(name: 'is_public') bool isPublic,
-      String? difficulty});
+      @JsonKey(name: 'is_vegetarian') bool isVegetarian,
+      @JsonKey(name: 'is_vegan') bool isVegan,
+      @JsonKey(name: 'contains_gluten') bool containsGluten,
+      @JsonKey(name: 'contains_lactose') bool containsLactose,
+      @JsonKey(name: 'contains_nuts') bool containsNuts,
+      @JsonKey(name: 'contains_eggs') bool containsEggs,
+      @JsonKey(name: 'contains_soy') bool containsSoy,
+      @JsonKey(name: 'contains_fish') bool containsFish,
+      @JsonKey(name: 'contains_shellfish') bool containsShellfish});
 }
 
 /// @nodoc
@@ -87,43 +131,68 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
   @override
   $Res call({
     Object? id = null,
-    Object? vegetableId = freezed,
     Object? title = null,
+    Object? description = null,
     Object? image = null,
-    Object? timeMin = null,
+    Object? prepTimeMin = null,
+    Object? cookTimeMin = null,
     Object? servings = null,
+    Object? difficulty = freezed,
+    Object? category = freezed,
     Object? ingredients = null,
     Object? steps = null,
+    Object? tags = null,
+    Object? vegetableId = freezed,
     Object? source = null,
     Object? userId = freezed,
     Object? isPublic = null,
-    Object? difficulty = freezed,
+    Object? isVegetarian = null,
+    Object? isVegan = null,
+    Object? containsGluten = null,
+    Object? containsLactose = null,
+    Object? containsNuts = null,
+    Object? containsEggs = null,
+    Object? containsSoy = null,
+    Object? containsFish = null,
+    Object? containsShellfish = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      vegetableId: freezed == vegetableId
-          ? _value.vegetableId
-          : vegetableId // ignore: cast_nullable_to_non_nullable
-              as String?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
               as String,
       image: null == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String,
-      timeMin: null == timeMin
-          ? _value.timeMin
-          : timeMin // ignore: cast_nullable_to_non_nullable
+      prepTimeMin: null == prepTimeMin
+          ? _value.prepTimeMin
+          : prepTimeMin // ignore: cast_nullable_to_non_nullable
+              as int,
+      cookTimeMin: null == cookTimeMin
+          ? _value.cookTimeMin
+          : cookTimeMin // ignore: cast_nullable_to_non_nullable
               as int,
       servings: null == servings
           ? _value.servings
           : servings // ignore: cast_nullable_to_non_nullable
               as int,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as String?,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
       ingredients: null == ingredients
           ? _value.ingredients
           : ingredients // ignore: cast_nullable_to_non_nullable
@@ -131,7 +200,15 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
       steps: null == steps
           ? _value.steps
           : steps // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<dynamic>,
+      tags: null == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as String,
+      vegetableId: freezed == vegetableId
+          ? _value.vegetableId
+          : vegetableId // ignore: cast_nullable_to_non_nullable
+              as String?,
       source: null == source
           ? _value.source
           : source // ignore: cast_nullable_to_non_nullable
@@ -144,10 +221,42 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
           ? _value.isPublic
           : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
-      difficulty: freezed == difficulty
-          ? _value.difficulty
-          : difficulty // ignore: cast_nullable_to_non_nullable
-              as String?,
+      isVegetarian: null == isVegetarian
+          ? _value.isVegetarian
+          : isVegetarian // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isVegan: null == isVegan
+          ? _value.isVegan
+          : isVegan // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsGluten: null == containsGluten
+          ? _value.containsGluten
+          : containsGluten // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsLactose: null == containsLactose
+          ? _value.containsLactose
+          : containsLactose // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsNuts: null == containsNuts
+          ? _value.containsNuts
+          : containsNuts // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsEggs: null == containsEggs
+          ? _value.containsEggs
+          : containsEggs // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsSoy: null == containsSoy
+          ? _value.containsSoy
+          : containsSoy // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsFish: null == containsFish
+          ? _value.containsFish
+          : containsFish // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsShellfish: null == containsShellfish
+          ? _value.containsShellfish
+          : containsShellfish // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -162,17 +271,30 @@ abstract class _$$RecipeDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String title,
+      String description,
       String image,
-      @JsonKey(name: 'time_min') int timeMin,
+      @JsonKey(name: 'prep_time_min') int prepTimeMin,
+      @JsonKey(name: 'cook_time_min') int cookTimeMin,
       int servings,
+      String? difficulty,
+      String? category,
       List<dynamic> ingredients,
-      List<String> steps,
+      List<dynamic> steps,
+      String tags,
+      @JsonKey(name: 'vegetable_id') String? vegetableId,
       String source,
       @JsonKey(name: 'user_id') String? userId,
       @JsonKey(name: 'is_public') bool isPublic,
-      String? difficulty});
+      @JsonKey(name: 'is_vegetarian') bool isVegetarian,
+      @JsonKey(name: 'is_vegan') bool isVegan,
+      @JsonKey(name: 'contains_gluten') bool containsGluten,
+      @JsonKey(name: 'contains_lactose') bool containsLactose,
+      @JsonKey(name: 'contains_nuts') bool containsNuts,
+      @JsonKey(name: 'contains_eggs') bool containsEggs,
+      @JsonKey(name: 'contains_soy') bool containsSoy,
+      @JsonKey(name: 'contains_fish') bool containsFish,
+      @JsonKey(name: 'contains_shellfish') bool containsShellfish});
 }
 
 /// @nodoc
@@ -189,43 +311,68 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? vegetableId = freezed,
     Object? title = null,
+    Object? description = null,
     Object? image = null,
-    Object? timeMin = null,
+    Object? prepTimeMin = null,
+    Object? cookTimeMin = null,
     Object? servings = null,
+    Object? difficulty = freezed,
+    Object? category = freezed,
     Object? ingredients = null,
     Object? steps = null,
+    Object? tags = null,
+    Object? vegetableId = freezed,
     Object? source = null,
     Object? userId = freezed,
     Object? isPublic = null,
-    Object? difficulty = freezed,
+    Object? isVegetarian = null,
+    Object? isVegan = null,
+    Object? containsGluten = null,
+    Object? containsLactose = null,
+    Object? containsNuts = null,
+    Object? containsEggs = null,
+    Object? containsSoy = null,
+    Object? containsFish = null,
+    Object? containsShellfish = null,
   }) {
     return _then(_$RecipeDtoImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      vegetableId: freezed == vegetableId
-          ? _value.vegetableId
-          : vegetableId // ignore: cast_nullable_to_non_nullable
-              as String?,
       title: null == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
               as String,
       image: null == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String,
-      timeMin: null == timeMin
-          ? _value.timeMin
-          : timeMin // ignore: cast_nullable_to_non_nullable
+      prepTimeMin: null == prepTimeMin
+          ? _value.prepTimeMin
+          : prepTimeMin // ignore: cast_nullable_to_non_nullable
+              as int,
+      cookTimeMin: null == cookTimeMin
+          ? _value.cookTimeMin
+          : cookTimeMin // ignore: cast_nullable_to_non_nullable
               as int,
       servings: null == servings
           ? _value.servings
           : servings // ignore: cast_nullable_to_non_nullable
               as int,
+      difficulty: freezed == difficulty
+          ? _value.difficulty
+          : difficulty // ignore: cast_nullable_to_non_nullable
+              as String?,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
       ingredients: null == ingredients
           ? _value._ingredients
           : ingredients // ignore: cast_nullable_to_non_nullable
@@ -233,7 +380,15 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
       steps: null == steps
           ? _value._steps
           : steps // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<dynamic>,
+      tags: null == tags
+          ? _value.tags
+          : tags // ignore: cast_nullable_to_non_nullable
+              as String,
+      vegetableId: freezed == vegetableId
+          ? _value.vegetableId
+          : vegetableId // ignore: cast_nullable_to_non_nullable
+              as String?,
       source: null == source
           ? _value.source
           : source // ignore: cast_nullable_to_non_nullable
@@ -246,10 +401,42 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
           ? _value.isPublic
           : isPublic // ignore: cast_nullable_to_non_nullable
               as bool,
-      difficulty: freezed == difficulty
-          ? _value.difficulty
-          : difficulty // ignore: cast_nullable_to_non_nullable
-              as String?,
+      isVegetarian: null == isVegetarian
+          ? _value.isVegetarian
+          : isVegetarian // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isVegan: null == isVegan
+          ? _value.isVegan
+          : isVegan // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsGluten: null == containsGluten
+          ? _value.containsGluten
+          : containsGluten // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsLactose: null == containsLactose
+          ? _value.containsLactose
+          : containsLactose // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsNuts: null == containsNuts
+          ? _value.containsNuts
+          : containsNuts // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsEggs: null == containsEggs
+          ? _value.containsEggs
+          : containsEggs // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsSoy: null == containsSoy
+          ? _value.containsSoy
+          : containsSoy // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsFish: null == containsFish
+          ? _value.containsFish
+          : containsFish // ignore: cast_nullable_to_non_nullable
+              as bool,
+      containsShellfish: null == containsShellfish
+          ? _value.containsShellfish
+          : containsShellfish // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -259,17 +446,30 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
 class _$RecipeDtoImpl implements _RecipeDto {
   const _$RecipeDtoImpl(
       {required this.id,
-      @JsonKey(name: 'vegetable_id') this.vegetableId,
       required this.title,
+      this.description = '',
       this.image = '',
-      @JsonKey(name: 'time_min') this.timeMin = 0,
+      @JsonKey(name: 'prep_time_min') this.prepTimeMin = 0,
+      @JsonKey(name: 'cook_time_min') this.cookTimeMin = 0,
       this.servings = 4,
+      this.difficulty,
+      this.category,
       final List<dynamic> ingredients = const [],
-      final List<String> steps = const [],
+      final List<dynamic> steps = const [],
+      this.tags = '[]',
+      @JsonKey(name: 'vegetable_id') this.vegetableId,
       this.source = 'curated',
       @JsonKey(name: 'user_id') this.userId,
       @JsonKey(name: 'is_public') this.isPublic = false,
-      this.difficulty})
+      @JsonKey(name: 'is_vegetarian') this.isVegetarian = false,
+      @JsonKey(name: 'is_vegan') this.isVegan = false,
+      @JsonKey(name: 'contains_gluten') this.containsGluten = false,
+      @JsonKey(name: 'contains_lactose') this.containsLactose = false,
+      @JsonKey(name: 'contains_nuts') this.containsNuts = false,
+      @JsonKey(name: 'contains_eggs') this.containsEggs = false,
+      @JsonKey(name: 'contains_soy') this.containsSoy = false,
+      @JsonKey(name: 'contains_fish') this.containsFish = false,
+      @JsonKey(name: 'contains_shellfish') this.containsShellfish = false})
       : _ingredients = ingredients,
         _steps = steps;
 
@@ -279,21 +479,34 @@ class _$RecipeDtoImpl implements _RecipeDto {
   @override
   final String id;
   @override
-  @JsonKey(name: 'vegetable_id')
-  final String? vegetableId;
-// Nullable for user recipes
-  @override
   final String title;
   @override
   @JsonKey()
-  final String image;
+  final String description;
   @override
-  @JsonKey(name: 'time_min')
-  final int timeMin;
+  @JsonKey()
+  final String image;
+// === Zeiten (getrennt) ===
+  @override
+  @JsonKey(name: 'prep_time_min')
+  final int prepTimeMin;
+  @override
+  @JsonKey(name: 'cook_time_min')
+  final int cookTimeMin;
+// === Portionen & Schwierigkeit ===
   @override
   @JsonKey()
   final int servings;
+  @override
+  final String? difficulty;
+// 'easy' | 'medium' | 'hard'
+  @override
+  final String? category;
+// 'main' | 'side' | 'dessert' | 'snack' | 'breakfast' | 'soup' | 'salad'
+// === Inhalte (JSON) ===
   final List<dynamic> _ingredients;
+// 'main' | 'side' | 'dessert' | 'snack' | 'breakfast' | 'soup' | 'salad'
+// === Inhalte (JSON) ===
   @override
   @JsonKey()
   List<dynamic> get ingredients {
@@ -302,19 +515,28 @@ class _$RecipeDtoImpl implements _RecipeDto {
     return EqualUnmodifiableListView(_ingredients);
   }
 
-// JSON array of objects
-  final List<String> _steps;
-// JSON array of objects
+// JSON array: [{item, amount, unit, note}]
+  final List<dynamic> _steps;
+// JSON array: [{item, amount, unit, note}]
   @override
   @JsonKey()
-  List<String> get steps {
+  List<dynamic> get steps {
     if (_steps is EqualUnmodifiableListView) return _steps;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_steps);
   }
 
 // JSON array of strings
-// Phase 11: User Recipes
+// === Tags ===
+  @override
+  @JsonKey()
+  final String tags;
+// JSON array: ["schnell", "günstig"]
+// === Beziehungen ===
+  @override
+  @JsonKey(name: 'vegetable_id')
+  final String? vegetableId;
+// === Ownership ===
   @override
   @JsonKey()
   final String source;
@@ -325,12 +547,39 @@ class _$RecipeDtoImpl implements _RecipeDto {
   @override
   @JsonKey(name: 'is_public')
   final bool isPublic;
+// === Ernährung ===
   @override
-  final String? difficulty;
+  @JsonKey(name: 'is_vegetarian')
+  final bool isVegetarian;
+  @override
+  @JsonKey(name: 'is_vegan')
+  final bool isVegan;
+// === Allergene (contains = true wenn enthalten) ===
+  @override
+  @JsonKey(name: 'contains_gluten')
+  final bool containsGluten;
+  @override
+  @JsonKey(name: 'contains_lactose')
+  final bool containsLactose;
+  @override
+  @JsonKey(name: 'contains_nuts')
+  final bool containsNuts;
+  @override
+  @JsonKey(name: 'contains_eggs')
+  final bool containsEggs;
+  @override
+  @JsonKey(name: 'contains_soy')
+  final bool containsSoy;
+  @override
+  @JsonKey(name: 'contains_fish')
+  final bool containsFish;
+  @override
+  @JsonKey(name: 'contains_shellfish')
+  final bool containsShellfish;
 
   @override
   String toString() {
-    return 'RecipeDto(id: $id, vegetableId: $vegetableId, title: $title, image: $image, timeMin: $timeMin, servings: $servings, ingredients: $ingredients, steps: $steps, source: $source, userId: $userId, isPublic: $isPublic, difficulty: $difficulty)';
+    return 'RecipeDto(id: $id, title: $title, description: $description, image: $image, prepTimeMin: $prepTimeMin, cookTimeMin: $cookTimeMin, servings: $servings, difficulty: $difficulty, category: $category, ingredients: $ingredients, steps: $steps, tags: $tags, vegetableId: $vegetableId, source: $source, userId: $userId, isPublic: $isPublic, isVegetarian: $isVegetarian, isVegan: $isVegan, containsGluten: $containsGluten, containsLactose: $containsLactose, containsNuts: $containsNuts, containsEggs: $containsEggs, containsSoy: $containsSoy, containsFish: $containsFish, containsShellfish: $containsShellfish)';
   }
 
   @override
@@ -339,40 +588,79 @@ class _$RecipeDtoImpl implements _RecipeDto {
         (other.runtimeType == runtimeType &&
             other is _$RecipeDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.vegetableId, vegetableId) ||
-                other.vegetableId == vegetableId) &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             (identical(other.image, image) || other.image == image) &&
-            (identical(other.timeMin, timeMin) || other.timeMin == timeMin) &&
+            (identical(other.prepTimeMin, prepTimeMin) ||
+                other.prepTimeMin == prepTimeMin) &&
+            (identical(other.cookTimeMin, cookTimeMin) ||
+                other.cookTimeMin == cookTimeMin) &&
             (identical(other.servings, servings) ||
                 other.servings == servings) &&
+            (identical(other.difficulty, difficulty) ||
+                other.difficulty == difficulty) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
             const DeepCollectionEquality()
                 .equals(other._ingredients, _ingredients) &&
             const DeepCollectionEquality().equals(other._steps, _steps) &&
+            (identical(other.tags, tags) || other.tags == tags) &&
+            (identical(other.vegetableId, vegetableId) ||
+                other.vegetableId == vegetableId) &&
             (identical(other.source, source) || other.source == source) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.isPublic, isPublic) ||
                 other.isPublic == isPublic) &&
-            (identical(other.difficulty, difficulty) ||
-                other.difficulty == difficulty));
+            (identical(other.isVegetarian, isVegetarian) ||
+                other.isVegetarian == isVegetarian) &&
+            (identical(other.isVegan, isVegan) || other.isVegan == isVegan) &&
+            (identical(other.containsGluten, containsGluten) ||
+                other.containsGluten == containsGluten) &&
+            (identical(other.containsLactose, containsLactose) ||
+                other.containsLactose == containsLactose) &&
+            (identical(other.containsNuts, containsNuts) ||
+                other.containsNuts == containsNuts) &&
+            (identical(other.containsEggs, containsEggs) ||
+                other.containsEggs == containsEggs) &&
+            (identical(other.containsSoy, containsSoy) ||
+                other.containsSoy == containsSoy) &&
+            (identical(other.containsFish, containsFish) ||
+                other.containsFish == containsFish) &&
+            (identical(other.containsShellfish, containsShellfish) ||
+                other.containsShellfish == containsShellfish));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      vegetableId,
-      title,
-      image,
-      timeMin,
-      servings,
-      const DeepCollectionEquality().hash(_ingredients),
-      const DeepCollectionEquality().hash(_steps),
-      source,
-      userId,
-      isPublic,
-      difficulty);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        title,
+        description,
+        image,
+        prepTimeMin,
+        cookTimeMin,
+        servings,
+        difficulty,
+        category,
+        const DeepCollectionEquality().hash(_ingredients),
+        const DeepCollectionEquality().hash(_steps),
+        tags,
+        vegetableId,
+        source,
+        userId,
+        isPublic,
+        isVegetarian,
+        isVegan,
+        containsGluten,
+        containsLactose,
+        containsNuts,
+        containsEggs,
+        containsSoy,
+        containsFish,
+        containsShellfish
+      ]);
 
   /// Create a copy of RecipeDto
   /// with the given fields replaced by the non-null parameter values.
@@ -392,18 +680,32 @@ class _$RecipeDtoImpl implements _RecipeDto {
 
 abstract class _RecipeDto implements RecipeDto {
   const factory _RecipeDto(
-      {required final String id,
-      @JsonKey(name: 'vegetable_id') final String? vegetableId,
-      required final String title,
-      final String image,
-      @JsonKey(name: 'time_min') final int timeMin,
-      final int servings,
-      final List<dynamic> ingredients,
-      final List<String> steps,
-      final String source,
-      @JsonKey(name: 'user_id') final String? userId,
-      @JsonKey(name: 'is_public') final bool isPublic,
-      final String? difficulty}) = _$RecipeDtoImpl;
+          {required final String id,
+          required final String title,
+          final String description,
+          final String image,
+          @JsonKey(name: 'prep_time_min') final int prepTimeMin,
+          @JsonKey(name: 'cook_time_min') final int cookTimeMin,
+          final int servings,
+          final String? difficulty,
+          final String? category,
+          final List<dynamic> ingredients,
+          final List<dynamic> steps,
+          final String tags,
+          @JsonKey(name: 'vegetable_id') final String? vegetableId,
+          final String source,
+          @JsonKey(name: 'user_id') final String? userId,
+          @JsonKey(name: 'is_public') final bool isPublic,
+          @JsonKey(name: 'is_vegetarian') final bool isVegetarian,
+          @JsonKey(name: 'is_vegan') final bool isVegan,
+          @JsonKey(name: 'contains_gluten') final bool containsGluten,
+          @JsonKey(name: 'contains_lactose') final bool containsLactose,
+          @JsonKey(name: 'contains_nuts') final bool containsNuts,
+          @JsonKey(name: 'contains_eggs') final bool containsEggs,
+          @JsonKey(name: 'contains_soy') final bool containsSoy,
+          @JsonKey(name: 'contains_fish') final bool containsFish,
+          @JsonKey(name: 'contains_shellfish') final bool containsShellfish}) =
+      _$RecipeDtoImpl;
 
   factory _RecipeDto.fromJson(Map<String, dynamic> json) =
       _$RecipeDtoImpl.fromJson;
@@ -411,22 +713,36 @@ abstract class _RecipeDto implements RecipeDto {
   @override
   String get id;
   @override
-  @JsonKey(name: 'vegetable_id')
-  String? get vegetableId; // Nullable for user recipes
-  @override
   String get title;
   @override
-  String get image;
+  String get description;
   @override
-  @JsonKey(name: 'time_min')
-  int get timeMin;
+  String get image; // === Zeiten (getrennt) ===
+  @override
+  @JsonKey(name: 'prep_time_min')
+  int get prepTimeMin;
+  @override
+  @JsonKey(name: 'cook_time_min')
+  int get cookTimeMin; // === Portionen & Schwierigkeit ===
   @override
   int get servings;
   @override
-  List<dynamic> get ingredients; // JSON array of objects
+  String? get difficulty; // 'easy' | 'medium' | 'hard'
   @override
-  List<String> get steps; // JSON array of strings
-// Phase 11: User Recipes
+  String?
+      get category; // 'main' | 'side' | 'dessert' | 'snack' | 'breakfast' | 'soup' | 'salad'
+// === Inhalte (JSON) ===
+  @override
+  List<dynamic> get ingredients; // JSON array: [{item, amount, unit, note}]
+  @override
+  List<dynamic> get steps; // JSON array of strings
+// === Tags ===
+  @override
+  String get tags; // JSON array: ["schnell", "günstig"]
+// === Beziehungen ===
+  @override
+  @JsonKey(name: 'vegetable_id')
+  String? get vegetableId; // === Ownership ===
   @override
   String get source; // 'curated' | 'user'
   @override
@@ -434,9 +750,34 @@ abstract class _RecipeDto implements RecipeDto {
   String? get userId;
   @override
   @JsonKey(name: 'is_public')
-  bool get isPublic;
+  bool get isPublic; // === Ernährung ===
   @override
-  String? get difficulty;
+  @JsonKey(name: 'is_vegetarian')
+  bool get isVegetarian;
+  @override
+  @JsonKey(name: 'is_vegan')
+  bool get isVegan; // === Allergene (contains = true wenn enthalten) ===
+  @override
+  @JsonKey(name: 'contains_gluten')
+  bool get containsGluten;
+  @override
+  @JsonKey(name: 'contains_lactose')
+  bool get containsLactose;
+  @override
+  @JsonKey(name: 'contains_nuts')
+  bool get containsNuts;
+  @override
+  @JsonKey(name: 'contains_eggs')
+  bool get containsEggs;
+  @override
+  @JsonKey(name: 'contains_soy')
+  bool get containsSoy;
+  @override
+  @JsonKey(name: 'contains_fish')
+  bool get containsFish;
+  @override
+  @JsonKey(name: 'contains_shellfish')
+  bool get containsShellfish;
 
   /// Create a copy of RecipeDto
   /// with the given fields replaced by the non-null parameter values.

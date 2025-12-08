@@ -4,7 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i20;
-import 'dart:io' as _i25;
+import 'dart:io' as _i26;
 
 import 'package:http/http.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
@@ -27,8 +27,10 @@ import 'package:pocketbase/src/services/realtime_service.dart' as _i6;
 import 'package:pocketbase/src/services/record_service.dart' as _i12;
 import 'package:pocketbase/src/services/settings_service.dart' as _i7;
 import 'package:saisonier/core/database/app_database.dart' as _i23;
-import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart'
+import 'package:saisonier/features/profile/domain/models/user_profile.dart'
     as _i24;
+import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart'
+    as _i25;
 import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart'
     as _i22;
 
@@ -1388,6 +1390,29 @@ class MockVegetableRepository extends _i1.Mock
       ) as _i20.Stream<List<_i23.Vegetable>>);
 
   @override
+  _i20.Stream<List<_i23.Vegetable>> watchSeasonalFiltered(
+    int? month, {
+    List<String>? allowedTypes = const [
+      'vegetable',
+      'fruit',
+      'salad',
+      'herb',
+    ],
+    _i24.UserProfile? profile,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #watchSeasonalFiltered,
+          [month],
+          {
+            #allowedTypes: allowedTypes,
+            #profile: profile,
+          },
+        ),
+        returnValue: _i20.Stream<List<_i23.Vegetable>>.empty(),
+      ) as _i20.Stream<List<_i23.Vegetable>>);
+
+  @override
   _i20.Future<void> toggleFavorite(String? id) => (super.noSuchMethod(
         Invocation.method(
           #toggleFavorite,
@@ -1447,7 +1472,7 @@ class MockVegetableRepository extends _i1.Mock
 /// A class which mocks [RecipeRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
+class MockRecipeRepository extends _i1.Mock implements _i25.RecipeRepository {
   MockRecipeRepository() {
     _i1.throwOnMissingStub(this);
   }
@@ -1507,11 +1532,24 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
     required String? title,
     required List<Map<String, dynamic>>? ingredients,
     required List<String>? steps,
-    int? timeMin = 30,
+    String? description,
+    int? prepTimeMin = 0,
+    int? cookTimeMin = 30,
     int? servings = 4,
     String? difficulty,
+    String? category,
     String? vegetableId,
-    _i25.File? imageFile,
+    bool? isVegetarian = false,
+    bool? isVegan = false,
+    bool? containsGluten = false,
+    bool? containsLactose = false,
+    bool? containsNuts = false,
+    bool? containsEggs = false,
+    bool? containsSoy = false,
+    bool? containsFish = false,
+    bool? containsShellfish = false,
+    List<String>? tags,
+    _i26.File? imageFile,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1522,10 +1560,23 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
             #title: title,
             #ingredients: ingredients,
             #steps: steps,
-            #timeMin: timeMin,
+            #description: description,
+            #prepTimeMin: prepTimeMin,
+            #cookTimeMin: cookTimeMin,
             #servings: servings,
             #difficulty: difficulty,
+            #category: category,
             #vegetableId: vegetableId,
+            #isVegetarian: isVegetarian,
+            #isVegan: isVegan,
+            #containsGluten: containsGluten,
+            #containsLactose: containsLactose,
+            #containsNuts: containsNuts,
+            #containsEggs: containsEggs,
+            #containsSoy: containsSoy,
+            #containsFish: containsFish,
+            #containsShellfish: containsShellfish,
+            #tags: tags,
             #imageFile: imageFile,
           },
         ),
@@ -1538,11 +1589,24 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
     required String? title,
     required List<Map<String, dynamic>>? ingredients,
     required List<String>? steps,
-    int? timeMin = 30,
+    String? description,
+    int? prepTimeMin = 0,
+    int? cookTimeMin = 30,
     int? servings = 4,
     String? difficulty,
+    String? category,
     String? vegetableId,
-    _i25.File? imageFile,
+    bool? isVegetarian = false,
+    bool? isVegan = false,
+    bool? containsGluten = false,
+    bool? containsLactose = false,
+    bool? containsNuts = false,
+    bool? containsEggs = false,
+    bool? containsSoy = false,
+    bool? containsFish = false,
+    bool? containsShellfish = false,
+    List<String>? tags,
+    _i26.File? imageFile,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1553,10 +1617,23 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
             #title: title,
             #ingredients: ingredients,
             #steps: steps,
-            #timeMin: timeMin,
+            #description: description,
+            #prepTimeMin: prepTimeMin,
+            #cookTimeMin: cookTimeMin,
             #servings: servings,
             #difficulty: difficulty,
+            #category: category,
             #vegetableId: vegetableId,
+            #isVegetarian: isVegetarian,
+            #isVegan: isVegan,
+            #containsGluten: containsGluten,
+            #containsLactose: containsLactose,
+            #containsNuts: containsNuts,
+            #containsEggs: containsEggs,
+            #containsSoy: containsSoy,
+            #containsFish: containsFish,
+            #containsShellfish: containsShellfish,
+            #tags: tags,
             #imageFile: imageFile,
           },
         ),
@@ -1572,4 +1649,23 @@ class MockRecipeRepository extends _i1.Mock implements _i24.RecipeRepository {
         returnValue: _i20.Future<void>.value(),
         returnValueForMissingStub: _i20.Future<void>.value(),
       ) as _i20.Future<void>);
+
+  @override
+  _i20.Future<void> toggleFavorite(String? recipeId) => (super.noSuchMethod(
+        Invocation.method(
+          #toggleFavorite,
+          [recipeId],
+        ),
+        returnValue: _i20.Future<void>.value(),
+        returnValueForMissingStub: _i20.Future<void>.value(),
+      ) as _i20.Future<void>);
+
+  @override
+  _i20.Stream<List<_i23.Recipe>> watchFavorites() => (super.noSuchMethod(
+        Invocation.method(
+          #watchFavorites,
+          [],
+        ),
+        returnValue: _i20.Stream<List<_i23.Recipe>>.empty(),
+      ) as _i20.Stream<List<_i23.Recipe>>);
 }

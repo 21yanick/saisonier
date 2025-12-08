@@ -73,6 +73,9 @@ class _RecipeMealCard extends ConsumerWidget {
                           imageUrl:
                               '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
                           fit: BoxFit.cover,
+                          memCacheWidth: 128,
+                          memCacheHeight: 128,
+                          fadeInDuration: const Duration(milliseconds: 100),
                           placeholder: (_, __) =>
                               Container(color: Colors.grey[200]),
                           errorWidget: (_, __, ___) => Container(

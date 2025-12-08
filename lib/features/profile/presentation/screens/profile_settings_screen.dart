@@ -6,9 +6,31 @@ import 'package:saisonier/features/auth/presentation/controllers/auth_controller
 import 'package:saisonier/features/auth/presentation/widgets/auth_form.dart';
 import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
 import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
+import 'package:saisonier/features/profile/presentation/widgets/household_edit_sheet.dart';
+import 'package:saisonier/features/profile/presentation/widgets/nutrition_edit_sheet.dart';
+import 'package:saisonier/features/profile/presentation/widgets/cooking_edit_sheet.dart';
 
 class ProfileSettingsScreen extends ConsumerWidget {
   const ProfileSettingsScreen({super.key});
+
+  String _buildNutritionSubtitle(profile) {
+    final parts = <String>[];
+    parts.add(profile.diet.label);
+
+    if (profile.allergens.isNotEmpty) {
+      parts.add('${profile.allergens.length} Allergien');
+    }
+
+    if (profile.dislikes.isNotEmpty) {
+      parts.add('${profile.dislikes.length} Dislikes');
+    }
+
+    if (profile.allergens.isEmpty && profile.dislikes.isEmpty) {
+      parts.add('Keine Einschränkungen');
+    }
+
+    return parts.join(' • ');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,23 +82,25 @@ class ProfileSettingsScreen extends ConsumerWidget {
                   ListTile(
                     title: const Text('Haushalt'),
                     subtitle: Text(
-                        '${profile.householdSize} Personen, ${profile.childrenCount} Kinder'),
+                        '${profile.householdSize} ${profile.householdSize == 1 ? "Person" : "Personen"}${profile.childrenCount > 0 ? ", ${profile.childrenCount} Kinder" : ""}'),
                     leading: const Icon(Icons.house),
-                    onTap: () => context.push('/profile/setup'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => HouseholdEditSheet.show(context, profile),
                   ),
                   ListTile(
                     title: const Text('Ernährung'),
-                    subtitle: Text(
-                        '${profile.diet.label} • ${profile.allergens.isEmpty ? "Keine Allergien" : "${profile.allergens.length} Allergien"}'),
+                    subtitle: Text(_buildNutritionSubtitle(profile)),
                     leading: const Icon(Icons.restaurant),
-                    onTap: () => context.push('/profile/setup'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => NutritionEditSheet.show(context, profile),
                   ),
                   ListTile(
                     title: const Text('Koch-Skills'),
                     subtitle:
                         Text('${profile.skill.label} • Max. ${profile.maxCookingTimeMin} Min'),
                     leading: const Icon(Icons.timer),
-                    onTap: () => context.push('/profile/setup'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => CookingEditSheet.show(context, profile),
                   ),
                   const Divider(),
                   bringConnectedAsync.when(

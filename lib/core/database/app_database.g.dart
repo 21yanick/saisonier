@@ -484,29 +484,30 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
       'description', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _stepsMeta = const VerificationMeta('steps');
-  @override
-  late final GeneratedColumn<String> steps = GeneratedColumn<String>(
-      'steps', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _ingredientsMeta =
-      const VerificationMeta('ingredients');
-  @override
-  late final GeneratedColumn<String> ingredients = GeneratedColumn<String>(
-      'ingredients', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
   static const VerificationMeta _imageMeta = const VerificationMeta('image');
   @override
   late final GeneratedColumn<String> image = GeneratedColumn<String>(
       'image', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _timeMinMeta =
-      const VerificationMeta('timeMin');
+  static const VerificationMeta _prepTimeMinMeta =
+      const VerificationMeta('prepTimeMin');
   @override
-  late final GeneratedColumn<int> timeMin = GeneratedColumn<int>(
-      'time_min', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+  late final GeneratedColumn<int> prepTimeMin = GeneratedColumn<int>(
+      'prep_time_min', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _cookTimeMinMeta =
+      const VerificationMeta('cookTimeMin');
+  @override
+  late final GeneratedColumn<int> cookTimeMin = GeneratedColumn<int>(
+      'cook_time_min', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
   static const VerificationMeta _servingsMeta =
       const VerificationMeta('servings');
   @override
@@ -515,6 +516,23 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(4));
+  static const VerificationMeta _difficultyMeta =
+      const VerificationMeta('difficulty');
+  @override
+  late final GeneratedColumn<String> difficulty = GeneratedColumn<String>(
+      'difficulty', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _ingredientsMeta =
+      const VerificationMeta('ingredients');
+  @override
+  late final GeneratedColumn<String> ingredients = GeneratedColumn<String>(
+      'ingredients', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _stepsMeta = const VerificationMeta('steps');
+  @override
+  late final GeneratedColumn<String> steps = GeneratedColumn<String>(
+      'steps', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _vegetableIdMeta =
       const VerificationMeta('vegetableId');
   @override
@@ -543,27 +561,147 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_public" IN (0, 1))'),
       defaultValue: const Constant(false));
-  static const VerificationMeta _difficultyMeta =
-      const VerificationMeta('difficulty');
+  static const VerificationMeta _isFavoriteMeta =
+      const VerificationMeta('isFavorite');
   @override
-  late final GeneratedColumn<String> difficulty = GeneratedColumn<String>(
-      'difficulty', aliasedName, true,
+  late final GeneratedColumn<bool> isFavorite = GeneratedColumn<bool>(
+      'is_favorite', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_favorite" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _isVegetarianMeta =
+      const VerificationMeta('isVegetarian');
+  @override
+  late final GeneratedColumn<bool> isVegetarian = GeneratedColumn<bool>(
+      'is_vegetarian', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_vegetarian" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _isVeganMeta =
+      const VerificationMeta('isVegan');
+  @override
+  late final GeneratedColumn<bool> isVegan = GeneratedColumn<bool>(
+      'is_vegan', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_vegan" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsGlutenMeta =
+      const VerificationMeta('containsGluten');
+  @override
+  late final GeneratedColumn<bool> containsGluten = GeneratedColumn<bool>(
+      'contains_gluten', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_gluten" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsLactoseMeta =
+      const VerificationMeta('containsLactose');
+  @override
+  late final GeneratedColumn<bool> containsLactose = GeneratedColumn<bool>(
+      'contains_lactose', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_lactose" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsNutsMeta =
+      const VerificationMeta('containsNuts');
+  @override
+  late final GeneratedColumn<bool> containsNuts = GeneratedColumn<bool>(
+      'contains_nuts', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_nuts" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsEggsMeta =
+      const VerificationMeta('containsEggs');
+  @override
+  late final GeneratedColumn<bool> containsEggs = GeneratedColumn<bool>(
+      'contains_eggs', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_eggs" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsSoyMeta =
+      const VerificationMeta('containsSoy');
+  @override
+  late final GeneratedColumn<bool> containsSoy = GeneratedColumn<bool>(
+      'contains_soy', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_soy" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsFishMeta =
+      const VerificationMeta('containsFish');
+  @override
+  late final GeneratedColumn<bool> containsFish = GeneratedColumn<bool>(
+      'contains_fish', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_fish" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _containsShellfishMeta =
+      const VerificationMeta('containsShellfish');
+  @override
+  late final GeneratedColumn<bool> containsShellfish = GeneratedColumn<bool>(
+      'contains_shellfish', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("contains_shellfish" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
+  @override
+  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
+      'tags', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
   @override
   List<GeneratedColumn> get $columns => [
         id,
         title,
         description,
-        steps,
-        ingredients,
         image,
-        timeMin,
+        prepTimeMin,
+        cookTimeMin,
         servings,
+        difficulty,
+        ingredients,
+        steps,
         vegetableId,
         source,
         userId,
         isPublic,
-        difficulty
+        isFavorite,
+        isVegetarian,
+        isVegan,
+        containsGluten,
+        containsLactose,
+        containsNuts,
+        containsEggs,
+        containsSoy,
+        containsFish,
+        containsShellfish,
+        category,
+        tags
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -591,14 +729,34 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
           _descriptionMeta,
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
     }
-    if (data.containsKey('steps')) {
+    if (data.containsKey('image')) {
       context.handle(
-          _stepsMeta, steps.isAcceptableOrUnknown(data['steps']!, _stepsMeta));
+          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
     } else if (isInserting) {
-      context.missing(_stepsMeta);
+      context.missing(_imageMeta);
+    }
+    if (data.containsKey('prep_time_min')) {
+      context.handle(
+          _prepTimeMinMeta,
+          prepTimeMin.isAcceptableOrUnknown(
+              data['prep_time_min']!, _prepTimeMinMeta));
+    }
+    if (data.containsKey('cook_time_min')) {
+      context.handle(
+          _cookTimeMinMeta,
+          cookTimeMin.isAcceptableOrUnknown(
+              data['cook_time_min']!, _cookTimeMinMeta));
+    }
+    if (data.containsKey('servings')) {
+      context.handle(_servingsMeta,
+          servings.isAcceptableOrUnknown(data['servings']!, _servingsMeta));
+    }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+          _difficultyMeta,
+          difficulty.isAcceptableOrUnknown(
+              data['difficulty']!, _difficultyMeta));
     }
     if (data.containsKey('ingredients')) {
       context.handle(
@@ -608,21 +766,11 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
     } else if (isInserting) {
       context.missing(_ingredientsMeta);
     }
-    if (data.containsKey('image')) {
+    if (data.containsKey('steps')) {
       context.handle(
-          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
+          _stepsMeta, steps.isAcceptableOrUnknown(data['steps']!, _stepsMeta));
     } else if (isInserting) {
-      context.missing(_imageMeta);
-    }
-    if (data.containsKey('time_min')) {
-      context.handle(_timeMinMeta,
-          timeMin.isAcceptableOrUnknown(data['time_min']!, _timeMinMeta));
-    } else if (isInserting) {
-      context.missing(_timeMinMeta);
-    }
-    if (data.containsKey('servings')) {
-      context.handle(_servingsMeta,
-          servings.isAcceptableOrUnknown(data['servings']!, _servingsMeta));
+      context.missing(_stepsMeta);
     }
     if (data.containsKey('vegetable_id')) {
       context.handle(
@@ -642,11 +790,71 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
       context.handle(_isPublicMeta,
           isPublic.isAcceptableOrUnknown(data['is_public']!, _isPublicMeta));
     }
-    if (data.containsKey('difficulty')) {
+    if (data.containsKey('is_favorite')) {
       context.handle(
-          _difficultyMeta,
-          difficulty.isAcceptableOrUnknown(
-              data['difficulty']!, _difficultyMeta));
+          _isFavoriteMeta,
+          isFavorite.isAcceptableOrUnknown(
+              data['is_favorite']!, _isFavoriteMeta));
+    }
+    if (data.containsKey('is_vegetarian')) {
+      context.handle(
+          _isVegetarianMeta,
+          isVegetarian.isAcceptableOrUnknown(
+              data['is_vegetarian']!, _isVegetarianMeta));
+    }
+    if (data.containsKey('is_vegan')) {
+      context.handle(_isVeganMeta,
+          isVegan.isAcceptableOrUnknown(data['is_vegan']!, _isVeganMeta));
+    }
+    if (data.containsKey('contains_gluten')) {
+      context.handle(
+          _containsGlutenMeta,
+          containsGluten.isAcceptableOrUnknown(
+              data['contains_gluten']!, _containsGlutenMeta));
+    }
+    if (data.containsKey('contains_lactose')) {
+      context.handle(
+          _containsLactoseMeta,
+          containsLactose.isAcceptableOrUnknown(
+              data['contains_lactose']!, _containsLactoseMeta));
+    }
+    if (data.containsKey('contains_nuts')) {
+      context.handle(
+          _containsNutsMeta,
+          containsNuts.isAcceptableOrUnknown(
+              data['contains_nuts']!, _containsNutsMeta));
+    }
+    if (data.containsKey('contains_eggs')) {
+      context.handle(
+          _containsEggsMeta,
+          containsEggs.isAcceptableOrUnknown(
+              data['contains_eggs']!, _containsEggsMeta));
+    }
+    if (data.containsKey('contains_soy')) {
+      context.handle(
+          _containsSoyMeta,
+          containsSoy.isAcceptableOrUnknown(
+              data['contains_soy']!, _containsSoyMeta));
+    }
+    if (data.containsKey('contains_fish')) {
+      context.handle(
+          _containsFishMeta,
+          containsFish.isAcceptableOrUnknown(
+              data['contains_fish']!, _containsFishMeta));
+    }
+    if (data.containsKey('contains_shellfish')) {
+      context.handle(
+          _containsShellfishMeta,
+          containsShellfish.isAcceptableOrUnknown(
+              data['contains_shellfish']!, _containsShellfishMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    }
+    if (data.containsKey('tags')) {
+      context.handle(
+          _tagsMeta, tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta));
     }
     return context;
   }
@@ -663,16 +871,20 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      steps: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}steps'])!,
-      ingredients: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}ingredients'])!,
       image: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}image'])!,
-      timeMin: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}time_min'])!,
+      prepTimeMin: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}prep_time_min'])!,
+      cookTimeMin: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}cook_time_min'])!,
       servings: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}servings'])!,
+      difficulty: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}difficulty']),
+      ingredients: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}ingredients'])!,
+      steps: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}steps'])!,
       vegetableId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}vegetable_id']),
       source: attachedDatabase.typeMapping
@@ -681,8 +893,30 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
           .read(DriftSqlType.string, data['${effectivePrefix}user_id']),
       isPublic: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_public'])!,
-      difficulty: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}difficulty']),
+      isFavorite: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_favorite'])!,
+      isVegetarian: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_vegetarian'])!,
+      isVegan: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_vegan'])!,
+      containsGluten: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_gluten'])!,
+      containsLactose: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_lactose'])!,
+      containsNuts: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_nuts'])!,
+      containsEggs: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_eggs'])!,
+      containsSoy: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_soy'])!,
+      containsFish: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}contains_fish'])!,
+      containsShellfish: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}contains_shellfish'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category']),
+      tags: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tags'])!,
     );
   }
 
@@ -696,41 +930,71 @@ class Recipe extends DataClass implements Insertable<Recipe> {
   final String id;
   final String title;
   final String description;
-  final String steps;
-  final String ingredients;
   final String image;
-  final int timeMin;
+  final int prepTimeMin;
+  final int cookTimeMin;
   final int servings;
+  final String? difficulty;
+  final String ingredients;
+  final String steps;
   final String? vegetableId;
   final String source;
   final String? userId;
   final bool isPublic;
-  final String? difficulty;
+  final bool isFavorite;
+  final bool isVegetarian;
+  final bool isVegan;
+  final bool containsGluten;
+  final bool containsLactose;
+  final bool containsNuts;
+  final bool containsEggs;
+  final bool containsSoy;
+  final bool containsFish;
+  final bool containsShellfish;
+  final String? category;
+  final String tags;
   const Recipe(
       {required this.id,
       required this.title,
       required this.description,
-      required this.steps,
-      required this.ingredients,
       required this.image,
-      required this.timeMin,
+      required this.prepTimeMin,
+      required this.cookTimeMin,
       required this.servings,
+      this.difficulty,
+      required this.ingredients,
+      required this.steps,
       this.vegetableId,
       required this.source,
       this.userId,
       required this.isPublic,
-      this.difficulty});
+      required this.isFavorite,
+      required this.isVegetarian,
+      required this.isVegan,
+      required this.containsGluten,
+      required this.containsLactose,
+      required this.containsNuts,
+      required this.containsEggs,
+      required this.containsSoy,
+      required this.containsFish,
+      required this.containsShellfish,
+      this.category,
+      required this.tags});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
-    map['steps'] = Variable<String>(steps);
-    map['ingredients'] = Variable<String>(ingredients);
     map['image'] = Variable<String>(image);
-    map['time_min'] = Variable<int>(timeMin);
+    map['prep_time_min'] = Variable<int>(prepTimeMin);
+    map['cook_time_min'] = Variable<int>(cookTimeMin);
     map['servings'] = Variable<int>(servings);
+    if (!nullToAbsent || difficulty != null) {
+      map['difficulty'] = Variable<String>(difficulty);
+    }
+    map['ingredients'] = Variable<String>(ingredients);
+    map['steps'] = Variable<String>(steps);
     if (!nullToAbsent || vegetableId != null) {
       map['vegetable_id'] = Variable<String>(vegetableId);
     }
@@ -739,9 +1003,20 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       map['user_id'] = Variable<String>(userId);
     }
     map['is_public'] = Variable<bool>(isPublic);
-    if (!nullToAbsent || difficulty != null) {
-      map['difficulty'] = Variable<String>(difficulty);
+    map['is_favorite'] = Variable<bool>(isFavorite);
+    map['is_vegetarian'] = Variable<bool>(isVegetarian);
+    map['is_vegan'] = Variable<bool>(isVegan);
+    map['contains_gluten'] = Variable<bool>(containsGluten);
+    map['contains_lactose'] = Variable<bool>(containsLactose);
+    map['contains_nuts'] = Variable<bool>(containsNuts);
+    map['contains_eggs'] = Variable<bool>(containsEggs);
+    map['contains_soy'] = Variable<bool>(containsSoy);
+    map['contains_fish'] = Variable<bool>(containsFish);
+    map['contains_shellfish'] = Variable<bool>(containsShellfish);
+    if (!nullToAbsent || category != null) {
+      map['category'] = Variable<String>(category);
     }
+    map['tags'] = Variable<String>(tags);
     return map;
   }
 
@@ -750,11 +1025,15 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       id: Value(id),
       title: Value(title),
       description: Value(description),
-      steps: Value(steps),
-      ingredients: Value(ingredients),
       image: Value(image),
-      timeMin: Value(timeMin),
+      prepTimeMin: Value(prepTimeMin),
+      cookTimeMin: Value(cookTimeMin),
       servings: Value(servings),
+      difficulty: difficulty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difficulty),
+      ingredients: Value(ingredients),
+      steps: Value(steps),
       vegetableId: vegetableId == null && nullToAbsent
           ? const Value.absent()
           : Value(vegetableId),
@@ -762,9 +1041,20 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       userId:
           userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       isPublic: Value(isPublic),
-      difficulty: difficulty == null && nullToAbsent
+      isFavorite: Value(isFavorite),
+      isVegetarian: Value(isVegetarian),
+      isVegan: Value(isVegan),
+      containsGluten: Value(containsGluten),
+      containsLactose: Value(containsLactose),
+      containsNuts: Value(containsNuts),
+      containsEggs: Value(containsEggs),
+      containsSoy: Value(containsSoy),
+      containsFish: Value(containsFish),
+      containsShellfish: Value(containsShellfish),
+      category: category == null && nullToAbsent
           ? const Value.absent()
-          : Value(difficulty),
+          : Value(category),
+      tags: Value(tags),
     );
   }
 
@@ -775,16 +1065,29 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
-      steps: serializer.fromJson<String>(json['steps']),
-      ingredients: serializer.fromJson<String>(json['ingredients']),
       image: serializer.fromJson<String>(json['image']),
-      timeMin: serializer.fromJson<int>(json['timeMin']),
+      prepTimeMin: serializer.fromJson<int>(json['prepTimeMin']),
+      cookTimeMin: serializer.fromJson<int>(json['cookTimeMin']),
       servings: serializer.fromJson<int>(json['servings']),
+      difficulty: serializer.fromJson<String?>(json['difficulty']),
+      ingredients: serializer.fromJson<String>(json['ingredients']),
+      steps: serializer.fromJson<String>(json['steps']),
       vegetableId: serializer.fromJson<String?>(json['vegetableId']),
       source: serializer.fromJson<String>(json['source']),
       userId: serializer.fromJson<String?>(json['userId']),
       isPublic: serializer.fromJson<bool>(json['isPublic']),
-      difficulty: serializer.fromJson<String?>(json['difficulty']),
+      isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+      isVegetarian: serializer.fromJson<bool>(json['isVegetarian']),
+      isVegan: serializer.fromJson<bool>(json['isVegan']),
+      containsGluten: serializer.fromJson<bool>(json['containsGluten']),
+      containsLactose: serializer.fromJson<bool>(json['containsLactose']),
+      containsNuts: serializer.fromJson<bool>(json['containsNuts']),
+      containsEggs: serializer.fromJson<bool>(json['containsEggs']),
+      containsSoy: serializer.fromJson<bool>(json['containsSoy']),
+      containsFish: serializer.fromJson<bool>(json['containsFish']),
+      containsShellfish: serializer.fromJson<bool>(json['containsShellfish']),
+      category: serializer.fromJson<String?>(json['category']),
+      tags: serializer.fromJson<String>(json['tags']),
     );
   }
   @override
@@ -794,16 +1097,29 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
-      'steps': serializer.toJson<String>(steps),
-      'ingredients': serializer.toJson<String>(ingredients),
       'image': serializer.toJson<String>(image),
-      'timeMin': serializer.toJson<int>(timeMin),
+      'prepTimeMin': serializer.toJson<int>(prepTimeMin),
+      'cookTimeMin': serializer.toJson<int>(cookTimeMin),
       'servings': serializer.toJson<int>(servings),
+      'difficulty': serializer.toJson<String?>(difficulty),
+      'ingredients': serializer.toJson<String>(ingredients),
+      'steps': serializer.toJson<String>(steps),
       'vegetableId': serializer.toJson<String?>(vegetableId),
       'source': serializer.toJson<String>(source),
       'userId': serializer.toJson<String?>(userId),
       'isPublic': serializer.toJson<bool>(isPublic),
-      'difficulty': serializer.toJson<String?>(difficulty),
+      'isFavorite': serializer.toJson<bool>(isFavorite),
+      'isVegetarian': serializer.toJson<bool>(isVegetarian),
+      'isVegan': serializer.toJson<bool>(isVegan),
+      'containsGluten': serializer.toJson<bool>(containsGluten),
+      'containsLactose': serializer.toJson<bool>(containsLactose),
+      'containsNuts': serializer.toJson<bool>(containsNuts),
+      'containsEggs': serializer.toJson<bool>(containsEggs),
+      'containsSoy': serializer.toJson<bool>(containsSoy),
+      'containsFish': serializer.toJson<bool>(containsFish),
+      'containsShellfish': serializer.toJson<bool>(containsShellfish),
+      'category': serializer.toJson<String?>(category),
+      'tags': serializer.toJson<String>(tags),
     };
   }
 
@@ -811,30 +1127,56 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           {String? id,
           String? title,
           String? description,
-          String? steps,
-          String? ingredients,
           String? image,
-          int? timeMin,
+          int? prepTimeMin,
+          int? cookTimeMin,
           int? servings,
+          Value<String?> difficulty = const Value.absent(),
+          String? ingredients,
+          String? steps,
           Value<String?> vegetableId = const Value.absent(),
           String? source,
           Value<String?> userId = const Value.absent(),
           bool? isPublic,
-          Value<String?> difficulty = const Value.absent()}) =>
+          bool? isFavorite,
+          bool? isVegetarian,
+          bool? isVegan,
+          bool? containsGluten,
+          bool? containsLactose,
+          bool? containsNuts,
+          bool? containsEggs,
+          bool? containsSoy,
+          bool? containsFish,
+          bool? containsShellfish,
+          Value<String?> category = const Value.absent(),
+          String? tags}) =>
       Recipe(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
-        steps: steps ?? this.steps,
-        ingredients: ingredients ?? this.ingredients,
         image: image ?? this.image,
-        timeMin: timeMin ?? this.timeMin,
+        prepTimeMin: prepTimeMin ?? this.prepTimeMin,
+        cookTimeMin: cookTimeMin ?? this.cookTimeMin,
         servings: servings ?? this.servings,
+        difficulty: difficulty.present ? difficulty.value : this.difficulty,
+        ingredients: ingredients ?? this.ingredients,
+        steps: steps ?? this.steps,
         vegetableId: vegetableId.present ? vegetableId.value : this.vegetableId,
         source: source ?? this.source,
         userId: userId.present ? userId.value : this.userId,
         isPublic: isPublic ?? this.isPublic,
-        difficulty: difficulty.present ? difficulty.value : this.difficulty,
+        isFavorite: isFavorite ?? this.isFavorite,
+        isVegetarian: isVegetarian ?? this.isVegetarian,
+        isVegan: isVegan ?? this.isVegan,
+        containsGluten: containsGluten ?? this.containsGluten,
+        containsLactose: containsLactose ?? this.containsLactose,
+        containsNuts: containsNuts ?? this.containsNuts,
+        containsEggs: containsEggs ?? this.containsEggs,
+        containsSoy: containsSoy ?? this.containsSoy,
+        containsFish: containsFish ?? this.containsFish,
+        containsShellfish: containsShellfish ?? this.containsShellfish,
+        category: category.present ? category.value : this.category,
+        tags: tags ?? this.tags,
       );
   Recipe copyWithCompanion(RecipesCompanion data) {
     return Recipe(
@@ -842,19 +1184,50 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       title: data.title.present ? data.title.value : this.title,
       description:
           data.description.present ? data.description.value : this.description,
-      steps: data.steps.present ? data.steps.value : this.steps,
+      image: data.image.present ? data.image.value : this.image,
+      prepTimeMin:
+          data.prepTimeMin.present ? data.prepTimeMin.value : this.prepTimeMin,
+      cookTimeMin:
+          data.cookTimeMin.present ? data.cookTimeMin.value : this.cookTimeMin,
+      servings: data.servings.present ? data.servings.value : this.servings,
+      difficulty:
+          data.difficulty.present ? data.difficulty.value : this.difficulty,
       ingredients:
           data.ingredients.present ? data.ingredients.value : this.ingredients,
-      image: data.image.present ? data.image.value : this.image,
-      timeMin: data.timeMin.present ? data.timeMin.value : this.timeMin,
-      servings: data.servings.present ? data.servings.value : this.servings,
+      steps: data.steps.present ? data.steps.value : this.steps,
       vegetableId:
           data.vegetableId.present ? data.vegetableId.value : this.vegetableId,
       source: data.source.present ? data.source.value : this.source,
       userId: data.userId.present ? data.userId.value : this.userId,
       isPublic: data.isPublic.present ? data.isPublic.value : this.isPublic,
-      difficulty:
-          data.difficulty.present ? data.difficulty.value : this.difficulty,
+      isFavorite:
+          data.isFavorite.present ? data.isFavorite.value : this.isFavorite,
+      isVegetarian: data.isVegetarian.present
+          ? data.isVegetarian.value
+          : this.isVegetarian,
+      isVegan: data.isVegan.present ? data.isVegan.value : this.isVegan,
+      containsGluten: data.containsGluten.present
+          ? data.containsGluten.value
+          : this.containsGluten,
+      containsLactose: data.containsLactose.present
+          ? data.containsLactose.value
+          : this.containsLactose,
+      containsNuts: data.containsNuts.present
+          ? data.containsNuts.value
+          : this.containsNuts,
+      containsEggs: data.containsEggs.present
+          ? data.containsEggs.value
+          : this.containsEggs,
+      containsSoy:
+          data.containsSoy.present ? data.containsSoy.value : this.containsSoy,
+      containsFish: data.containsFish.present
+          ? data.containsFish.value
+          : this.containsFish,
+      containsShellfish: data.containsShellfish.present
+          ? data.containsShellfish.value
+          : this.containsShellfish,
+      category: data.category.present ? data.category.value : this.category,
+      tags: data.tags.present ? data.tags.value : this.tags,
     );
   }
 
@@ -864,35 +1237,62 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('steps: $steps, ')
-          ..write('ingredients: $ingredients, ')
           ..write('image: $image, ')
-          ..write('timeMin: $timeMin, ')
+          ..write('prepTimeMin: $prepTimeMin, ')
+          ..write('cookTimeMin: $cookTimeMin, ')
           ..write('servings: $servings, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('ingredients: $ingredients, ')
+          ..write('steps: $steps, ')
           ..write('vegetableId: $vegetableId, ')
           ..write('source: $source, ')
           ..write('userId: $userId, ')
           ..write('isPublic: $isPublic, ')
-          ..write('difficulty: $difficulty')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('isVegetarian: $isVegetarian, ')
+          ..write('isVegan: $isVegan, ')
+          ..write('containsGluten: $containsGluten, ')
+          ..write('containsLactose: $containsLactose, ')
+          ..write('containsNuts: $containsNuts, ')
+          ..write('containsEggs: $containsEggs, ')
+          ..write('containsSoy: $containsSoy, ')
+          ..write('containsFish: $containsFish, ')
+          ..write('containsShellfish: $containsShellfish, ')
+          ..write('category: $category, ')
+          ..write('tags: $tags')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      title,
-      description,
-      steps,
-      ingredients,
-      image,
-      timeMin,
-      servings,
-      vegetableId,
-      source,
-      userId,
-      isPublic,
-      difficulty);
+  int get hashCode => Object.hashAll([
+        id,
+        title,
+        description,
+        image,
+        prepTimeMin,
+        cookTimeMin,
+        servings,
+        difficulty,
+        ingredients,
+        steps,
+        vegetableId,
+        source,
+        userId,
+        isPublic,
+        isFavorite,
+        isVegetarian,
+        isVegan,
+        containsGluten,
+        containsLactose,
+        containsNuts,
+        containsEggs,
+        containsSoy,
+        containsFish,
+        containsShellfish,
+        category,
+        tags
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -900,101 +1300,177 @@ class Recipe extends DataClass implements Insertable<Recipe> {
           other.id == this.id &&
           other.title == this.title &&
           other.description == this.description &&
-          other.steps == this.steps &&
-          other.ingredients == this.ingredients &&
           other.image == this.image &&
-          other.timeMin == this.timeMin &&
+          other.prepTimeMin == this.prepTimeMin &&
+          other.cookTimeMin == this.cookTimeMin &&
           other.servings == this.servings &&
+          other.difficulty == this.difficulty &&
+          other.ingredients == this.ingredients &&
+          other.steps == this.steps &&
           other.vegetableId == this.vegetableId &&
           other.source == this.source &&
           other.userId == this.userId &&
           other.isPublic == this.isPublic &&
-          other.difficulty == this.difficulty);
+          other.isFavorite == this.isFavorite &&
+          other.isVegetarian == this.isVegetarian &&
+          other.isVegan == this.isVegan &&
+          other.containsGluten == this.containsGluten &&
+          other.containsLactose == this.containsLactose &&
+          other.containsNuts == this.containsNuts &&
+          other.containsEggs == this.containsEggs &&
+          other.containsSoy == this.containsSoy &&
+          other.containsFish == this.containsFish &&
+          other.containsShellfish == this.containsShellfish &&
+          other.category == this.category &&
+          other.tags == this.tags);
 }
 
 class RecipesCompanion extends UpdateCompanion<Recipe> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> description;
-  final Value<String> steps;
-  final Value<String> ingredients;
   final Value<String> image;
-  final Value<int> timeMin;
+  final Value<int> prepTimeMin;
+  final Value<int> cookTimeMin;
   final Value<int> servings;
+  final Value<String?> difficulty;
+  final Value<String> ingredients;
+  final Value<String> steps;
   final Value<String?> vegetableId;
   final Value<String> source;
   final Value<String?> userId;
   final Value<bool> isPublic;
-  final Value<String?> difficulty;
+  final Value<bool> isFavorite;
+  final Value<bool> isVegetarian;
+  final Value<bool> isVegan;
+  final Value<bool> containsGluten;
+  final Value<bool> containsLactose;
+  final Value<bool> containsNuts;
+  final Value<bool> containsEggs;
+  final Value<bool> containsSoy;
+  final Value<bool> containsFish;
+  final Value<bool> containsShellfish;
+  final Value<String?> category;
+  final Value<String> tags;
   final Value<int> rowid;
   const RecipesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
-    this.steps = const Value.absent(),
-    this.ingredients = const Value.absent(),
     this.image = const Value.absent(),
-    this.timeMin = const Value.absent(),
+    this.prepTimeMin = const Value.absent(),
+    this.cookTimeMin = const Value.absent(),
     this.servings = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.ingredients = const Value.absent(),
+    this.steps = const Value.absent(),
     this.vegetableId = const Value.absent(),
     this.source = const Value.absent(),
     this.userId = const Value.absent(),
     this.isPublic = const Value.absent(),
-    this.difficulty = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+    this.isVegetarian = const Value.absent(),
+    this.isVegan = const Value.absent(),
+    this.containsGluten = const Value.absent(),
+    this.containsLactose = const Value.absent(),
+    this.containsNuts = const Value.absent(),
+    this.containsEggs = const Value.absent(),
+    this.containsSoy = const Value.absent(),
+    this.containsFish = const Value.absent(),
+    this.containsShellfish = const Value.absent(),
+    this.category = const Value.absent(),
+    this.tags = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   RecipesCompanion.insert({
     required String id,
     required String title,
-    required String description,
-    required String steps,
-    required String ingredients,
+    this.description = const Value.absent(),
     required String image,
-    required int timeMin,
+    this.prepTimeMin = const Value.absent(),
+    this.cookTimeMin = const Value.absent(),
     this.servings = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    required String ingredients,
+    required String steps,
     this.vegetableId = const Value.absent(),
     this.source = const Value.absent(),
     this.userId = const Value.absent(),
     this.isPublic = const Value.absent(),
-    this.difficulty = const Value.absent(),
+    this.isFavorite = const Value.absent(),
+    this.isVegetarian = const Value.absent(),
+    this.isVegan = const Value.absent(),
+    this.containsGluten = const Value.absent(),
+    this.containsLactose = const Value.absent(),
+    this.containsNuts = const Value.absent(),
+    this.containsEggs = const Value.absent(),
+    this.containsSoy = const Value.absent(),
+    this.containsFish = const Value.absent(),
+    this.containsShellfish = const Value.absent(),
+    this.category = const Value.absent(),
+    this.tags = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         title = Value(title),
-        description = Value(description),
-        steps = Value(steps),
-        ingredients = Value(ingredients),
         image = Value(image),
-        timeMin = Value(timeMin);
+        ingredients = Value(ingredients),
+        steps = Value(steps);
   static Insertable<Recipe> custom({
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
-    Expression<String>? steps,
-    Expression<String>? ingredients,
     Expression<String>? image,
-    Expression<int>? timeMin,
+    Expression<int>? prepTimeMin,
+    Expression<int>? cookTimeMin,
     Expression<int>? servings,
+    Expression<String>? difficulty,
+    Expression<String>? ingredients,
+    Expression<String>? steps,
     Expression<String>? vegetableId,
     Expression<String>? source,
     Expression<String>? userId,
     Expression<bool>? isPublic,
-    Expression<String>? difficulty,
+    Expression<bool>? isFavorite,
+    Expression<bool>? isVegetarian,
+    Expression<bool>? isVegan,
+    Expression<bool>? containsGluten,
+    Expression<bool>? containsLactose,
+    Expression<bool>? containsNuts,
+    Expression<bool>? containsEggs,
+    Expression<bool>? containsSoy,
+    Expression<bool>? containsFish,
+    Expression<bool>? containsShellfish,
+    Expression<String>? category,
+    Expression<String>? tags,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
-      if (steps != null) 'steps': steps,
-      if (ingredients != null) 'ingredients': ingredients,
       if (image != null) 'image': image,
-      if (timeMin != null) 'time_min': timeMin,
+      if (prepTimeMin != null) 'prep_time_min': prepTimeMin,
+      if (cookTimeMin != null) 'cook_time_min': cookTimeMin,
       if (servings != null) 'servings': servings,
+      if (difficulty != null) 'difficulty': difficulty,
+      if (ingredients != null) 'ingredients': ingredients,
+      if (steps != null) 'steps': steps,
       if (vegetableId != null) 'vegetable_id': vegetableId,
       if (source != null) 'source': source,
       if (userId != null) 'user_id': userId,
       if (isPublic != null) 'is_public': isPublic,
-      if (difficulty != null) 'difficulty': difficulty,
+      if (isFavorite != null) 'is_favorite': isFavorite,
+      if (isVegetarian != null) 'is_vegetarian': isVegetarian,
+      if (isVegan != null) 'is_vegan': isVegan,
+      if (containsGluten != null) 'contains_gluten': containsGluten,
+      if (containsLactose != null) 'contains_lactose': containsLactose,
+      if (containsNuts != null) 'contains_nuts': containsNuts,
+      if (containsEggs != null) 'contains_eggs': containsEggs,
+      if (containsSoy != null) 'contains_soy': containsSoy,
+      if (containsFish != null) 'contains_fish': containsFish,
+      if (containsShellfish != null) 'contains_shellfish': containsShellfish,
+      if (category != null) 'category': category,
+      if (tags != null) 'tags': tags,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1003,31 +1479,57 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
       {Value<String>? id,
       Value<String>? title,
       Value<String>? description,
-      Value<String>? steps,
-      Value<String>? ingredients,
       Value<String>? image,
-      Value<int>? timeMin,
+      Value<int>? prepTimeMin,
+      Value<int>? cookTimeMin,
       Value<int>? servings,
+      Value<String?>? difficulty,
+      Value<String>? ingredients,
+      Value<String>? steps,
       Value<String?>? vegetableId,
       Value<String>? source,
       Value<String?>? userId,
       Value<bool>? isPublic,
-      Value<String?>? difficulty,
+      Value<bool>? isFavorite,
+      Value<bool>? isVegetarian,
+      Value<bool>? isVegan,
+      Value<bool>? containsGluten,
+      Value<bool>? containsLactose,
+      Value<bool>? containsNuts,
+      Value<bool>? containsEggs,
+      Value<bool>? containsSoy,
+      Value<bool>? containsFish,
+      Value<bool>? containsShellfish,
+      Value<String?>? category,
+      Value<String>? tags,
       Value<int>? rowid}) {
     return RecipesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
-      steps: steps ?? this.steps,
-      ingredients: ingredients ?? this.ingredients,
       image: image ?? this.image,
-      timeMin: timeMin ?? this.timeMin,
+      prepTimeMin: prepTimeMin ?? this.prepTimeMin,
+      cookTimeMin: cookTimeMin ?? this.cookTimeMin,
       servings: servings ?? this.servings,
+      difficulty: difficulty ?? this.difficulty,
+      ingredients: ingredients ?? this.ingredients,
+      steps: steps ?? this.steps,
       vegetableId: vegetableId ?? this.vegetableId,
       source: source ?? this.source,
       userId: userId ?? this.userId,
       isPublic: isPublic ?? this.isPublic,
-      difficulty: difficulty ?? this.difficulty,
+      isFavorite: isFavorite ?? this.isFavorite,
+      isVegetarian: isVegetarian ?? this.isVegetarian,
+      isVegan: isVegan ?? this.isVegan,
+      containsGluten: containsGluten ?? this.containsGluten,
+      containsLactose: containsLactose ?? this.containsLactose,
+      containsNuts: containsNuts ?? this.containsNuts,
+      containsEggs: containsEggs ?? this.containsEggs,
+      containsSoy: containsSoy ?? this.containsSoy,
+      containsFish: containsFish ?? this.containsFish,
+      containsShellfish: containsShellfish ?? this.containsShellfish,
+      category: category ?? this.category,
+      tags: tags ?? this.tags,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1044,20 +1546,26 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (steps.present) {
-      map['steps'] = Variable<String>(steps.value);
+    if (image.present) {
+      map['image'] = Variable<String>(image.value);
+    }
+    if (prepTimeMin.present) {
+      map['prep_time_min'] = Variable<int>(prepTimeMin.value);
+    }
+    if (cookTimeMin.present) {
+      map['cook_time_min'] = Variable<int>(cookTimeMin.value);
+    }
+    if (servings.present) {
+      map['servings'] = Variable<int>(servings.value);
+    }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<String>(difficulty.value);
     }
     if (ingredients.present) {
       map['ingredients'] = Variable<String>(ingredients.value);
     }
-    if (image.present) {
-      map['image'] = Variable<String>(image.value);
-    }
-    if (timeMin.present) {
-      map['time_min'] = Variable<int>(timeMin.value);
-    }
-    if (servings.present) {
-      map['servings'] = Variable<int>(servings.value);
+    if (steps.present) {
+      map['steps'] = Variable<String>(steps.value);
     }
     if (vegetableId.present) {
       map['vegetable_id'] = Variable<String>(vegetableId.value);
@@ -1071,8 +1579,41 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     if (isPublic.present) {
       map['is_public'] = Variable<bool>(isPublic.value);
     }
-    if (difficulty.present) {
-      map['difficulty'] = Variable<String>(difficulty.value);
+    if (isFavorite.present) {
+      map['is_favorite'] = Variable<bool>(isFavorite.value);
+    }
+    if (isVegetarian.present) {
+      map['is_vegetarian'] = Variable<bool>(isVegetarian.value);
+    }
+    if (isVegan.present) {
+      map['is_vegan'] = Variable<bool>(isVegan.value);
+    }
+    if (containsGluten.present) {
+      map['contains_gluten'] = Variable<bool>(containsGluten.value);
+    }
+    if (containsLactose.present) {
+      map['contains_lactose'] = Variable<bool>(containsLactose.value);
+    }
+    if (containsNuts.present) {
+      map['contains_nuts'] = Variable<bool>(containsNuts.value);
+    }
+    if (containsEggs.present) {
+      map['contains_eggs'] = Variable<bool>(containsEggs.value);
+    }
+    if (containsSoy.present) {
+      map['contains_soy'] = Variable<bool>(containsSoy.value);
+    }
+    if (containsFish.present) {
+      map['contains_fish'] = Variable<bool>(containsFish.value);
+    }
+    if (containsShellfish.present) {
+      map['contains_shellfish'] = Variable<bool>(containsShellfish.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (tags.present) {
+      map['tags'] = Variable<String>(tags.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1086,16 +1627,29 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('steps: $steps, ')
-          ..write('ingredients: $ingredients, ')
           ..write('image: $image, ')
-          ..write('timeMin: $timeMin, ')
+          ..write('prepTimeMin: $prepTimeMin, ')
+          ..write('cookTimeMin: $cookTimeMin, ')
           ..write('servings: $servings, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('ingredients: $ingredients, ')
+          ..write('steps: $steps, ')
           ..write('vegetableId: $vegetableId, ')
           ..write('source: $source, ')
           ..write('userId: $userId, ')
           ..write('isPublic: $isPublic, ')
-          ..write('difficulty: $difficulty, ')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('isVegetarian: $isVegetarian, ')
+          ..write('isVegan: $isVegan, ')
+          ..write('containsGluten: $containsGluten, ')
+          ..write('containsLactose: $containsLactose, ')
+          ..write('containsNuts: $containsNuts, ')
+          ..write('containsEggs: $containsEggs, ')
+          ..write('containsSoy: $containsSoy, ')
+          ..write('containsFish: $containsFish, ')
+          ..write('containsShellfish: $containsShellfish, ')
+          ..write('category: $category, ')
+          ..write('tags: $tags, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1729,33 +2283,59 @@ typedef $$VegetablesTableProcessedTableManager = ProcessedTableManager<
 typedef $$RecipesTableCreateCompanionBuilder = RecipesCompanion Function({
   required String id,
   required String title,
-  required String description,
-  required String steps,
-  required String ingredients,
+  Value<String> description,
   required String image,
-  required int timeMin,
+  Value<int> prepTimeMin,
+  Value<int> cookTimeMin,
   Value<int> servings,
+  Value<String?> difficulty,
+  required String ingredients,
+  required String steps,
   Value<String?> vegetableId,
   Value<String> source,
   Value<String?> userId,
   Value<bool> isPublic,
-  Value<String?> difficulty,
+  Value<bool> isFavorite,
+  Value<bool> isVegetarian,
+  Value<bool> isVegan,
+  Value<bool> containsGluten,
+  Value<bool> containsLactose,
+  Value<bool> containsNuts,
+  Value<bool> containsEggs,
+  Value<bool> containsSoy,
+  Value<bool> containsFish,
+  Value<bool> containsShellfish,
+  Value<String?> category,
+  Value<String> tags,
   Value<int> rowid,
 });
 typedef $$RecipesTableUpdateCompanionBuilder = RecipesCompanion Function({
   Value<String> id,
   Value<String> title,
   Value<String> description,
-  Value<String> steps,
-  Value<String> ingredients,
   Value<String> image,
-  Value<int> timeMin,
+  Value<int> prepTimeMin,
+  Value<int> cookTimeMin,
   Value<int> servings,
+  Value<String?> difficulty,
+  Value<String> ingredients,
+  Value<String> steps,
   Value<String?> vegetableId,
   Value<String> source,
   Value<String?> userId,
   Value<bool> isPublic,
-  Value<String?> difficulty,
+  Value<bool> isFavorite,
+  Value<bool> isVegetarian,
+  Value<bool> isVegan,
+  Value<bool> containsGluten,
+  Value<bool> containsLactose,
+  Value<bool> containsNuts,
+  Value<bool> containsEggs,
+  Value<bool> containsSoy,
+  Value<bool> containsFish,
+  Value<bool> containsShellfish,
+  Value<String?> category,
+  Value<String> tags,
   Value<int> rowid,
 });
 
@@ -1777,20 +2357,26 @@ class $$RecipesTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get steps => $composableBuilder(
-      column: $table.steps, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get prepTimeMin => $composableBuilder(
+      column: $table.prepTimeMin, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get cookTimeMin => $composableBuilder(
+      column: $table.cookTimeMin, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get ingredients => $composableBuilder(
       column: $table.ingredients, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get image => $composableBuilder(
-      column: $table.image, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get timeMin => $composableBuilder(
-      column: $table.timeMin, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get servings => $composableBuilder(
-      column: $table.servings, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get steps => $composableBuilder(
+      column: $table.steps, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => ColumnFilters(column));
@@ -1804,8 +2390,44 @@ class $$RecipesTableFilterComposer
   ColumnFilters<bool> get isPublic => $composableBuilder(
       column: $table.isPublic, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get difficulty => $composableBuilder(
-      column: $table.difficulty, builder: (column) => ColumnFilters(column));
+  ColumnFilters<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isVegetarian => $composableBuilder(
+      column: $table.isVegetarian, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isVegan => $composableBuilder(
+      column: $table.isVegan, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsGluten => $composableBuilder(
+      column: $table.containsGluten,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsLactose => $composableBuilder(
+      column: $table.containsLactose,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsNuts => $composableBuilder(
+      column: $table.containsNuts, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsEggs => $composableBuilder(
+      column: $table.containsEggs, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsSoy => $composableBuilder(
+      column: $table.containsSoy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsFish => $composableBuilder(
+      column: $table.containsFish, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get containsShellfish => $composableBuilder(
+      column: $table.containsShellfish,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tags => $composableBuilder(
+      column: $table.tags, builder: (column) => ColumnFilters(column));
 }
 
 class $$RecipesTableOrderingComposer
@@ -1826,20 +2448,26 @@ class $$RecipesTableOrderingComposer
   ColumnOrderings<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get steps => $composableBuilder(
-      column: $table.steps, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get prepTimeMin => $composableBuilder(
+      column: $table.prepTimeMin, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get cookTimeMin => $composableBuilder(
+      column: $table.cookTimeMin, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get servings => $composableBuilder(
+      column: $table.servings, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get ingredients => $composableBuilder(
       column: $table.ingredients, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get image => $composableBuilder(
-      column: $table.image, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get timeMin => $composableBuilder(
-      column: $table.timeMin, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get servings => $composableBuilder(
-      column: $table.servings, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get steps => $composableBuilder(
+      column: $table.steps, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => ColumnOrderings(column));
@@ -1853,8 +2481,48 @@ class $$RecipesTableOrderingComposer
   ColumnOrderings<bool> get isPublic => $composableBuilder(
       column: $table.isPublic, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get difficulty => $composableBuilder(
-      column: $table.difficulty, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isVegetarian => $composableBuilder(
+      column: $table.isVegetarian,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isVegan => $composableBuilder(
+      column: $table.isVegan, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsGluten => $composableBuilder(
+      column: $table.containsGluten,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsLactose => $composableBuilder(
+      column: $table.containsLactose,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsNuts => $composableBuilder(
+      column: $table.containsNuts,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsEggs => $composableBuilder(
+      column: $table.containsEggs,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsSoy => $composableBuilder(
+      column: $table.containsSoy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsFish => $composableBuilder(
+      column: $table.containsFish,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get containsShellfish => $composableBuilder(
+      column: $table.containsShellfish,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get category => $composableBuilder(
+      column: $table.category, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tags => $composableBuilder(
+      column: $table.tags, builder: (column) => ColumnOrderings(column));
 }
 
 class $$RecipesTableAnnotationComposer
@@ -1875,20 +2543,26 @@ class $$RecipesTableAnnotationComposer
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<String> get steps =>
-      $composableBuilder(column: $table.steps, builder: (column) => column);
+  GeneratedColumn<String> get image =>
+      $composableBuilder(column: $table.image, builder: (column) => column);
+
+  GeneratedColumn<int> get prepTimeMin => $composableBuilder(
+      column: $table.prepTimeMin, builder: (column) => column);
+
+  GeneratedColumn<int> get cookTimeMin => $composableBuilder(
+      column: $table.cookTimeMin, builder: (column) => column);
+
+  GeneratedColumn<int> get servings =>
+      $composableBuilder(column: $table.servings, builder: (column) => column);
+
+  GeneratedColumn<String> get difficulty => $composableBuilder(
+      column: $table.difficulty, builder: (column) => column);
 
   GeneratedColumn<String> get ingredients => $composableBuilder(
       column: $table.ingredients, builder: (column) => column);
 
-  GeneratedColumn<String> get image =>
-      $composableBuilder(column: $table.image, builder: (column) => column);
-
-  GeneratedColumn<int> get timeMin =>
-      $composableBuilder(column: $table.timeMin, builder: (column) => column);
-
-  GeneratedColumn<int> get servings =>
-      $composableBuilder(column: $table.servings, builder: (column) => column);
+  GeneratedColumn<String> get steps =>
+      $composableBuilder(column: $table.steps, builder: (column) => column);
 
   GeneratedColumn<String> get vegetableId => $composableBuilder(
       column: $table.vegetableId, builder: (column) => column);
@@ -1902,8 +2576,41 @@ class $$RecipesTableAnnotationComposer
   GeneratedColumn<bool> get isPublic =>
       $composableBuilder(column: $table.isPublic, builder: (column) => column);
 
-  GeneratedColumn<String> get difficulty => $composableBuilder(
-      column: $table.difficulty, builder: (column) => column);
+  GeneratedColumn<bool> get isFavorite => $composableBuilder(
+      column: $table.isFavorite, builder: (column) => column);
+
+  GeneratedColumn<bool> get isVegetarian => $composableBuilder(
+      column: $table.isVegetarian, builder: (column) => column);
+
+  GeneratedColumn<bool> get isVegan =>
+      $composableBuilder(column: $table.isVegan, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsGluten => $composableBuilder(
+      column: $table.containsGluten, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsLactose => $composableBuilder(
+      column: $table.containsLactose, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsNuts => $composableBuilder(
+      column: $table.containsNuts, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsEggs => $composableBuilder(
+      column: $table.containsEggs, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsSoy => $composableBuilder(
+      column: $table.containsSoy, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsFish => $composableBuilder(
+      column: $table.containsFish, builder: (column) => column);
+
+  GeneratedColumn<bool> get containsShellfish => $composableBuilder(
+      column: $table.containsShellfish, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get tags =>
+      $composableBuilder(column: $table.tags, builder: (column) => column);
 }
 
 class $$RecipesTableTableManager extends RootTableManager<
@@ -1932,64 +2639,116 @@ class $$RecipesTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<String> description = const Value.absent(),
-            Value<String> steps = const Value.absent(),
-            Value<String> ingredients = const Value.absent(),
             Value<String> image = const Value.absent(),
-            Value<int> timeMin = const Value.absent(),
+            Value<int> prepTimeMin = const Value.absent(),
+            Value<int> cookTimeMin = const Value.absent(),
             Value<int> servings = const Value.absent(),
+            Value<String?> difficulty = const Value.absent(),
+            Value<String> ingredients = const Value.absent(),
+            Value<String> steps = const Value.absent(),
             Value<String?> vegetableId = const Value.absent(),
             Value<String> source = const Value.absent(),
             Value<String?> userId = const Value.absent(),
             Value<bool> isPublic = const Value.absent(),
-            Value<String?> difficulty = const Value.absent(),
+            Value<bool> isFavorite = const Value.absent(),
+            Value<bool> isVegetarian = const Value.absent(),
+            Value<bool> isVegan = const Value.absent(),
+            Value<bool> containsGluten = const Value.absent(),
+            Value<bool> containsLactose = const Value.absent(),
+            Value<bool> containsNuts = const Value.absent(),
+            Value<bool> containsEggs = const Value.absent(),
+            Value<bool> containsSoy = const Value.absent(),
+            Value<bool> containsFish = const Value.absent(),
+            Value<bool> containsShellfish = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<String> tags = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               RecipesCompanion(
             id: id,
             title: title,
             description: description,
-            steps: steps,
-            ingredients: ingredients,
             image: image,
-            timeMin: timeMin,
+            prepTimeMin: prepTimeMin,
+            cookTimeMin: cookTimeMin,
             servings: servings,
+            difficulty: difficulty,
+            ingredients: ingredients,
+            steps: steps,
             vegetableId: vegetableId,
             source: source,
             userId: userId,
             isPublic: isPublic,
-            difficulty: difficulty,
+            isFavorite: isFavorite,
+            isVegetarian: isVegetarian,
+            isVegan: isVegan,
+            containsGluten: containsGluten,
+            containsLactose: containsLactose,
+            containsNuts: containsNuts,
+            containsEggs: containsEggs,
+            containsSoy: containsSoy,
+            containsFish: containsFish,
+            containsShellfish: containsShellfish,
+            category: category,
+            tags: tags,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             required String id,
             required String title,
-            required String description,
-            required String steps,
-            required String ingredients,
+            Value<String> description = const Value.absent(),
             required String image,
-            required int timeMin,
+            Value<int> prepTimeMin = const Value.absent(),
+            Value<int> cookTimeMin = const Value.absent(),
             Value<int> servings = const Value.absent(),
+            Value<String?> difficulty = const Value.absent(),
+            required String ingredients,
+            required String steps,
             Value<String?> vegetableId = const Value.absent(),
             Value<String> source = const Value.absent(),
             Value<String?> userId = const Value.absent(),
             Value<bool> isPublic = const Value.absent(),
-            Value<String?> difficulty = const Value.absent(),
+            Value<bool> isFavorite = const Value.absent(),
+            Value<bool> isVegetarian = const Value.absent(),
+            Value<bool> isVegan = const Value.absent(),
+            Value<bool> containsGluten = const Value.absent(),
+            Value<bool> containsLactose = const Value.absent(),
+            Value<bool> containsNuts = const Value.absent(),
+            Value<bool> containsEggs = const Value.absent(),
+            Value<bool> containsSoy = const Value.absent(),
+            Value<bool> containsFish = const Value.absent(),
+            Value<bool> containsShellfish = const Value.absent(),
+            Value<String?> category = const Value.absent(),
+            Value<String> tags = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               RecipesCompanion.insert(
             id: id,
             title: title,
             description: description,
-            steps: steps,
-            ingredients: ingredients,
             image: image,
-            timeMin: timeMin,
+            prepTimeMin: prepTimeMin,
+            cookTimeMin: cookTimeMin,
             servings: servings,
+            difficulty: difficulty,
+            ingredients: ingredients,
+            steps: steps,
             vegetableId: vegetableId,
             source: source,
             userId: userId,
             isPublic: isPublic,
-            difficulty: difficulty,
+            isFavorite: isFavorite,
+            isVegetarian: isVegetarian,
+            isVegan: isVegan,
+            containsGluten: containsGluten,
+            containsLactose: containsLactose,
+            containsNuts: containsNuts,
+            containsEggs: containsEggs,
+            containsSoy: containsSoy,
+            containsFish: containsFish,
+            containsShellfish: containsShellfish,
+            category: category,
+            tags: tags,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

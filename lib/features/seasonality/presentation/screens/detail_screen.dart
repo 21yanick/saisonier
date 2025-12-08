@@ -95,6 +95,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                         child: CachedNetworkImage(
                           imageUrl: '${AppConfig.pocketBaseUrl}/api/files/vegetables/${vegetable.id}/${vegetable.image}',
                           fit: BoxFit.cover,
+                          memCacheWidth: 800,
+                          memCacheHeight: 600,
+                          fadeInDuration: const Duration(milliseconds: 150),
                         ),
                       ),
                       const DecoratedBox(
@@ -182,6 +185,10 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                                             child: CachedNetworkImage(
                                               imageUrl: '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
                                               fit: BoxFit.cover,
+                                              memCacheWidth: 400,
+                                              memCacheHeight: 300,
+                                              fadeInDuration: const Duration(milliseconds: 150),
+                                              placeholder: (_, __) => Container(color: Colors.grey[200]),
                                               errorWidget: (_,__,___) => Container(color: Colors.grey[300]),
                                             ),
                                           ),

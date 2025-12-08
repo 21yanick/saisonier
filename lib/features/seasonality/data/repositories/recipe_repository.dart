@@ -118,10 +118,23 @@ class RecipeRepository {
     required String title,
     required List<Map<String, dynamic>> ingredients,
     required List<String> steps,
-    int timeMin = 30,
+    String? description,
+    int prepTimeMin = 0,
+    int cookTimeMin = 30,
     int servings = 4,
     String? difficulty,
+    String? category,
     String? vegetableId,
+    bool isVegetarian = false,
+    bool isVegan = false,
+    bool containsGluten = false,
+    bool containsLactose = false,
+    bool containsNuts = false,
+    bool containsEggs = false,
+    bool containsSoy = false,
+    bool containsFish = false,
+    bool containsShellfish = false,
+    List<String>? tags,
     File? imageFile,
   }) async {
     try {
@@ -131,13 +144,26 @@ class RecipeRepository {
         'source': 'user',
         'user_id': userId,
         'is_public': false,
-        'time_min': timeMin,
+        'prep_time_min': prepTimeMin,
+        'cook_time_min': cookTimeMin,
         'servings': servings,
         'ingredients': jsonEncode(ingredients),
         'steps': jsonEncode(steps),
+        'is_vegetarian': isVegetarian,
+        'is_vegan': isVegan,
+        'contains_gluten': containsGluten,
+        'contains_lactose': containsLactose,
+        'contains_nuts': containsNuts,
+        'contains_eggs': containsEggs,
+        'contains_soy': containsSoy,
+        'contains_fish': containsFish,
+        'contains_shellfish': containsShellfish,
       };
+      if (description != null) body['description'] = description;
       if (difficulty != null) body['difficulty'] = difficulty;
+      if (category != null) body['category'] = category;
       if (vegetableId != null) body['vegetable_id'] = vegetableId;
+      if (tags != null) body['tags'] = jsonEncode(tags);
 
       // Create with or without image
       RecordModel record;
@@ -174,22 +200,48 @@ class RecipeRepository {
     required String title,
     required List<Map<String, dynamic>> ingredients,
     required List<String> steps,
-    int timeMin = 30,
+    String? description,
+    int prepTimeMin = 0,
+    int cookTimeMin = 30,
     int servings = 4,
     String? difficulty,
+    String? category,
     String? vegetableId,
+    bool isVegetarian = false,
+    bool isVegan = false,
+    bool containsGluten = false,
+    bool containsLactose = false,
+    bool containsNuts = false,
+    bool containsEggs = false,
+    bool containsSoy = false,
+    bool containsFish = false,
+    bool containsShellfish = false,
+    List<String>? tags,
     File? imageFile,
   }) async {
     try {
       final body = <String, dynamic>{
         'title': title,
-        'time_min': timeMin,
+        'prep_time_min': prepTimeMin,
+        'cook_time_min': cookTimeMin,
         'servings': servings,
         'ingredients': jsonEncode(ingredients),
         'steps': jsonEncode(steps),
+        'is_vegetarian': isVegetarian,
+        'is_vegan': isVegan,
+        'contains_gluten': containsGluten,
+        'contains_lactose': containsLactose,
+        'contains_nuts': containsNuts,
+        'contains_eggs': containsEggs,
+        'contains_soy': containsSoy,
+        'contains_fish': containsFish,
+        'contains_shellfish': containsShellfish,
       };
+      if (description != null) body['description'] = description;
       if (difficulty != null) body['difficulty'] = difficulty;
+      if (category != null) body['category'] = category;
       if (vegetableId != null) body['vegetable_id'] = vegetableId;
+      if (tags != null) body['tags'] = jsonEncode(tags);
 
       RecordModel record;
       if (imageFile != null) {
@@ -234,18 +286,67 @@ class RecipeRepository {
   RecipesCompanion _dtoToCompanion(RecipeDto dto) {
     return RecipesCompanion(
       id: Value(dto.id),
-      vegetableId: Value(dto.vegetableId ?? ''),
       title: Value(dto.title),
-      description: const Value(''),
+      description: Value(dto.description),
       image: Value(dto.image),
-      timeMin: Value(dto.timeMin),
+
+      // Zeiten
+      prepTimeMin: Value(dto.prepTimeMin),
+      cookTimeMin: Value(dto.cookTimeMin),
+
+      // Portionen & Schwierigkeit
       servings: Value(dto.servings),
-      steps: Value(dto.steps is String ? dto.steps as String : jsonEncode(dto.steps)),
-      ingredients: Value(dto.ingredients is String ? dto.ingredients as String : jsonEncode(dto.ingredients)),
+      difficulty: Value(dto.difficulty),
+      category: Value(dto.category),
+
+      // Inhalte
+      ingredients: Value(dto.ingredients is String
+          ? dto.ingredients as String
+          : jsonEncode(dto.ingredients)),
+      steps: Value(dto.steps is String
+          ? dto.steps as String
+          : jsonEncode(dto.steps)),
+      tags: Value(dto.tags),
+
+      // Beziehungen
+      vegetableId: Value(dto.vegetableId),
+
+      // Ownership
       source: Value(dto.source),
       userId: Value(dto.userId),
       isPublic: Value(dto.isPublic),
-      difficulty: Value(dto.difficulty),
+
+      // Ernährung
+      isVegetarian: Value(dto.isVegetarian),
+      isVegan: Value(dto.isVegan),
+
+      // Allergene
+      containsGluten: Value(dto.containsGluten),
+      containsLactose: Value(dto.containsLactose),
+      containsNuts: Value(dto.containsNuts),
+      containsEggs: Value(dto.containsEggs),
+      containsSoy: Value(dto.containsSoy),
+      containsFish: Value(dto.containsFish),
+      containsShellfish: Value(dto.containsShellfish),
+
+      // isFavorite bleibt lokal (nicht vom Server überschreiben)
     );
+  }
+
+  /// Toggle favorite status for a recipe (local only)
+  Future<void> toggleFavorite(String recipeId) async {
+    final recipe = await getRecipe(recipeId);
+    if (recipe == null) return;
+
+    await (_db.update(_db.recipes)..where((t) => t.id.equals(recipeId)))
+        .write(RecipesCompanion(isFavorite: Value(!recipe.isFavorite)));
+  }
+
+  /// Get all favorite recipes
+  Stream<List<Recipe>> watchFavorites() {
+    return (_db.select(_db.recipes)
+          ..where((t) => t.isFavorite.equals(true))
+          ..orderBy([(t) => OrderingTerm.asc(t.title)]))
+        .watch();
   }
 }

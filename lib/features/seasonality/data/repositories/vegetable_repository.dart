@@ -5,10 +5,14 @@ import 'package:drift/drift.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/network/pocketbase_provider.dart';
+import '../../../profile/domain/models/user_profile.dart';
 
 import '../remote/vegetable_dto.dart';
 
 part 'vegetable_repository.g.dart';
+
+/// Types die im Saison-Feed angezeigt werden sollen
+const kFeedAllowedTypes = ['vegetable', 'fruit', 'salad', 'herb'];
 
 @riverpod
 VegetableRepository vegetableRepository(Ref ref) {
@@ -70,6 +74,40 @@ class VegetableRepository {
         if (tierComp != 0) return tierComp;
         return a.name.compareTo(b.name);
       });
+
+      return filtered;
+    });
+  }
+
+  /// Get seasonal vegetables filtered by type and user preferences
+  ///
+  /// [month] - The month to filter by (1-12)
+  /// [allowedTypes] - List of types to include (e.g., ['vegetable', 'fruit', 'salad', 'herb'])
+  /// [profile] - Optional user profile for dislikes filtering
+  Stream<List<Vegetable>> watchSeasonalFiltered(
+    int month, {
+    List<String> allowedTypes = kFeedAllowedTypes,
+    UserProfile? profile,
+  }) {
+    return watchSeasonal(month).map((items) {
+      var filtered = items.where((v) {
+        // 1. Type filter - nur erlaubte Types
+        if (!allowedTypes.contains(v.type)) {
+          return false;
+        }
+
+        // 2. Dislikes filter - User mag das nicht
+        if (profile != null && profile.dislikes.isNotEmpty) {
+          final nameLower = v.name.toLowerCase();
+          for (final dislike in profile.dislikes) {
+            if (nameLower.contains(dislike.toLowerCase())) {
+              return false;
+            }
+          }
+        }
+
+        return true;
+      }).toList();
 
       return filtered;
     });

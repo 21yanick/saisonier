@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -34,16 +35,22 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
     final recipesAsync = ref.watch(allRecipesProvider);
     final userId = userAsync.valueOrNull?.id;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rezepte'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_outline),
-            onPressed: () => context.push('/profile'),
-          ),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark, // Dunkle Icons auf hellem Hintergrund
+        statusBarBrightness: Brightness.light,
       ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Rezepte'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person_outline),
+              onPressed: () => context.push('/profile'),
+            ),
+          ],
+        ),
       body: Column(
         children: [
           // Segmented Control
@@ -100,6 +107,7 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
               ),
             )
           : null,
+      ),
     );
   }
 
@@ -293,6 +301,9 @@ class _RecipeListTile extends StatelessWidget {
                       imageUrl:
                           '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
                       fit: BoxFit.cover,
+                      memCacheWidth: 200,
+                      memCacheHeight: 200,
+                      fadeInDuration: const Duration(milliseconds: 100),
                       placeholder: (_, __) => Container(
                         color: Colors.grey[200],
                         child: const Icon(Icons.restaurant, color: Colors.grey),

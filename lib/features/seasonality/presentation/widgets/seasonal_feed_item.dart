@@ -29,8 +29,11 @@ class SeasonalFeedItem extends StatelessWidget {
                child: CachedNetworkImage(
                   imageUrl: '${AppConfig.pocketBaseUrl}/api/files/vegetables/${vegetable.id}/${vegetable.image}',
                   fit: BoxFit.cover,
-                  // Use larger cache for full screen images
-                  memCacheWidth: 1080, 
+                  // Optimierte Cache-Dimensionen für Full-Screen
+                  memCacheWidth: 1080,
+                  memCacheHeight: 1920,
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  fadeOutDuration: const Duration(milliseconds: 150),
                   placeholder: (context, url) => Container(color: Colors.grey[900]),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey[900],

@@ -88,6 +88,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                       CachedNetworkImage(
                         imageUrl: '${AppConfig.pocketBaseUrl}/api/files/recipes/${recipe.id}/${recipe.image}',
                         fit: BoxFit.cover,
+                        memCacheWidth: 800,
+                        memCacheHeight: 500,
+                        fadeInDuration: const Duration(milliseconds: 150),
                       ),
                       const DecoratedBox(
                         decoration: BoxDecoration(

@@ -6,7 +6,7 @@ part of 'weekplan_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$weekPlannedMealsHash() => r'25e962636d879649a366495ac4a2c62a1ece7ae2';
+String _$weekPlannedMealsHash() => r'cdc92237189877e9246f7cdc4005d9b9de7084e1';
 
 /// Provider for planned meals of the selected week
 ///
@@ -45,12 +45,9 @@ final selectedWeekStartProvider =
 
 typedef _$SelectedWeekStart = AutoDisposeNotifier<DateTime>;
 String _$weekplanControllerHash() =>
-    r'f5863ea9788a170219736d2cf54a1c0d7d990f51';
+    r'68d4b91c9b325cb9b4d5fc6bf3e5d2da4fede964';
 
 /// Controller for week plan actions
-/// Note: We don't use AsyncLoading/AsyncError state here to avoid
-/// "Future already completed" issues with rapid user interactions.
-/// The methods simply return success/failure as bool.
 ///
 /// Copied from [WeekplanController].
 @ProviderFor(WeekplanController)

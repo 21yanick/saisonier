@@ -19,16 +19,48 @@ class _OnboardingWizardScreenState
     extends ConsumerState<OnboardingWizardScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _initialized = false;
 
   // Form State
   int _householdSize = 1;
   int _childrenCount = 0;
-  final List<int> _childrenAges = [];
-  final List<Allergen> _allergens = [];
+  List<int> _childrenAges = [];
+  List<Allergen> _allergens = [];
+  List<String> _dislikes = []; // Preserve existing dislikes
 
   DietType _diet = DietType.omnivore;
   CookingSkill _skill = CookingSkill.beginner;
   int _timeMin = 30;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load existing profile data after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadExistingProfile();
+    });
+  }
+
+  void _loadExistingProfile() {
+    if (_initialized) return;
+
+    final profileAsync = ref.read(userProfileControllerProvider);
+    final profile = profileAsync.valueOrNull;
+
+    if (profile != null) {
+      setState(() {
+        _householdSize = profile.householdSize;
+        _childrenCount = profile.childrenCount;
+        _childrenAges = List<int>.from(profile.childrenAges ?? []);
+        _allergens = List<Allergen>.from(profile.allergens);
+        _dislikes = List<String>.from(profile.dislikes);
+        _diet = profile.diet;
+        _skill = profile.skill;
+        _timeMin = profile.maxCookingTimeMin;
+        _initialized = true;
+      });
+    }
+  }
 
   void _nextPage() {
     if (_currentPage < 2) {
@@ -46,16 +78,22 @@ class _OnboardingWizardScreenState
     final user = userState.value;
     if (user == null) return;
 
+    // Get existing profile to preserve fields not shown in wizard (e.g., dislikes, bring)
+    final existingProfile = ref.read(userProfileControllerProvider).valueOrNull;
+
     final profile = UserProfile(
       userId: user.id,
       householdSize: _householdSize,
       childrenCount: _childrenCount,
       childrenAges: _childrenAges,
       allergens: _allergens,
-
+      dislikes: _dislikes, // Preserve dislikes
       diet: _diet,
       skill: _skill,
       maxCookingTimeMin: _timeMin,
+      // Preserve Bring connection
+      bringEmail: existingProfile?.bringEmail,
+      bringListUuid: existingProfile?.bringListUuid,
     );
 
     await ref
