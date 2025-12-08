@@ -306,7 +306,9 @@ class RecipeRepository {
       steps: Value(dto.steps is String
           ? dto.steps as String
           : jsonEncode(dto.steps)),
-      tags: Value(dto.tags),
+      tags: Value(dto.tags is String
+          ? dto.tags as String
+          : jsonEncode(dto.tags)),
 
       // Beziehungen
       vegetableId: Value(dto.vegetableId),

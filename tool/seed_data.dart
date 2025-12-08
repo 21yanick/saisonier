@@ -385,7 +385,7 @@ Future<void> main() async {
 
       // Tier aus JSON übernehmen, falls vorhanden (vegetables_ch.json hat tier)
       // Fallback auf 3 wenn nicht definiert
-      int tier = item['tier'] ?? 3;
+      final tier = item['tier'] ?? 3;
 
       final body = {
         "name": name,

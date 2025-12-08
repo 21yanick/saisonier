@@ -19,7 +19,7 @@ _$RecipeDtoImpl _$$RecipeDtoImplFromJson(Map<String, dynamic> json) =>
       category: json['category'] as String?,
       ingredients: json['ingredients'] as List<dynamic>? ?? const [],
       steps: json['steps'] as List<dynamic>? ?? const [],
-      tags: json['tags'] as String? ?? '[]',
+      tags: json['tags'] as List<dynamic>? ?? const [],
       vegetableId: json['vegetable_id'] as String?,
       source: json['source'] as String? ?? 'curated',
       userId: json['user_id'] as String?,

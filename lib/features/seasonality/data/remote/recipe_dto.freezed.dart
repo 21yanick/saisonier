@@ -41,8 +41,8 @@ mixin _$RecipeDto {
   List<dynamic> get steps =>
       throw _privateConstructorUsedError; // JSON array of strings
 // === Tags ===
-  String get tags =>
-      throw _privateConstructorUsedError; // JSON array: ["schnell", "günstig"]
+  List<dynamic> get tags =>
+      throw _privateConstructorUsedError; // Array: ["schnell", "günstig"]
 // === Beziehungen ===
   @JsonKey(name: 'vegetable_id')
   String? get vegetableId =>
@@ -99,7 +99,7 @@ abstract class $RecipeDtoCopyWith<$Res> {
       String? category,
       List<dynamic> ingredients,
       List<dynamic> steps,
-      String tags,
+      List<dynamic> tags,
       @JsonKey(name: 'vegetable_id') String? vegetableId,
       String source,
       @JsonKey(name: 'user_id') String? userId,
@@ -204,7 +204,7 @@ class _$RecipeDtoCopyWithImpl<$Res, $Val extends RecipeDto>
       tags: null == tags
           ? _value.tags
           : tags // ignore: cast_nullable_to_non_nullable
-              as String,
+              as List<dynamic>,
       vegetableId: freezed == vegetableId
           ? _value.vegetableId
           : vegetableId // ignore: cast_nullable_to_non_nullable
@@ -281,7 +281,7 @@ abstract class _$$RecipeDtoImplCopyWith<$Res>
       String? category,
       List<dynamic> ingredients,
       List<dynamic> steps,
-      String tags,
+      List<dynamic> tags,
       @JsonKey(name: 'vegetable_id') String? vegetableId,
       String source,
       @JsonKey(name: 'user_id') String? userId,
@@ -382,9 +382,9 @@ class __$$RecipeDtoImplCopyWithImpl<$Res>
           : steps // ignore: cast_nullable_to_non_nullable
               as List<dynamic>,
       tags: null == tags
-          ? _value.tags
+          ? _value._tags
           : tags // ignore: cast_nullable_to_non_nullable
-              as String,
+              as List<dynamic>,
       vegetableId: freezed == vegetableId
           ? _value.vegetableId
           : vegetableId // ignore: cast_nullable_to_non_nullable
@@ -456,7 +456,7 @@ class _$RecipeDtoImpl implements _RecipeDto {
       this.category,
       final List<dynamic> ingredients = const [],
       final List<dynamic> steps = const [],
-      this.tags = '[]',
+      final List<dynamic> tags = const [],
       @JsonKey(name: 'vegetable_id') this.vegetableId,
       this.source = 'curated',
       @JsonKey(name: 'user_id') this.userId,
@@ -471,7 +471,8 @@ class _$RecipeDtoImpl implements _RecipeDto {
       @JsonKey(name: 'contains_fish') this.containsFish = false,
       @JsonKey(name: 'contains_shellfish') this.containsShellfish = false})
       : _ingredients = ingredients,
-        _steps = steps;
+        _steps = steps,
+        _tags = tags;
 
   factory _$RecipeDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$RecipeDtoImplFromJson(json);
@@ -528,10 +529,18 @@ class _$RecipeDtoImpl implements _RecipeDto {
 
 // JSON array of strings
 // === Tags ===
+  final List<dynamic> _tags;
+// JSON array of strings
+// === Tags ===
   @override
   @JsonKey()
-  final String tags;
-// JSON array: ["schnell", "günstig"]
+  List<dynamic> get tags {
+    if (_tags is EqualUnmodifiableListView) return _tags;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tags);
+  }
+
+// Array: ["schnell", "günstig"]
 // === Beziehungen ===
   @override
   @JsonKey(name: 'vegetable_id')
@@ -605,7 +614,7 @@ class _$RecipeDtoImpl implements _RecipeDto {
             const DeepCollectionEquality()
                 .equals(other._ingredients, _ingredients) &&
             const DeepCollectionEquality().equals(other._steps, _steps) &&
-            (identical(other.tags, tags) || other.tags == tags) &&
+            const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.vegetableId, vegetableId) ||
                 other.vegetableId == vegetableId) &&
             (identical(other.source, source) || other.source == source) &&
@@ -646,7 +655,7 @@ class _$RecipeDtoImpl implements _RecipeDto {
         category,
         const DeepCollectionEquality().hash(_ingredients),
         const DeepCollectionEquality().hash(_steps),
-        tags,
+        const DeepCollectionEquality().hash(_tags),
         vegetableId,
         source,
         userId,
@@ -691,7 +700,7 @@ abstract class _RecipeDto implements RecipeDto {
           final String? category,
           final List<dynamic> ingredients,
           final List<dynamic> steps,
-          final String tags,
+          final List<dynamic> tags,
           @JsonKey(name: 'vegetable_id') final String? vegetableId,
           final String source,
           @JsonKey(name: 'user_id') final String? userId,
@@ -738,7 +747,7 @@ abstract class _RecipeDto implements RecipeDto {
   List<dynamic> get steps; // JSON array of strings
 // === Tags ===
   @override
-  String get tags; // JSON array: ["schnell", "günstig"]
+  List<dynamic> get tags; // Array: ["schnell", "günstig"]
 // === Beziehungen ===
   @override
   @JsonKey(name: 'vegetable_id')

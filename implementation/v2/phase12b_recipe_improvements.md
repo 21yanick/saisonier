@@ -429,8 +429,8 @@ class RecipeDto with _$RecipeDto {
     String? difficulty,
     String? category,
     @Default([]) List<dynamic> ingredients,
-    @Default([]) List<String> steps,
-    @Default('[]') String tags,
+    @Default([]) List<dynamic> steps,
+    @Default([]) List<dynamic> tags,  // PocketBase returns array, not string
 
     // Beziehungen
     @JsonKey(name: 'vegetable_id') String? vegetableId,

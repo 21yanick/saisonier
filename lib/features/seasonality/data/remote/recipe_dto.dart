@@ -25,7 +25,7 @@ class RecipeDto with _$RecipeDto {
     @Default([]) List<dynamic> steps, // JSON array of strings
 
     // === Tags ===
-    @Default('[]') String tags, // JSON array: ["schnell", "günstig"]
+    @Default([]) List<dynamic> tags, // Array: ["schnell", "günstig"]
 
     // === Beziehungen ===
     @JsonKey(name: 'vegetable_id') String? vegetableId,

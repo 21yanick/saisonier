@@ -90,7 +90,7 @@ class VegetableRepository {
     UserProfile? profile,
   }) {
     return watchSeasonal(month).map((items) {
-      var filtered = items.where((v) {
+      final filtered = items.where((v) {
         // 1. Type filter - nur erlaubte Types
         if (!allowedTypes.contains(v.type)) {
           return false;
