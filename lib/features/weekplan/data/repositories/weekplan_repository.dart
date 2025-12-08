@@ -136,6 +136,11 @@ class WeekplanRepository {
   }
 
   /// Sync planned meals from PocketBase
+  ///
+  /// This performs a full sync for the given user:
+  /// 1. Fetches all planned meals from PocketBase for this user
+  /// 2. Upserts them into local DB
+  /// 3. Deletes local meals that no longer exist in PocketBase
   Future<void> sync(String userId) async {
     try {
       final records = await _pb.collection('planned_meals').getFullList(
@@ -145,14 +150,32 @@ class WeekplanRepository {
       final dtos =
           records.map((r) => PlannedMealDto.fromJson(r.toJson())).toList();
 
-      await _db.batch((batch) {
-        batch.insertAllOnConflictUpdate(
-          _db.plannedMeals,
-          dtos.map((dto) => _dtoToCompanion(dto)).toList(),
-        );
+      // Collect all IDs from PocketBase response
+      final pbIds = dtos.map((dto) => dto.id).toSet();
+
+      await _db.transaction(() async {
+        // 1. Upsert all records from PocketBase
+        await _db.batch((batch) {
+          batch.insertAllOnConflictUpdate(
+            _db.plannedMeals,
+            dtos.map((dto) => _dtoToCompanion(dto)).toList(),
+          );
+        });
+
+        // 2. Delete local records for this user that no longer exist in PocketBase
+        if (pbIds.isNotEmpty) {
+          await (_db.delete(_db.plannedMeals)
+                ..where((t) => t.userId.equals(userId) & t.id.isNotIn(pbIds)))
+              .go();
+        } else {
+          // PocketBase returned empty for this user → clear all their local meals
+          await (_db.delete(_db.plannedMeals)
+                ..where((t) => t.userId.equals(userId)))
+              .go();
+        }
       });
     } catch (_) {
-      // Fail silently for offline
+      // Fail silently for offline - keep existing local data
     }
   }
 
