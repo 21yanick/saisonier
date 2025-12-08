@@ -28,6 +28,7 @@ ios/Flutter/flutter_export_environment.sh
 
 # Backend
 backend/pb_data/
+backend/seed_images/*
 
 # Environment Variables
 .env*
