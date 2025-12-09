@@ -224,6 +224,331 @@ function getInspirationInstructions(inspiration) {
   return instructions[inspiration] || '';
 }
 
+// === SMART WEEKPLAN HELPER FUNCTIONS ===
+
+// Get IDs of vegetables that are in season for a given month
+async function getSeasonalVegetableIds(month) {
+  try {
+    const vegetables = await pb.collection('vegetables').getFullList({
+      filter: `months ~ "${month}"`,
+    });
+    return vegetables.map(v => v.id);
+  } catch (e) {
+    console.error('Failed to get seasonal vegetable IDs:', e);
+    return [];
+  }
+}
+
+// Get IDs of recipes the user has favorited
+// TODO: Expand when favorites system is fully implemented
+async function getUserFavoriteRecipeIds(userId) {
+  try {
+    const recipes = await pb.collection('recipes').getFullList({
+      filter: `is_favorite = true`,
+    });
+    return recipes.map(r => r.id);
+  } catch (e) {
+    return [];
+  }
+}
+
+// Filter and score recipes based on user profile and request filters
+async function getEligibleRecipes(userId, userProfile, filters = {}) {
+  // 1. Load all recipes (curated + user's own)
+  let recipes = await pb.collection('recipes').getFullList({
+    filter: `source = "curated" || user_id = "${userId}"`,
+  });
+
+  console.log(`Loaded ${recipes.length} total recipes`);
+
+  // 2. Hard-Filter: Allergens (NEVER include recipes with user's allergens)
+  const allergens = userProfile?.allergens || [];
+  if (allergens.length > 0) {
+    recipes = recipes.filter(r => {
+      for (const allergen of allergens) {
+        const fieldName = `contains_${allergen}`;
+        if (r[fieldName] === true) return false;
+      }
+      return true;
+    });
+    console.log(`After allergen filter: ${recipes.length} recipes`);
+  }
+
+  // 3. Hard-Filter: Diet (vegetarian/vegan)
+  if (filters.forceVegan || userProfile?.diet === 'vegan') {
+    recipes = recipes.filter(r => r.is_vegan === true);
+    console.log(`After vegan filter: ${recipes.length} recipes`);
+  } else if (filters.forceVegetarian || userProfile?.diet === 'vegetarian') {
+    recipes = recipes.filter(r => r.is_vegetarian === true);
+    console.log(`After vegetarian filter: ${recipes.length} recipes`);
+  }
+
+  // 4. Hard-Filter: Max cooking time
+  const maxTime = filters.forceQuick ? 30 : (userProfile?.max_cooking_time_min || 90);
+  recipes = recipes.filter(r => {
+    const totalTime = (r.prep_time_min || 0) + (r.cook_time_min || 0);
+    return totalTime <= maxTime;
+  });
+  console.log(`After time filter (max ${maxTime}min): ${recipes.length} recipes`);
+
+  // 5. Hard-Filter: Skill level
+  const skillOrder = { 'easy': 1, 'medium': 2, 'hard': 3 };
+  const userSkillLevel = skillOrder[userProfile?.skill] || 3; // Default to hard (no restriction)
+  recipes = recipes.filter(r => {
+    const recipeSkill = skillOrder[r.difficulty] || 1;
+    return recipeSkill <= userSkillLevel;
+  });
+  console.log(`After skill filter: ${recipes.length} recipes`);
+
+  // 6. Soft-Scoring: Add metadata for prompt
+  const currentMonth = new Date().getMonth() + 1;
+  const seasonalVegetableIds = await getSeasonalVegetableIds(currentMonth);
+  const userFavoriteIds = await getUserFavoriteRecipeIds(userId);
+
+  recipes = recipes.map(r => {
+    let score = 1.0;
+    const flags = [];
+
+    // Seasonal boost (1.5x)
+    if (seasonalVegetableIds.includes(r.vegetable_id)) {
+      score *= 1.5;
+      flags.push('seasonal');
+    }
+
+    // Favorites boost (2x if enabled)
+    if (filters.boostFavorites && userFavoriteIds.includes(r.id)) {
+      score *= 2.0;
+      flags.push('favorite');
+    }
+
+    // Own recipes boost (1.8x if enabled)
+    if (filters.boostOwnRecipes && r.user_id === userId) {
+      score *= 1.8;
+      flags.push('own');
+    }
+
+    // Inspiration-based boosts
+    if (filters.inspiration === 'budgetWeek') {
+      const tags = r.tags || [];
+      if (tags.includes('budget') || tags.includes('günstig')) score *= 1.5;
+    }
+    if (filters.inspiration === 'comfortWeek') {
+      const tags = r.tags || [];
+      if (tags.includes('comfort') || tags.includes('herzhaft')) score *= 1.5;
+    }
+    if (filters.inspiration === 'lightWeek') {
+      const tags = r.tags || [];
+      if (tags.includes('leicht') || tags.includes('gesund')) score *= 1.5;
+    }
+
+    return { ...r, _score: score, _flags: flags };
+  });
+
+  // 7. Sort by score and limit
+  recipes.sort((a, b) => b._score - a._score);
+  const limited = recipes.slice(0, 60);
+  console.log(`Returning top ${limited.length} recipes by score`);
+
+  return limited;
+}
+
+// Build compact recipe summaries for the prompt
+function buildRecipeSummaries(recipes) {
+  // Group by category
+  const byCategory = {};
+  const catNames = {
+    main: 'Hauptgerichte',
+    side: 'Beilagen',
+    soup: 'Suppen',
+    salad: 'Salate',
+    breakfast: 'Frühstück',
+    dessert: 'Desserts',
+    snack: 'Snacks',
+  };
+
+  for (const r of recipes) {
+    const cat = r.category || 'main';
+    if (!byCategory[cat]) byCategory[cat] = [];
+
+    const totalTime = (r.prep_time_min || 0) + (r.cook_time_min || 0);
+    const flags = [];
+
+    if (r.is_vegetarian) flags.push('veg');
+    if (r.is_vegan) flags.push('vegan');
+    if (r._flags?.includes('favorite')) flags.push('⭐');
+    if (r._flags?.includes('own')) flags.push('👤');
+    if (r._flags?.includes('seasonal')) flags.push('🌿');
+
+    const flagStr = flags.length > 0 ? `, ${flags.join(' ')}` : '';
+    byCategory[cat].push(`[${r.id}] ${r.title} (${totalTime}min${flagStr})`);
+  }
+
+  // Build output string
+  let output = '';
+  for (const [cat, items] of Object.entries(byCategory)) {
+    if (items.length > 0) {
+      output += `\n### ${catNames[cat] || cat}\n`;
+      output += items.map(i => `• ${i}`).join('\n');
+      output += '\n';
+    }
+  }
+
+  return output;
+}
+
+// Build the smart weekplan prompt with context analysis
+function buildSmartWeekplanPrompt(context, recipeSummaries) {
+  const dayNames = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+  const selectedDaysStr = (context.selectedDays || []).map(d => dayNames[d]).join(', ');
+
+  // Format existing meals
+  const existingMealsInfo = context.existingMeals?.length > 0
+    ? context.existingMeals.map(m => `- ${m.date} ${m.slot}: ${m.title}`).join('\n')
+    : 'Keine';
+
+  // Build dates for the selected days
+  const weekStart = new Date(context.weekStartDate);
+  const dayDates = {};
+  for (const dayNum of (context.selectedDays || [])) {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + (dayNum - 1)); // dayNum 1 = Monday
+    dayDates[dayNames[dayNum]] = date.toISOString().split('T')[0];
+  }
+
+  return `
+Du bist ein persönlicher Schweizer Meal-Planner der STRATEGISCH denkt.
+
+## DEINE AUFGABE
+
+Erstelle einen DURCHDACHTEN Wochenplan. Nicht "zufällige Rezepte", sondern
+einen Plan der zur WOCHE dieses Users passt.
+
+## USER-KONTEXT DIESE WOCHE
+
+"${context.weekContext || 'Keine besonderen Angaben'}"
+
+ANALYSIERE diesen Kontext und extrahiere:
+- Zeit-Constraints: Welche Tage sind stressig/entspannt?
+- Events: Gäste, Geburtstage, besondere Anlässe?
+- Vorhandene Zutaten: Was muss verwertet werden?
+- Explizite Wünsche: Was will der User diese Woche?
+
+## USER-PROFIL (IMMER EINHALTEN)
+
+- Haushalt: ${context.householdSize} Personen${context.childrenCount > 0 ? ` (davon ${context.childrenCount} Kinder)` : ''}
+- Ernährung: ${context.diet || 'omnivor'}
+- Allergene: ${context.allergens?.join(', ') || 'keine'} → NIEMALS verwenden!
+- Max. Zeit pro Rezept: ${context.maxTime} Minuten
+- Kochskill: ${context.skill || 'beginner'}
+
+## PRÄFERENZEN
+
+- Lieblings-Küchen: ${context.cuisinePreferences?.join(', ') || 'alle'}
+- Geschmack: ${context.flavorProfile?.join(', ') || 'ausgewogen'}
+${context.inspiration ? `- Inspiration: ${context.inspiration}` : ''}
+${context.boostFavorites ? '- FAVORITEN bevorzugen (⭐)!' : ''}
+${context.boostOwnRecipes ? '- EIGENE REZEPTE bevorzugen (👤)!' : ''}
+
+## STRATEGISCHES DENKEN
+
+Für JEDEN Tag, überlege:
+
+1. ZEIT: Was weisst du über diesen Tag? (aus Kontext)
+   - "Stress" / "wenig Zeit" → schnelles Rezept
+   - "Homeoffice" / "frei" → mehr Zeit ok
+
+2. EVENT: Passiert was Besonderes?
+   - Gäste → festlich, mehr Portionen
+   - Geburtstag → besonderes Rezept
+
+3. VORHER: Was wurde gestern gekocht?
+   - Reste nutzbar? → Reste-Verwertung!
+   - Gleiche Zutat? → Variation statt Wiederholung
+
+4. ZUTATEN: Welche vorhandenen Zutaten einbauen?
+   - Food Waste vermeiden!
+
+5. SAISON: Was ist gerade frisch?
+   - Saisonale Rezepte (🌿) bevorzugen
+
+## BEREITS GEPLANT (NICHT ÜBERSCHREIBEN)
+
+${existingMealsInfo}
+
+## ANFRAGE
+
+- Tage: ${selectedDaysStr}
+- Mahlzeiten: ${context.selectedSlots?.join(', ') || 'dinner'}
+- Woche startet: ${context.weekStartDate}
+
+Verwende diese Datums-Zuordnung:
+${Object.entries(dayDates).map(([day, date]) => `- ${day}: ${date}`).join('\n')}
+
+## VERFÜGBARE REZEPTE
+
+Legende: ⭐=Favorit, 👤=Eigenes Rezept, 🌿=Saisonal
+${recipeSummaries}
+
+WICHTIG: Wähle NUR aus dieser Liste (IDs exakt übernehmen).
+
+## OUTPUT FORMAT (JSON)
+
+{
+  "contextAnalysis": {
+    "timeConstraints": {
+      "monday": "busy"
+    },
+    "events": {
+      "thursday": { "type": "guests", "guestCount": 4 }
+    },
+    "ingredientsToUse": ["poulet", "lauch"],
+    "displaySummary": "Mo+Di wenig Zeit, Do Gäste, Poulet+Lauch verwerten"
+  },
+  "weekplan": [
+    {
+      "date": "2025-12-09",
+      "dayName": "Montag",
+      "dayContext": "busy",
+      "meals": {
+        "dinner": {
+          "recipeId": "abc123",
+          "reasoning": "Schnell zubereitet weil du wenig Zeit hast"
+        }
+      }
+    }
+  ],
+  "strategy": {
+    "insights": [
+      "Poulet + Lauch verwertet",
+      "3 saisonale Rezepte im Plan"
+    ],
+    "seasonalCount": 3,
+    "favoritesUsed": 1
+  }
+}
+
+## WICHTIG ZU DEN REASONINGS
+
+Die "reasoning" zeigt dem User dass du MITDENKST. Sie muss:
+- Kurz sein (1 Satz max)
+- Den Bezug zum Kontext zeigen
+- Praktischen Mehrwert erklären
+
+GUTE Reasonings:
+- "Schnell weil du wenig Zeit hast"
+- "Reste von gestern clever genutzt"
+- "Für deine Gäste - beeindruckend!"
+- "Dein Lauch wird verwendet"
+
+SCHLECHTE Reasonings:
+- "Ein leckeres Gericht"
+- "Passt gut"
+- "Vegetarisches Rezept"
+
+Antworte NUR mit dem JSON, ohne Markdown.
+`;
+}
+
 // Build recipe generation prompt (v2 - extended)
 function buildRecipePrompt(request, userProfile, aiProfile, seasonalVegetablesFromDB) {
   // User Profile data
@@ -520,7 +845,7 @@ app.post('/api/ai/generate-recipe', authMiddleware, premiumMiddleware, async (re
   }
 });
 
-// Generate weekplan
+// Generate weekplan (legacy - generates recipes)
 app.post('/api/ai/generate-weekplan', authMiddleware, premiumMiddleware, async (req, res) => {
   try {
     const userProfile = await getUserProfile(req.userId);
@@ -538,6 +863,232 @@ app.post('/api/ai/generate-weekplan', authMiddleware, premiumMiddleware, async (
     console.error('Weekplan generation error:', e);
     await logAIRequest(req.userId, 'weekplan_gen', 0, false, e.message);
     res.status(500).json({ error: 'Weekplan generation failed', message: e.message });
+  }
+});
+
+// Smart weekplan generation (DB-based with context analysis)
+app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, async (req, res) => {
+  console.log('=== SMART WEEKPLAN GENERATION START ===');
+
+  try {
+    const userId = req.userId;
+    const request = req.body;
+
+    // 1. Get user profile
+    const userProfile = await getUserProfile(userId);
+    const aiProfile = req.aiProfile;
+
+    // 2. Get eligible recipes with filters
+    const filters = {
+      forceVegetarian: request.force_vegetarian,
+      forceVegan: request.force_vegan,
+      forceQuick: request.force_quick,
+      boostFavorites: request.boost_favorites,
+      boostOwnRecipes: request.boost_own_recipes,
+      inspiration: request.inspiration,
+    };
+    const eligibleRecipes = await getEligibleRecipes(userId, userProfile, filters);
+
+    if (eligibleRecipes.length === 0) {
+      return res.status(400).json({
+        error: 'no_recipes',
+        message: 'Keine passenden Rezepte gefunden. Passe deine Filter an.',
+      });
+    }
+
+    // 3. Build recipe summaries for prompt
+    const recipeSummaries = buildRecipeSummaries(eligibleRecipes);
+
+    // 4. Build context for prompt
+    const context = {
+      selectedDays: request.selected_days || [1, 2, 3, 4, 5],
+      selectedSlots: request.selected_slots || ['dinner'],
+      weekContext: request.week_context || '',
+      weekStartDate: request.week_start_date,
+      existingMeals: request.existing_meals || [],
+      inspiration: request.inspiration,
+      boostFavorites: request.boost_favorites,
+      boostOwnRecipes: request.boost_own_recipes,
+      // User profile data
+      householdSize: userProfile?.household_size || 2,
+      childrenCount: userProfile?.children_count || 0,
+      diet: userProfile?.diet,
+      skill: userProfile?.skill,
+      maxTime: request.force_quick ? 30 : (userProfile?.max_cooking_time_min || 60),
+      allergens: userProfile?.allergens || [],
+      // AI profile data
+      cuisinePreferences: aiProfile?.cuisine_preferences,
+      flavorProfile: aiProfile?.flavor_profile,
+    };
+
+    // 5. Build prompt and call Gemini
+    const prompt = buildSmartWeekplanPrompt(context, recipeSummaries);
+    console.log('Prompt length:', prompt.length);
+
+    const geminiResponse = await callGemini(prompt, {
+      temperature: 0.7,
+      maxOutputTokens: 4096,
+    });
+
+    const result = geminiResponse.result;
+
+    // 6. Load full recipe data for selected recipes
+    const recipeIds = new Set();
+    for (const day of (result.weekplan || [])) {
+      for (const meal of Object.values(day.meals || {})) {
+        if (meal.recipeId) recipeIds.add(meal.recipeId);
+      }
+    }
+
+    const fullRecipes = {};
+    for (const id of recipeIds) {
+      try {
+        const recipe = await pb.collection('recipes').getOne(id);
+        fullRecipes[id] = recipe;
+      } catch (e) {
+        console.warn(`Recipe ${id} not found in DB`);
+      }
+    }
+
+    // 7. Log request
+    await logAIRequest(userId, 'smart_weekplan', geminiResponse.usage?.totalTokens, true);
+
+    // 8. Return response
+    console.log('=== SMART WEEKPLAN GENERATION SUCCESS ===');
+    res.json({
+      contextAnalysis: result.contextAnalysis || {},
+      weekplan: result.weekplan || [],
+      recipes: fullRecipes,
+      strategy: result.strategy || {},
+      eligibleRecipeCount: eligibleRecipes.length,
+    });
+
+  } catch (e) {
+    console.error('Smart weekplan generation error:', e);
+    await logAIRequest(req.userId, 'smart_weekplan', 0, false, e.message);
+    res.status(500).json({
+      error: 'generation_failed',
+      message: e.message,
+    });
+  }
+});
+
+// Get eligible recipe count (for UI validation)
+app.post('/api/ai/eligible-recipe-count', authMiddleware, premiumMiddleware, async (req, res) => {
+  try {
+    const userProfile = await getUserProfile(req.userId);
+    const filters = {
+      forceVegetarian: req.body.force_vegetarian,
+      forceVegan: req.body.force_vegan,
+      forceQuick: req.body.force_quick,
+    };
+    const recipes = await getEligibleRecipes(req.userId, userProfile, filters);
+    res.json({ count: recipes.length });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Refine a single meal through conversation
+app.post('/api/ai/refine-meal', authMiddleware, premiumMiddleware, async (req, res) => {
+  console.log('=== REFINE MEAL START ===');
+
+  try {
+    const { current_plan, day, slot, user_message, day_context } = req.body;
+
+    // Get recipes already used in the plan
+    const usedRecipeIds = new Set();
+    for (const d of (current_plan || [])) {
+      for (const meal of Object.values(d.meals || {})) {
+        if (meal.recipeId) usedRecipeIds.add(meal.recipeId);
+      }
+    }
+
+    // Get available recipes (excluding already used ones)
+    const userProfile = await getUserProfile(req.userId);
+    const allRecipes = await getEligibleRecipes(req.userId, userProfile, {});
+    const availableRecipes = allRecipes.filter(r => !usedRecipeIds.has(r.id));
+
+    // Find current meal info
+    const currentDay = current_plan?.find(d => d.date === day);
+    const currentMeal = currentDay?.meals?.[slot];
+
+    // Build compact recipe list for prompt
+    const recipeList = availableRecipes.slice(0, 30).map(r => {
+      const time = (r.prep_time_min || 0) + (r.cook_time_min || 0);
+      return `[${r.id}] ${r.title} (${time}min)`;
+    }).join('\n');
+
+    // Build refinement prompt
+    const prompt = `
+Du bist ein hilfsbereiter Meal-Planner im Gespräch mit dem User.
+
+## AKTUELLES REZEPT
+${currentMeal?.title || currentMeal?.recipeId || 'Nicht bekannt'}
+Begründung war: "${currentMeal?.reasoning || ''}"
+Tages-Kontext: ${day_context || 'normal'}
+
+## USER-NACHRICHT
+"${user_message}"
+
+## DEINE AUFGABE
+1. Verstehe was der User will/nicht will
+2. Schlage 2-3 passende Alternativen vor
+3. Erkläre kurz warum jede Alternative passt
+
+## VERFÜGBARE REZEPTE
+${recipeList}
+
+## OUTPUT FORMAT (JSON)
+
+{
+  "response": "Verstehe! [Kurze empathische Antwort]. Hier sind Alternativen:",
+  "suggestions": [
+    {
+      "recipeId": "abc123",
+      "title": "Rezeptname",
+      "reasoning": "Warum das passt (1 Satz)",
+      "cookTimeMin": 35
+    }
+  ]
+}
+
+Sei freundlich und hilfreich. Maximal 3 Suggestions.
+Antworte NUR mit dem JSON.
+`;
+
+    const response = await callGemini(prompt, {
+      temperature: 0.8,
+      maxOutputTokens: 1024,
+    });
+
+    const result = response.result;
+
+    // Load full recipe data for suggestions
+    const suggestions = result.suggestions || [];
+    for (const suggestion of suggestions) {
+      if (suggestion.recipeId) {
+        try {
+          const recipe = await pb.collection('recipes').getOne(suggestion.recipeId);
+          suggestion.recipe = recipe;
+        } catch (e) {
+          console.warn(`Suggestion recipe ${suggestion.recipeId} not found`);
+        }
+      }
+    }
+
+    await logAIRequest(req.userId, 'refine_meal', response.usage?.totalTokens, true);
+
+    console.log('=== REFINE MEAL SUCCESS ===');
+    res.json({
+      response: result.response || '',
+      suggestions: suggestions,
+    });
+
+  } catch (e) {
+    console.error('Refine meal error:', e);
+    await logAIRequest(req.userId, 'refine_meal', 0, false, e.message);
+    res.status(500).json({ error: e.message });
   }
 });
 
