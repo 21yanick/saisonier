@@ -425,19 +425,26 @@ einen Plan der zur WOCHE dieses Users passt.
 
 ## USER-KONTEXT DIESE WOCHE
 
-"${context.weekContext || 'Keine besonderen Angaben'}"
+"${context.weekContext || ''}"
 
-ANALYSIERE diesen Kontext und extrahiere:
+${context.weekContext ? `ANALYSIERE diesen Kontext und extrahiere:
 - Zeit-Constraints: Welche Tage sind stressig/entspannt?
 - Events: Gäste, Geburtstage, besondere Anlässe?
 - Vorhandene Zutaten: Was muss verwertet werden?
-- Explizite Wünsche: Was will der User diese Woche?
+- Explizite Wünsche: Was will der User diese Woche?` : `WICHTIG: Der User hat KEINEN speziellen Kontext angegeben!
+- contextAnalysis.timeConstraints = {} (leer)
+- contextAnalysis.events = {} (leer)
+- contextAnalysis.ingredientsToUse = [] (leer)
+- contextAnalysis.displaySummary = null oder kurzer generischer Text
+- Erfinde KEINE Constraints, Events oder Zutaten!
+- Plane einfach eine abwechslungsreiche, saisonale Woche.`}
 
 ## USER-PROFIL (IMMER EINHALTEN)
 
 - Haushalt: ${context.householdSize} Personen${context.childrenCount > 0 ? ` (davon ${context.childrenCount} Kinder)` : ''}
 - Ernährung: ${context.diet || 'omnivor'}
 - Allergene: ${context.allergens?.join(', ') || 'keine'} → NIEMALS verwenden!
+- Dislikes: ${context.dislikes?.join(', ') || 'keine'} → MÖGLICHST VERMEIDEN!
 - Max. Zeit pro Rezept: ${context.maxTime} Minuten
 - Kochskill: ${context.skill || 'beginner'}
 
@@ -489,61 +496,78 @@ ${Object.entries(dayDates).map(([day, date]) => `- ${day}: ${date}`).join('\n')}
 Legende: ⭐=Favorit, 👤=Eigenes Rezept, 🌿=Saisonal
 ${recipeSummaries}
 
-WICHTIG: Wähle NUR aus dieser Liste (IDs exakt übernehmen).
+KRITISCH: Wähle NUR Rezepte aus dieser Liste!
+- Verwende EXAKT die IDs in eckigen Klammern [abc123def...]
+- ERFINDE NIEMALS IDs! Keine Placeholder wie "abc123" oder "ECHTE_ID"!
+- Wenn du eine ID verwendest die nicht in der Liste ist, wird das Rezept nicht gefunden.
 
 ## OUTPUT FORMAT (JSON)
 
+WICHTIG: Das folgende ist nur ein FORMAT-Beispiel. Kopiere NICHT die Werte!
+Wenn kein Kontext angegeben wurde, müssen timeConstraints, events, ingredientsToUse LEER sein.
+
 {
   "contextAnalysis": {
-    "timeConstraints": {
-      "monday": "busy"
-    },
-    "events": {
-      "thursday": { "type": "guests", "guestCount": 4 }
-    },
-    "ingredientsToUse": ["poulet", "lauch"],
-    "displaySummary": "Mo+Di wenig Zeit, Do Gäste, Poulet+Lauch verwerten"
+    "timeConstraints": {},
+    "events": {},
+    "ingredientsToUse": [],
+    "displaySummary": null
   },
   "weekplan": [
     {
-      "date": "2025-12-09",
-      "dayName": "Montag",
-      "dayContext": "busy",
+      "date": "YYYY-MM-DD",
+      "dayName": "Wochentag",
+      "dayContext": null,
       "meals": {
         "dinner": {
-          "recipeId": "abc123",
-          "reasoning": "Schnell zubereitet weil du wenig Zeit hast"
+          "recipeId": "<ID aus Rezeptliste oben>",
+          "reasoning": "<Kurze Begründung>"
         }
       }
     }
   ],
   "strategy": {
     "insights": [
-      "Poulet + Lauch verwertet",
-      "3 saisonale Rezepte im Plan"
+      "Abwechslungsreiche Woche geplant",
+      "X saisonale Rezepte verwendet"
     ],
     "seasonalCount": 3,
-    "favoritesUsed": 1
+    "favoritesUsed": 0
   }
 }
+
+Wenn der User KONTEXT angegeben hat (z.B. "Mo Stress, Do Gäste"), dann:
+- timeConstraints: {"monday": "busy"}
+- events: {"thursday": {"type": "guests", "guestCount": 4}}
+- displaySummary: "Mo wenig Zeit, Do Gäste"
+- dayContext bei den jeweiligen Tagen setzen
 
 ## WICHTIG ZU DEN REASONINGS
 
 Die "reasoning" zeigt dem User dass du MITDENKST. Sie muss:
 - Kurz sein (1 Satz max)
-- Den Bezug zum Kontext zeigen
 - Praktischen Mehrwert erklären
+- Wenn Kontext vorhanden: Bezug zum Kontext zeigen
+- Wenn KEIN Kontext: Saison, Abwechslung oder Rezept-Qualität hervorheben
 
-GUTE Reasonings:
+GUTE Reasonings (MIT Kontext):
 - "Schnell weil du wenig Zeit hast"
 - "Reste von gestern clever genutzt"
 - "Für deine Gäste - beeindruckend!"
 - "Dein Lauch wird verwendet"
 
-SCHLECHTE Reasonings:
+GUTE Reasonings (OHNE Kontext):
+- "Kürbis hat jetzt Hochsaison - perfekt!"
+- "Abwechslung nach dem Nudelgericht gestern"
+- "Klassiker der Schweizer Küche"
+- "Leicht und frisch für zwischendurch"
+- "Herzhaft und wärmend für den Winter"
+
+SCHLECHTE Reasonings (IMMER vermeiden):
 - "Ein leckeres Gericht"
 - "Passt gut"
 - "Vegetarisches Rezept"
+- Erfundene Constraints wie "weil du wenig Zeit hast" OHNE dass der User das erwähnt hat!
 
 Antworte NUR mit dem JSON, ohne Markdown.
 `;
@@ -916,6 +940,7 @@ app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, a
       skill: userProfile?.skill,
       maxTime: request.force_quick ? 30 : (userProfile?.max_cooking_time_min || 60),
       allergens: userProfile?.allergens || [],
+      dislikes: userProfile?.dislikes || [],
       // AI profile data
       cuisinePreferences: aiProfile?.cuisine_preferences,
       flavorProfile: aiProfile?.flavor_profile,
@@ -941,13 +966,18 @@ app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, a
     }
 
     const fullRecipes = {};
+    const missingRecipes = [];
     for (const id of recipeIds) {
       try {
         const recipe = await pb.collection('recipes').getOne(id);
         fullRecipes[id] = recipe;
       } catch (e) {
-        console.warn(`Recipe ${id} not found in DB`);
+        console.warn(`Recipe ${id} not found in DB - AI hallucinated this ID!`);
+        missingRecipes.push(id);
       }
+    }
+    if (missingRecipes.length > 0) {
+      console.warn(`=== WARNING: ${missingRecipes.length} recipes not found: ${missingRecipes.join(', ')} ===`);
     }
 
     // 7. Log request
@@ -1020,9 +1050,10 @@ app.post('/api/ai/refine-meal', authMiddleware, premiumMiddleware, async (req, r
     }).join('\n');
 
     // Build refinement prompt
+    const dislikes = userProfile?.dislikes || [];
     const prompt = `
 Du bist ein hilfsbereiter Meal-Planner im Gespräch mit dem User.
-
+${dislikes.length > 0 ? `\n## USER-DISLIKES (VERMEIDEN!)\n${dislikes.join(', ')}\n` : ''}
 ## AKTUELLES REZEPT
 ${currentMeal?.title || currentMeal?.recipeId || 'Nicht bekannt'}
 Begründung war: "${currentMeal?.reasoning || ''}"
