@@ -2508,6 +2508,747 @@ class ShoppingItemsCompanion extends UpdateCompanion<ShoppingItem> {
   }
 }
 
+class $AIProfilesTable extends AIProfiles
+    with TableInfo<$AIProfilesTable, AIProfile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AIProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cuisinePreferencesMeta =
+      const VerificationMeta('cuisinePreferences');
+  @override
+  late final GeneratedColumn<String> cuisinePreferences =
+      GeneratedColumn<String>('cuisine_preferences', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultValue: const Constant('[]'));
+  static const VerificationMeta _flavorProfileMeta =
+      const VerificationMeta('flavorProfile');
+  @override
+  late final GeneratedColumn<String> flavorProfile = GeneratedColumn<String>(
+      'flavor_profile', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _likesMeta = const VerificationMeta('likes');
+  @override
+  late final GeneratedColumn<String> likes = GeneratedColumn<String>(
+      'likes', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _proteinPreferencesMeta =
+      const VerificationMeta('proteinPreferences');
+  @override
+  late final GeneratedColumn<String> proteinPreferences =
+      GeneratedColumn<String>('protein_preferences', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultValue: const Constant('[]'));
+  static const VerificationMeta _budgetLevelMeta =
+      const VerificationMeta('budgetLevel');
+  @override
+  late final GeneratedColumn<String> budgetLevel = GeneratedColumn<String>(
+      'budget_level', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('normal'));
+  static const VerificationMeta _mealPrepStyleMeta =
+      const VerificationMeta('mealPrepStyle');
+  @override
+  late final GeneratedColumn<String> mealPrepStyle = GeneratedColumn<String>(
+      'meal_prep_style', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('mixed'));
+  static const VerificationMeta _cookingDaysPerWeekMeta =
+      const VerificationMeta('cookingDaysPerWeek');
+  @override
+  late final GeneratedColumn<int> cookingDaysPerWeek = GeneratedColumn<int>(
+      'cooking_days_per_week', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(4));
+  static const VerificationMeta _healthGoalsMeta =
+      const VerificationMeta('healthGoals');
+  @override
+  late final GeneratedColumn<String> healthGoals = GeneratedColumn<String>(
+      'health_goals', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _nutritionFocusMeta =
+      const VerificationMeta('nutritionFocus');
+  @override
+  late final GeneratedColumn<String> nutritionFocus = GeneratedColumn<String>(
+      'nutrition_focus', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('balanced'));
+  static const VerificationMeta _equipmentMeta =
+      const VerificationMeta('equipment');
+  @override
+  late final GeneratedColumn<String> equipment = GeneratedColumn<String>(
+      'equipment', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _learningContextMeta =
+      const VerificationMeta('learningContext');
+  @override
+  late final GeneratedColumn<String> learningContext = GeneratedColumn<String>(
+      'learning_context', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('{}'));
+  static const VerificationMeta _onboardingCompletedMeta =
+      const VerificationMeta('onboardingCompleted');
+  @override
+  late final GeneratedColumn<bool> onboardingCompleted = GeneratedColumn<bool>(
+      'onboarding_completed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("onboarding_completed" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        userId,
+        cuisinePreferences,
+        flavorProfile,
+        likes,
+        proteinPreferences,
+        budgetLevel,
+        mealPrepStyle,
+        cookingDaysPerWeek,
+        healthGoals,
+        nutritionFocus,
+        equipment,
+        learningContext,
+        onboardingCompleted,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'a_i_profiles';
+  @override
+  VerificationContext validateIntegrity(Insertable<AIProfile> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('cuisine_preferences')) {
+      context.handle(
+          _cuisinePreferencesMeta,
+          cuisinePreferences.isAcceptableOrUnknown(
+              data['cuisine_preferences']!, _cuisinePreferencesMeta));
+    }
+    if (data.containsKey('flavor_profile')) {
+      context.handle(
+          _flavorProfileMeta,
+          flavorProfile.isAcceptableOrUnknown(
+              data['flavor_profile']!, _flavorProfileMeta));
+    }
+    if (data.containsKey('likes')) {
+      context.handle(
+          _likesMeta, likes.isAcceptableOrUnknown(data['likes']!, _likesMeta));
+    }
+    if (data.containsKey('protein_preferences')) {
+      context.handle(
+          _proteinPreferencesMeta,
+          proteinPreferences.isAcceptableOrUnknown(
+              data['protein_preferences']!, _proteinPreferencesMeta));
+    }
+    if (data.containsKey('budget_level')) {
+      context.handle(
+          _budgetLevelMeta,
+          budgetLevel.isAcceptableOrUnknown(
+              data['budget_level']!, _budgetLevelMeta));
+    }
+    if (data.containsKey('meal_prep_style')) {
+      context.handle(
+          _mealPrepStyleMeta,
+          mealPrepStyle.isAcceptableOrUnknown(
+              data['meal_prep_style']!, _mealPrepStyleMeta));
+    }
+    if (data.containsKey('cooking_days_per_week')) {
+      context.handle(
+          _cookingDaysPerWeekMeta,
+          cookingDaysPerWeek.isAcceptableOrUnknown(
+              data['cooking_days_per_week']!, _cookingDaysPerWeekMeta));
+    }
+    if (data.containsKey('health_goals')) {
+      context.handle(
+          _healthGoalsMeta,
+          healthGoals.isAcceptableOrUnknown(
+              data['health_goals']!, _healthGoalsMeta));
+    }
+    if (data.containsKey('nutrition_focus')) {
+      context.handle(
+          _nutritionFocusMeta,
+          nutritionFocus.isAcceptableOrUnknown(
+              data['nutrition_focus']!, _nutritionFocusMeta));
+    }
+    if (data.containsKey('equipment')) {
+      context.handle(_equipmentMeta,
+          equipment.isAcceptableOrUnknown(data['equipment']!, _equipmentMeta));
+    }
+    if (data.containsKey('learning_context')) {
+      context.handle(
+          _learningContextMeta,
+          learningContext.isAcceptableOrUnknown(
+              data['learning_context']!, _learningContextMeta));
+    }
+    if (data.containsKey('onboarding_completed')) {
+      context.handle(
+          _onboardingCompletedMeta,
+          onboardingCompleted.isAcceptableOrUnknown(
+              data['onboarding_completed']!, _onboardingCompletedMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AIProfile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AIProfile(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      cuisinePreferences: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}cuisine_preferences'])!,
+      flavorProfile: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}flavor_profile'])!,
+      likes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}likes'])!,
+      proteinPreferences: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}protein_preferences'])!,
+      budgetLevel: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}budget_level'])!,
+      mealPrepStyle: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}meal_prep_style'])!,
+      cookingDaysPerWeek: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}cooking_days_per_week'])!,
+      healthGoals: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}health_goals'])!,
+      nutritionFocus: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}nutrition_focus'])!,
+      equipment: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}equipment'])!,
+      learningContext: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}learning_context'])!,
+      onboardingCompleted: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}onboarding_completed'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+    );
+  }
+
+  @override
+  $AIProfilesTable createAlias(String alias) {
+    return $AIProfilesTable(attachedDatabase, alias);
+  }
+}
+
+class AIProfile extends DataClass implements Insertable<AIProfile> {
+  final String id;
+  final String userId;
+  final String cuisinePreferences;
+  final String flavorProfile;
+  final String likes;
+  final String proteinPreferences;
+  final String budgetLevel;
+  final String mealPrepStyle;
+  final int cookingDaysPerWeek;
+  final String healthGoals;
+  final String nutritionFocus;
+  final String equipment;
+  final String learningContext;
+  final bool onboardingCompleted;
+  final DateTime? updatedAt;
+  const AIProfile(
+      {required this.id,
+      required this.userId,
+      required this.cuisinePreferences,
+      required this.flavorProfile,
+      required this.likes,
+      required this.proteinPreferences,
+      required this.budgetLevel,
+      required this.mealPrepStyle,
+      required this.cookingDaysPerWeek,
+      required this.healthGoals,
+      required this.nutritionFocus,
+      required this.equipment,
+      required this.learningContext,
+      required this.onboardingCompleted,
+      this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['cuisine_preferences'] = Variable<String>(cuisinePreferences);
+    map['flavor_profile'] = Variable<String>(flavorProfile);
+    map['likes'] = Variable<String>(likes);
+    map['protein_preferences'] = Variable<String>(proteinPreferences);
+    map['budget_level'] = Variable<String>(budgetLevel);
+    map['meal_prep_style'] = Variable<String>(mealPrepStyle);
+    map['cooking_days_per_week'] = Variable<int>(cookingDaysPerWeek);
+    map['health_goals'] = Variable<String>(healthGoals);
+    map['nutrition_focus'] = Variable<String>(nutritionFocus);
+    map['equipment'] = Variable<String>(equipment);
+    map['learning_context'] = Variable<String>(learningContext);
+    map['onboarding_completed'] = Variable<bool>(onboardingCompleted);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
+    return map;
+  }
+
+  AIProfilesCompanion toCompanion(bool nullToAbsent) {
+    return AIProfilesCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      cuisinePreferences: Value(cuisinePreferences),
+      flavorProfile: Value(flavorProfile),
+      likes: Value(likes),
+      proteinPreferences: Value(proteinPreferences),
+      budgetLevel: Value(budgetLevel),
+      mealPrepStyle: Value(mealPrepStyle),
+      cookingDaysPerWeek: Value(cookingDaysPerWeek),
+      healthGoals: Value(healthGoals),
+      nutritionFocus: Value(nutritionFocus),
+      equipment: Value(equipment),
+      learningContext: Value(learningContext),
+      onboardingCompleted: Value(onboardingCompleted),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+    );
+  }
+
+  factory AIProfile.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AIProfile(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      cuisinePreferences:
+          serializer.fromJson<String>(json['cuisinePreferences']),
+      flavorProfile: serializer.fromJson<String>(json['flavorProfile']),
+      likes: serializer.fromJson<String>(json['likes']),
+      proteinPreferences:
+          serializer.fromJson<String>(json['proteinPreferences']),
+      budgetLevel: serializer.fromJson<String>(json['budgetLevel']),
+      mealPrepStyle: serializer.fromJson<String>(json['mealPrepStyle']),
+      cookingDaysPerWeek: serializer.fromJson<int>(json['cookingDaysPerWeek']),
+      healthGoals: serializer.fromJson<String>(json['healthGoals']),
+      nutritionFocus: serializer.fromJson<String>(json['nutritionFocus']),
+      equipment: serializer.fromJson<String>(json['equipment']),
+      learningContext: serializer.fromJson<String>(json['learningContext']),
+      onboardingCompleted:
+          serializer.fromJson<bool>(json['onboardingCompleted']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'cuisinePreferences': serializer.toJson<String>(cuisinePreferences),
+      'flavorProfile': serializer.toJson<String>(flavorProfile),
+      'likes': serializer.toJson<String>(likes),
+      'proteinPreferences': serializer.toJson<String>(proteinPreferences),
+      'budgetLevel': serializer.toJson<String>(budgetLevel),
+      'mealPrepStyle': serializer.toJson<String>(mealPrepStyle),
+      'cookingDaysPerWeek': serializer.toJson<int>(cookingDaysPerWeek),
+      'healthGoals': serializer.toJson<String>(healthGoals),
+      'nutritionFocus': serializer.toJson<String>(nutritionFocus),
+      'equipment': serializer.toJson<String>(equipment),
+      'learningContext': serializer.toJson<String>(learningContext),
+      'onboardingCompleted': serializer.toJson<bool>(onboardingCompleted),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
+    };
+  }
+
+  AIProfile copyWith(
+          {String? id,
+          String? userId,
+          String? cuisinePreferences,
+          String? flavorProfile,
+          String? likes,
+          String? proteinPreferences,
+          String? budgetLevel,
+          String? mealPrepStyle,
+          int? cookingDaysPerWeek,
+          String? healthGoals,
+          String? nutritionFocus,
+          String? equipment,
+          String? learningContext,
+          bool? onboardingCompleted,
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
+      AIProfile(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        cuisinePreferences: cuisinePreferences ?? this.cuisinePreferences,
+        flavorProfile: flavorProfile ?? this.flavorProfile,
+        likes: likes ?? this.likes,
+        proteinPreferences: proteinPreferences ?? this.proteinPreferences,
+        budgetLevel: budgetLevel ?? this.budgetLevel,
+        mealPrepStyle: mealPrepStyle ?? this.mealPrepStyle,
+        cookingDaysPerWeek: cookingDaysPerWeek ?? this.cookingDaysPerWeek,
+        healthGoals: healthGoals ?? this.healthGoals,
+        nutritionFocus: nutritionFocus ?? this.nutritionFocus,
+        equipment: equipment ?? this.equipment,
+        learningContext: learningContext ?? this.learningContext,
+        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+      );
+  AIProfile copyWithCompanion(AIProfilesCompanion data) {
+    return AIProfile(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      cuisinePreferences: data.cuisinePreferences.present
+          ? data.cuisinePreferences.value
+          : this.cuisinePreferences,
+      flavorProfile: data.flavorProfile.present
+          ? data.flavorProfile.value
+          : this.flavorProfile,
+      likes: data.likes.present ? data.likes.value : this.likes,
+      proteinPreferences: data.proteinPreferences.present
+          ? data.proteinPreferences.value
+          : this.proteinPreferences,
+      budgetLevel:
+          data.budgetLevel.present ? data.budgetLevel.value : this.budgetLevel,
+      mealPrepStyle: data.mealPrepStyle.present
+          ? data.mealPrepStyle.value
+          : this.mealPrepStyle,
+      cookingDaysPerWeek: data.cookingDaysPerWeek.present
+          ? data.cookingDaysPerWeek.value
+          : this.cookingDaysPerWeek,
+      healthGoals:
+          data.healthGoals.present ? data.healthGoals.value : this.healthGoals,
+      nutritionFocus: data.nutritionFocus.present
+          ? data.nutritionFocus.value
+          : this.nutritionFocus,
+      equipment: data.equipment.present ? data.equipment.value : this.equipment,
+      learningContext: data.learningContext.present
+          ? data.learningContext.value
+          : this.learningContext,
+      onboardingCompleted: data.onboardingCompleted.present
+          ? data.onboardingCompleted.value
+          : this.onboardingCompleted,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AIProfile(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('cuisinePreferences: $cuisinePreferences, ')
+          ..write('flavorProfile: $flavorProfile, ')
+          ..write('likes: $likes, ')
+          ..write('proteinPreferences: $proteinPreferences, ')
+          ..write('budgetLevel: $budgetLevel, ')
+          ..write('mealPrepStyle: $mealPrepStyle, ')
+          ..write('cookingDaysPerWeek: $cookingDaysPerWeek, ')
+          ..write('healthGoals: $healthGoals, ')
+          ..write('nutritionFocus: $nutritionFocus, ')
+          ..write('equipment: $equipment, ')
+          ..write('learningContext: $learningContext, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      userId,
+      cuisinePreferences,
+      flavorProfile,
+      likes,
+      proteinPreferences,
+      budgetLevel,
+      mealPrepStyle,
+      cookingDaysPerWeek,
+      healthGoals,
+      nutritionFocus,
+      equipment,
+      learningContext,
+      onboardingCompleted,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AIProfile &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.cuisinePreferences == this.cuisinePreferences &&
+          other.flavorProfile == this.flavorProfile &&
+          other.likes == this.likes &&
+          other.proteinPreferences == this.proteinPreferences &&
+          other.budgetLevel == this.budgetLevel &&
+          other.mealPrepStyle == this.mealPrepStyle &&
+          other.cookingDaysPerWeek == this.cookingDaysPerWeek &&
+          other.healthGoals == this.healthGoals &&
+          other.nutritionFocus == this.nutritionFocus &&
+          other.equipment == this.equipment &&
+          other.learningContext == this.learningContext &&
+          other.onboardingCompleted == this.onboardingCompleted &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AIProfilesCompanion extends UpdateCompanion<AIProfile> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> cuisinePreferences;
+  final Value<String> flavorProfile;
+  final Value<String> likes;
+  final Value<String> proteinPreferences;
+  final Value<String> budgetLevel;
+  final Value<String> mealPrepStyle;
+  final Value<int> cookingDaysPerWeek;
+  final Value<String> healthGoals;
+  final Value<String> nutritionFocus;
+  final Value<String> equipment;
+  final Value<String> learningContext;
+  final Value<bool> onboardingCompleted;
+  final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
+  const AIProfilesCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.cuisinePreferences = const Value.absent(),
+    this.flavorProfile = const Value.absent(),
+    this.likes = const Value.absent(),
+    this.proteinPreferences = const Value.absent(),
+    this.budgetLevel = const Value.absent(),
+    this.mealPrepStyle = const Value.absent(),
+    this.cookingDaysPerWeek = const Value.absent(),
+    this.healthGoals = const Value.absent(),
+    this.nutritionFocus = const Value.absent(),
+    this.equipment = const Value.absent(),
+    this.learningContext = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AIProfilesCompanion.insert({
+    required String id,
+    required String userId,
+    this.cuisinePreferences = const Value.absent(),
+    this.flavorProfile = const Value.absent(),
+    this.likes = const Value.absent(),
+    this.proteinPreferences = const Value.absent(),
+    this.budgetLevel = const Value.absent(),
+    this.mealPrepStyle = const Value.absent(),
+    this.cookingDaysPerWeek = const Value.absent(),
+    this.healthGoals = const Value.absent(),
+    this.nutritionFocus = const Value.absent(),
+    this.equipment = const Value.absent(),
+    this.learningContext = const Value.absent(),
+    this.onboardingCompleted = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        userId = Value(userId);
+  static Insertable<AIProfile> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? cuisinePreferences,
+    Expression<String>? flavorProfile,
+    Expression<String>? likes,
+    Expression<String>? proteinPreferences,
+    Expression<String>? budgetLevel,
+    Expression<String>? mealPrepStyle,
+    Expression<int>? cookingDaysPerWeek,
+    Expression<String>? healthGoals,
+    Expression<String>? nutritionFocus,
+    Expression<String>? equipment,
+    Expression<String>? learningContext,
+    Expression<bool>? onboardingCompleted,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (cuisinePreferences != null) 'cuisine_preferences': cuisinePreferences,
+      if (flavorProfile != null) 'flavor_profile': flavorProfile,
+      if (likes != null) 'likes': likes,
+      if (proteinPreferences != null) 'protein_preferences': proteinPreferences,
+      if (budgetLevel != null) 'budget_level': budgetLevel,
+      if (mealPrepStyle != null) 'meal_prep_style': mealPrepStyle,
+      if (cookingDaysPerWeek != null)
+        'cooking_days_per_week': cookingDaysPerWeek,
+      if (healthGoals != null) 'health_goals': healthGoals,
+      if (nutritionFocus != null) 'nutrition_focus': nutritionFocus,
+      if (equipment != null) 'equipment': equipment,
+      if (learningContext != null) 'learning_context': learningContext,
+      if (onboardingCompleted != null)
+        'onboarding_completed': onboardingCompleted,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AIProfilesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? userId,
+      Value<String>? cuisinePreferences,
+      Value<String>? flavorProfile,
+      Value<String>? likes,
+      Value<String>? proteinPreferences,
+      Value<String>? budgetLevel,
+      Value<String>? mealPrepStyle,
+      Value<int>? cookingDaysPerWeek,
+      Value<String>? healthGoals,
+      Value<String>? nutritionFocus,
+      Value<String>? equipment,
+      Value<String>? learningContext,
+      Value<bool>? onboardingCompleted,
+      Value<DateTime?>? updatedAt,
+      Value<int>? rowid}) {
+    return AIProfilesCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      cuisinePreferences: cuisinePreferences ?? this.cuisinePreferences,
+      flavorProfile: flavorProfile ?? this.flavorProfile,
+      likes: likes ?? this.likes,
+      proteinPreferences: proteinPreferences ?? this.proteinPreferences,
+      budgetLevel: budgetLevel ?? this.budgetLevel,
+      mealPrepStyle: mealPrepStyle ?? this.mealPrepStyle,
+      cookingDaysPerWeek: cookingDaysPerWeek ?? this.cookingDaysPerWeek,
+      healthGoals: healthGoals ?? this.healthGoals,
+      nutritionFocus: nutritionFocus ?? this.nutritionFocus,
+      equipment: equipment ?? this.equipment,
+      learningContext: learningContext ?? this.learningContext,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (cuisinePreferences.present) {
+      map['cuisine_preferences'] = Variable<String>(cuisinePreferences.value);
+    }
+    if (flavorProfile.present) {
+      map['flavor_profile'] = Variable<String>(flavorProfile.value);
+    }
+    if (likes.present) {
+      map['likes'] = Variable<String>(likes.value);
+    }
+    if (proteinPreferences.present) {
+      map['protein_preferences'] = Variable<String>(proteinPreferences.value);
+    }
+    if (budgetLevel.present) {
+      map['budget_level'] = Variable<String>(budgetLevel.value);
+    }
+    if (mealPrepStyle.present) {
+      map['meal_prep_style'] = Variable<String>(mealPrepStyle.value);
+    }
+    if (cookingDaysPerWeek.present) {
+      map['cooking_days_per_week'] = Variable<int>(cookingDaysPerWeek.value);
+    }
+    if (healthGoals.present) {
+      map['health_goals'] = Variable<String>(healthGoals.value);
+    }
+    if (nutritionFocus.present) {
+      map['nutrition_focus'] = Variable<String>(nutritionFocus.value);
+    }
+    if (equipment.present) {
+      map['equipment'] = Variable<String>(equipment.value);
+    }
+    if (learningContext.present) {
+      map['learning_context'] = Variable<String>(learningContext.value);
+    }
+    if (onboardingCompleted.present) {
+      map['onboarding_completed'] = Variable<bool>(onboardingCompleted.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AIProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('cuisinePreferences: $cuisinePreferences, ')
+          ..write('flavorProfile: $flavorProfile, ')
+          ..write('likes: $likes, ')
+          ..write('proteinPreferences: $proteinPreferences, ')
+          ..write('budgetLevel: $budgetLevel, ')
+          ..write('mealPrepStyle: $mealPrepStyle, ')
+          ..write('cookingDaysPerWeek: $cookingDaysPerWeek, ')
+          ..write('healthGoals: $healthGoals, ')
+          ..write('nutritionFocus: $nutritionFocus, ')
+          ..write('equipment: $equipment, ')
+          ..write('learningContext: $learningContext, ')
+          ..write('onboardingCompleted: $onboardingCompleted, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2515,12 +3256,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RecipesTable recipes = $RecipesTable(this);
   late final $PlannedMealsTable plannedMeals = $PlannedMealsTable(this);
   late final $ShoppingItemsTable shoppingItems = $ShoppingItemsTable(this);
+  late final $AIProfilesTable aIProfiles = $AIProfilesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [vegetables, recipes, plannedMeals, shoppingItems];
+      [vegetables, recipes, plannedMeals, shoppingItems, aIProfiles];
 }
 
 typedef $$VegetablesTableCreateCompanionBuilder = VegetablesCompanion Function({
@@ -3676,6 +4418,335 @@ typedef $$ShoppingItemsTableProcessedTableManager = ProcessedTableManager<
     ),
     ShoppingItem,
     PrefetchHooks Function()>;
+typedef $$AIProfilesTableCreateCompanionBuilder = AIProfilesCompanion Function({
+  required String id,
+  required String userId,
+  Value<String> cuisinePreferences,
+  Value<String> flavorProfile,
+  Value<String> likes,
+  Value<String> proteinPreferences,
+  Value<String> budgetLevel,
+  Value<String> mealPrepStyle,
+  Value<int> cookingDaysPerWeek,
+  Value<String> healthGoals,
+  Value<String> nutritionFocus,
+  Value<String> equipment,
+  Value<String> learningContext,
+  Value<bool> onboardingCompleted,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+typedef $$AIProfilesTableUpdateCompanionBuilder = AIProfilesCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<String> cuisinePreferences,
+  Value<String> flavorProfile,
+  Value<String> likes,
+  Value<String> proteinPreferences,
+  Value<String> budgetLevel,
+  Value<String> mealPrepStyle,
+  Value<int> cookingDaysPerWeek,
+  Value<String> healthGoals,
+  Value<String> nutritionFocus,
+  Value<String> equipment,
+  Value<String> learningContext,
+  Value<bool> onboardingCompleted,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+
+class $$AIProfilesTableFilterComposer
+    extends Composer<_$AppDatabase, $AIProfilesTable> {
+  $$AIProfilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get cuisinePreferences => $composableBuilder(
+      column: $table.cuisinePreferences,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get flavorProfile => $composableBuilder(
+      column: $table.flavorProfile, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get likes => $composableBuilder(
+      column: $table.likes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get proteinPreferences => $composableBuilder(
+      column: $table.proteinPreferences,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get budgetLevel => $composableBuilder(
+      column: $table.budgetLevel, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get mealPrepStyle => $composableBuilder(
+      column: $table.mealPrepStyle, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get cookingDaysPerWeek => $composableBuilder(
+      column: $table.cookingDaysPerWeek,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get healthGoals => $composableBuilder(
+      column: $table.healthGoals, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get nutritionFocus => $composableBuilder(
+      column: $table.nutritionFocus,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get equipment => $composableBuilder(
+      column: $table.equipment, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get learningContext => $composableBuilder(
+      column: $table.learningContext,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get onboardingCompleted => $composableBuilder(
+      column: $table.onboardingCompleted,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$AIProfilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $AIProfilesTable> {
+  $$AIProfilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get cuisinePreferences => $composableBuilder(
+      column: $table.cuisinePreferences,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get flavorProfile => $composableBuilder(
+      column: $table.flavorProfile,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get likes => $composableBuilder(
+      column: $table.likes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get proteinPreferences => $composableBuilder(
+      column: $table.proteinPreferences,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get budgetLevel => $composableBuilder(
+      column: $table.budgetLevel, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get mealPrepStyle => $composableBuilder(
+      column: $table.mealPrepStyle,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get cookingDaysPerWeek => $composableBuilder(
+      column: $table.cookingDaysPerWeek,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get healthGoals => $composableBuilder(
+      column: $table.healthGoals, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get nutritionFocus => $composableBuilder(
+      column: $table.nutritionFocus,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get equipment => $composableBuilder(
+      column: $table.equipment, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get learningContext => $composableBuilder(
+      column: $table.learningContext,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get onboardingCompleted => $composableBuilder(
+      column: $table.onboardingCompleted,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$AIProfilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AIProfilesTable> {
+  $$AIProfilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get cuisinePreferences => $composableBuilder(
+      column: $table.cuisinePreferences, builder: (column) => column);
+
+  GeneratedColumn<String> get flavorProfile => $composableBuilder(
+      column: $table.flavorProfile, builder: (column) => column);
+
+  GeneratedColumn<String> get likes =>
+      $composableBuilder(column: $table.likes, builder: (column) => column);
+
+  GeneratedColumn<String> get proteinPreferences => $composableBuilder(
+      column: $table.proteinPreferences, builder: (column) => column);
+
+  GeneratedColumn<String> get budgetLevel => $composableBuilder(
+      column: $table.budgetLevel, builder: (column) => column);
+
+  GeneratedColumn<String> get mealPrepStyle => $composableBuilder(
+      column: $table.mealPrepStyle, builder: (column) => column);
+
+  GeneratedColumn<int> get cookingDaysPerWeek => $composableBuilder(
+      column: $table.cookingDaysPerWeek, builder: (column) => column);
+
+  GeneratedColumn<String> get healthGoals => $composableBuilder(
+      column: $table.healthGoals, builder: (column) => column);
+
+  GeneratedColumn<String> get nutritionFocus => $composableBuilder(
+      column: $table.nutritionFocus, builder: (column) => column);
+
+  GeneratedColumn<String> get equipment =>
+      $composableBuilder(column: $table.equipment, builder: (column) => column);
+
+  GeneratedColumn<String> get learningContext => $composableBuilder(
+      column: $table.learningContext, builder: (column) => column);
+
+  GeneratedColumn<bool> get onboardingCompleted => $composableBuilder(
+      column: $table.onboardingCompleted, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$AIProfilesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AIProfilesTable,
+    AIProfile,
+    $$AIProfilesTableFilterComposer,
+    $$AIProfilesTableOrderingComposer,
+    $$AIProfilesTableAnnotationComposer,
+    $$AIProfilesTableCreateCompanionBuilder,
+    $$AIProfilesTableUpdateCompanionBuilder,
+    (AIProfile, BaseReferences<_$AppDatabase, $AIProfilesTable, AIProfile>),
+    AIProfile,
+    PrefetchHooks Function()> {
+  $$AIProfilesTableTableManager(_$AppDatabase db, $AIProfilesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AIProfilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AIProfilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AIProfilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> userId = const Value.absent(),
+            Value<String> cuisinePreferences = const Value.absent(),
+            Value<String> flavorProfile = const Value.absent(),
+            Value<String> likes = const Value.absent(),
+            Value<String> proteinPreferences = const Value.absent(),
+            Value<String> budgetLevel = const Value.absent(),
+            Value<String> mealPrepStyle = const Value.absent(),
+            Value<int> cookingDaysPerWeek = const Value.absent(),
+            Value<String> healthGoals = const Value.absent(),
+            Value<String> nutritionFocus = const Value.absent(),
+            Value<String> equipment = const Value.absent(),
+            Value<String> learningContext = const Value.absent(),
+            Value<bool> onboardingCompleted = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AIProfilesCompanion(
+            id: id,
+            userId: userId,
+            cuisinePreferences: cuisinePreferences,
+            flavorProfile: flavorProfile,
+            likes: likes,
+            proteinPreferences: proteinPreferences,
+            budgetLevel: budgetLevel,
+            mealPrepStyle: mealPrepStyle,
+            cookingDaysPerWeek: cookingDaysPerWeek,
+            healthGoals: healthGoals,
+            nutritionFocus: nutritionFocus,
+            equipment: equipment,
+            learningContext: learningContext,
+            onboardingCompleted: onboardingCompleted,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String userId,
+            Value<String> cuisinePreferences = const Value.absent(),
+            Value<String> flavorProfile = const Value.absent(),
+            Value<String> likes = const Value.absent(),
+            Value<String> proteinPreferences = const Value.absent(),
+            Value<String> budgetLevel = const Value.absent(),
+            Value<String> mealPrepStyle = const Value.absent(),
+            Value<int> cookingDaysPerWeek = const Value.absent(),
+            Value<String> healthGoals = const Value.absent(),
+            Value<String> nutritionFocus = const Value.absent(),
+            Value<String> equipment = const Value.absent(),
+            Value<String> learningContext = const Value.absent(),
+            Value<bool> onboardingCompleted = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AIProfilesCompanion.insert(
+            id: id,
+            userId: userId,
+            cuisinePreferences: cuisinePreferences,
+            flavorProfile: flavorProfile,
+            likes: likes,
+            proteinPreferences: proteinPreferences,
+            budgetLevel: budgetLevel,
+            mealPrepStyle: mealPrepStyle,
+            cookingDaysPerWeek: cookingDaysPerWeek,
+            healthGoals: healthGoals,
+            nutritionFocus: nutritionFocus,
+            equipment: equipment,
+            learningContext: learningContext,
+            onboardingCompleted: onboardingCompleted,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$AIProfilesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $AIProfilesTable,
+    AIProfile,
+    $$AIProfilesTableFilterComposer,
+    $$AIProfilesTableOrderingComposer,
+    $$AIProfilesTableAnnotationComposer,
+    $$AIProfilesTableCreateCompanionBuilder,
+    $$AIProfilesTableUpdateCompanionBuilder,
+    (AIProfile, BaseReferences<_$AppDatabase, $AIProfilesTable, AIProfile>),
+    AIProfile,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3688,6 +4759,8 @@ class $AppDatabaseManager {
       $$PlannedMealsTableTableManager(_db, _db.plannedMeals);
   $$ShoppingItemsTableTableManager get shoppingItems =>
       $$ShoppingItemsTableTableManager(_db, _db.shoppingItems);
+  $$AIProfilesTableTableManager get aIProfiles =>
+      $$AIProfilesTableTableManager(_db, _db.aIProfiles);
 }
 
 // **************************************************************************

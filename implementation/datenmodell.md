@@ -1,9 +1,9 @@
 # Saisonier Data Model & Schema
 
 **Status:** Definitive
-**Source of Truth:** PRD v1.0.0 + Vision v2.0
+**Source of Truth:** PRD v1.0.0 + Vision v3.0 (AI Integration)
 **Technology:** Pocketbase (Remote), Drift (Local Cache), Freezed (Domain)
-**Schema Version:** 5
+**Schema Version:** 7
 
 ## 1. Domain Entities (Dart/Flutter)
 
@@ -80,7 +80,78 @@ enum DietType { omnivore, vegetarian, vegan, pescatarian, flexitarian }
 enum CookingSkill { beginner, intermediate, advanced }
 ```
 
-### 1.4 `PlannedMeal` (Phase 12)
+### 1.4 `AIProfile` (Phase 14 - Premium Only)
+Extended profile for AI personalization. Only exists for Premium/Pro users.
+```dart
+@freezed
+class AIProfile with _$AIProfile {
+  const factory AIProfile({
+    required String id,
+    required String userId,
+
+    // Culinary Preferences
+    @Default([]) List<Cuisine> cuisinePreferences,
+    @Default([]) List<FlavorProfile> flavorProfile,
+    @Default([]) List<String> likes, // "Pasta", "Suppen", "Eintöpfe"
+    @Default([]) List<Protein> proteinPreferences,
+
+    // Lifestyle
+    @Default(BudgetLevel.normal) BudgetLevel budgetLevel,
+    @Default(MealPrepStyle.mixed) MealPrepStyle mealPrepStyle,
+    @Default(4) int cookingDaysPerWeek,
+
+    // Goals (optional)
+    @Default([]) List<HealthGoal> healthGoals,
+    @Default(NutritionFocus.balanced) NutritionFocus nutritionFocus,
+
+    // Equipment (optional)
+    @Default([]) List<KitchenEquipment> equipment,
+
+    // AI Learning Context (implicit, updated by system)
+    @Default(AILearningContext()) AILearningContext learningContext,
+
+    // Timestamps
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) = _AIProfile;
+}
+
+enum Cuisine { italian, asian, swiss, mexican, indian, mediterranean, middleEastern, french, american }
+enum FlavorProfile { spicy, mild, creamy, crispy, hearty, fresh, umami }
+enum Protein { chicken, beef, pork, fish, seafood, tofu, legumes, eggs }
+enum BudgetLevel { budget, normal, premium }
+enum MealPrepStyle { daily, mealPrep, mixed }
+enum HealthGoal { loseWeight, gainMuscle, moreEnergy, eatHealthy, none }
+enum NutritionFocus { highProtein, lowCarb, balanced }
+enum KitchenEquipment { oven, mixer, airfryer, steamCooker, instantPot, grill }
+```
+
+### 1.5 `AILearningContext` (Phase 14 - Implicit Learning)
+Automatically tracked user behavior for AI personalization.
+```dart
+@freezed
+class AILearningContext with _$AILearningContext {
+  const factory AILearningContext({
+    // Derived from favorites & usage
+    @Default([]) List<String> topIngredients,
+    @Default({}) Map<String, int> categoryUsage, // "Suppe": 5, "Pasta": 8
+
+    // From AI interactions
+    @Default([]) List<String> acceptedSuggestions,
+    @Default([]) List<String> rejectedSuggestions,
+
+    // From weekplan behavior
+    @Default([]) List<int> activeCookingDays, // [1,2,3,5] = Mo,Di,Mi,Fr
+    @Default(2.0) double avgServings,
+
+    // Stats
+    @Default(0) int totalAIRequests,
+    DateTime? lastAIInteraction,
+  }) = _AILearningContext;
+}
+```
+
+### 1.6 `PlannedMeal` (Phase 12)
 Meal planning entity for week plans.
 ```dart
 @freezed
@@ -133,7 +204,7 @@ enum MealSlot { breakfast, lunch, dinner }
 | `ingredients` | JSON | | `[{item, amount, unit, note}]` |
 | `steps` | JSON | | List of strings |
 | `tags` | JSON | | `["schnell", "günstig"]` Phase 12b |
-| `source` | Select | `curated`, `user` | |
+| `source` | Select | `curated`, `user`, `ai` | Phase 14: AI-generated |
 | `user_id` | Relation | Collection: `users`, Nullable | |
 | `is_public` | Bool | Default: false | |
 | `is_vegetarian` | Bool | Default: false | Phase 12b |
@@ -176,11 +247,45 @@ enum MealSlot { breakfast, lunch, dinner }
 | `custom_title` | Text | Nullable | For non-recipe entries |
 | `servings` | Number | Default: 2 | |
 
+### 2.5 Collection: `ai_profiles` (Phase 14 - Premium Only)
+- **Type:** Base
+- **API Rules:** Owner only. Created on Premium subscription.
+
+| Field | Type | Options | Notes |
+| :--- | :--- | :--- | :--- |
+| `user_id` | Relation | Collection: `users`, Unique | Required |
+| `cuisine_preferences` | JSON | | Array of cuisine enum strings |
+| `flavor_profile` | JSON | | Array of flavor enum strings |
+| `likes` | JSON | | Array of strings ["Pasta", "Suppen"] |
+| `protein_preferences` | JSON | | Array of protein enum strings |
+| `budget_level` | Select | `budget`, `normal`, `premium` | Default: `normal` |
+| `meal_prep_style` | Select | `daily`, `mealPrep`, `mixed` | Default: `mixed` |
+| `cooking_days_per_week` | Number | Min: 1, Max: 7 | Default: 4 |
+| `health_goals` | JSON | | Array of goal enum strings |
+| `nutrition_focus` | Select | `highProtein`, `lowCarb`, `balanced` | Default: `balanced` |
+| `equipment` | JSON | | Array of equipment enum strings |
+| `learning_context` | JSON | | AILearningContext object |
+| `onboarding_completed` | Bool | | Default: false |
+
+### 2.6 Collection: `ai_requests` (Phase 14 - Logging & Quota)
+- **Type:** Base
+- **API Rules:** Owner read only, System create.
+
+| Field | Type | Options | Notes |
+| :--- | :--- | :--- | :--- |
+| `user_id` | Relation | Collection: `users` | Required |
+| `request_type` | Select | `recipe_gen`, `weekplan_gen`, `image_gen` | |
+| `prompt_hash` | Text | | For caching identical requests |
+| `tokens_used` | Number | | Input + Output tokens |
+| `success` | Bool | | |
+| `error_message` | Text | Nullable | |
+| `created` | DateTime | Auto | |
+
 ## 3. Local Schema (Drift Database)
 
 For "Offline First" capability, we mirror the remote data into a local SQLite database using **Drift**.
 
-**Current Schema Version: 5**
+**Current Schema Version: 7**
 
 ### 3.1 `Vegetables` Table
 ```dart
@@ -270,6 +375,42 @@ class PlannedMeals extends Table {
 }
 ```
 
+### 3.4 `AIProfiles` Table (Phase 14 - Premium Only)
+```dart
+class AIProfiles extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+
+  // Preferences (JSON stored as text)
+  TextColumn get cuisinePreferences => text().withDefault(const Constant('[]'))();
+  TextColumn get flavorProfile => text().withDefault(const Constant('[]'))();
+  TextColumn get likes => text().withDefault(const Constant('[]'))();
+  TextColumn get proteinPreferences => text().withDefault(const Constant('[]'))();
+
+  // Lifestyle
+  TextColumn get budgetLevel => text().withDefault(const Constant('normal'))();
+  TextColumn get mealPrepStyle => text().withDefault(const Constant('mixed'))();
+  IntColumn get cookingDaysPerWeek => integer().withDefault(const Constant(4))();
+
+  // Goals
+  TextColumn get healthGoals => text().withDefault(const Constant('[]'))();
+  TextColumn get nutritionFocus => text().withDefault(const Constant('balanced'))();
+
+  // Equipment
+  TextColumn get equipment => text().withDefault(const Constant('[]'))();
+
+  // Learning Context (JSON)
+  TextColumn get learningContext => text().withDefault(const Constant('{}'))();
+
+  // Meta
+  BoolColumn get onboardingCompleted => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+```
+
 ## 4. Data Sync Strategy (Repository Pattern)
 
 1.  **App Start:**
@@ -301,3 +442,66 @@ if (meal.recipeId == null || meal.recipeId!.isEmpty) {
   // Handle custom entry
 }
 ```
+
+## 6. AI Context Building (Phase 14+)
+
+The AI features use a comprehensive context built from multiple sources:
+
+### 6.1 Context Sources
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        AI PROMPT CONTEXT                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  FROM user_profiles (Free + Premium):                               │
+│  ├── householdSize, childrenCount, childrenAges                     │
+│  ├── allergens (STRICT - never violate)                             │
+│  ├── diet (vegetarian, vegan, etc.)                                 │
+│  ├── dislikes                                                        │
+│  ├── skill, maxCookingTimeMin                                       │
+│                                                                      │
+│  FROM ai_profiles (Premium only):                                    │
+│  ├── cuisinePreferences, flavorProfile, likes                       │
+│  ├── proteinPreferences                                             │
+│  ├── budgetLevel, mealPrepStyle, cookingDaysPerWeek                 │
+│  ├── healthGoals, nutritionFocus                                    │
+│  ├── equipment                                                       │
+│  └── learningContext (implicit)                                      │
+│                                                                      │
+│  FROM current data:                                                  │
+│  ├── Seasonal vegetables (current month)                            │
+│  ├── Existing weekplan (don't overwrite)                            │
+│  ├── User favorites (for style matching)                            │
+│  └── Previous AI interactions (from learningContext)                 │
+│                                                                      │
+│  FROM user input (per request):                                      │
+│  ├── Selected days/slots                                            │
+│  ├── Free-text additions ("viel Protein", "schnell")                │
+│  └── Specific ingredients (for recipe gen)                          │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 6.2 Learning Context Updates
+
+The `learningContext` in `ai_profiles` is updated automatically:
+
+| Trigger | Update |
+| :--- | :--- |
+| User saves AI-generated recipe | Add to `acceptedSuggestions` |
+| User clicks "Regenerate" | Add to `rejectedSuggestions` |
+| User favorites a recipe | Update `topIngredients` based on recipe |
+| User plans meals | Update `activeCookingDays`, `avgServings` |
+| AI request completed | Increment `totalAIRequests`, update `lastAIInteraction` |
+
+### 6.3 Priority Rules
+
+When building prompts, respect this priority:
+
+1. **Safety First:** Allergens are NEVER violated
+2. **Diet Compliance:** vegetarian/vegan strictly enforced
+3. **Dislikes:** Avoided unless explicitly requested
+4. **Learned Rejections:** Avoid ingredients from `rejectedSuggestions`
+5. **Preferences:** Applied where possible (cuisine, flavor, budget)
+6. **Seasonality:** Prioritize in-season vegetables

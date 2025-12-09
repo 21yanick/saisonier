@@ -240,13 +240,13 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 
         // Vegetarisch/Vegan
         if (recipe.isVegan)
-          _MetaChip(
+          const _MetaChip(
             icon: Icons.eco,
             label: 'Vegan',
             color: Colors.green,
           )
         else if (recipe.isVegetarian)
-          _MetaChip(
+          const _MetaChip(
             icon: Icons.eco_outlined,
             label: 'Vegetarisch',
             color: Colors.green,

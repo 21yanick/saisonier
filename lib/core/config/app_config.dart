@@ -18,4 +18,21 @@ class AppConfig {
 
     return 'http://127.0.0.1:8091';
   }
+
+  /// Base URL for the AI Service (Gemini Proxy).
+  ///
+  /// Priority:
+  /// 1. Compile-time override: `--dart-define=AI_URL=https://your-url.com`
+  /// 2. Android Emulator: Uses 10.0.2.2
+  /// 3. Default: 127.0.0.1
+  static String get aiServiceUrl {
+    const envUrl = String.fromEnvironment('AI_URL');
+    if (envUrl.isNotEmpty) return envUrl;
+
+    if (Platform.isAndroid) {
+      return 'http://10.0.2.2:3001';
+    }
+
+    return 'http://127.0.0.1:3001';
+  }
 }

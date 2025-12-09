@@ -6,6 +6,7 @@ import '../../features/seasonality/presentation/screens/recipe_detail_screen.dar
 import 'package:saisonier/features/profile/presentation/screens/profile_settings_screen.dart';
 import 'package:saisonier/features/profile/presentation/screens/onboarding_wizard_screen.dart';
 import 'package:saisonier/features/recipes/presentation/screens/recipe_editor_screen.dart';
+import 'package:saisonier/features/ai/presentation/screens/premium_onboarding_screen.dart';
 
 // Private navigator keys
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -69,6 +70,12 @@ final appRouter = GoRouter(
           builder: (context, state) => const OnboardingWizardScreen(),
         ),
       ],
+    ),
+    // Premium AI Onboarding
+    GoRoute(
+      path: '/premium-onboarding',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PremiumOnboardingScreen(),
     ),
   ],
 );

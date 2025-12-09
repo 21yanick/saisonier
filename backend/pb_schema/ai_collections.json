@@ -1,0 +1,182 @@
+{
+  "collections": [
+    {
+      "name": "ai_profiles",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "_pb_users_auth_",
+            "cascadeDelete": true,
+            "maxSelect": 1,
+            "displayFields": ["email"]
+          }
+        },
+        {
+          "name": "cuisine_preferences",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "flavor_profile",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "likes",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "protein_preferences",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "budget_level",
+          "type": "select",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "values": ["budget", "normal", "premium"]
+          }
+        },
+        {
+          "name": "meal_prep_style",
+          "type": "select",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "values": ["daily", "mealPrep", "mixed"]
+          }
+        },
+        {
+          "name": "cooking_days_per_week",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 1,
+            "max": 7
+          }
+        },
+        {
+          "name": "health_goals",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "nutrition_focus",
+          "type": "select",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "values": ["highProtein", "lowCarb", "balanced", "vegetableFocus", "lowSugar", "wholesome"]
+          }
+        },
+        {
+          "name": "equipment",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "learning_context",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "onboarding_completed",
+          "type": "bool",
+          "required": false,
+          "options": {}
+        }
+      ],
+      "listRule": "@request.auth.id = user_id",
+      "viewRule": "@request.auth.id = user_id",
+      "createRule": "@request.auth.id != ''",
+      "updateRule": "@request.auth.id = user_id",
+      "deleteRule": "@request.auth.id = user_id",
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_ai_profiles_user ON ai_profiles (user_id)"
+      ]
+    },
+    {
+      "name": "ai_requests",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "_pb_users_auth_",
+            "cascadeDelete": false,
+            "maxSelect": 1,
+            "displayFields": ["email"]
+          }
+        },
+        {
+          "name": "request_type",
+          "type": "select",
+          "required": true,
+          "options": {
+            "maxSelect": 1,
+            "values": ["recipe_gen", "weekplan_gen", "image_gen"]
+          }
+        },
+        {
+          "name": "prompt_hash",
+          "type": "text",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "tokens_used",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "response_data",
+          "type": "json",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "success",
+          "type": "bool",
+          "required": false,
+          "options": {}
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "required": false,
+          "options": {}
+        }
+      ],
+      "listRule": "@request.auth.id = user_id",
+      "viewRule": "@request.auth.id = user_id",
+      "createRule": null,
+      "updateRule": null,
+      "deleteRule": null,
+      "indexes": [
+        "CREATE INDEX idx_ai_requests_user ON ai_requests (user_id)",
+        "CREATE INDEX idx_ai_requests_type ON ai_requests (request_type)"
+      ]
+    }
+  ]
+}

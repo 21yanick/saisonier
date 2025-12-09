@@ -12,15 +12,16 @@ import '../../features/seasonality/data/local/vegetable_table.dart';
 import '../../features/seasonality/data/local/recipe_table.dart';
 import '../../features/weekplan/data/local/planned_meal_table.dart';
 import '../../features/shopping_list/data/local/shopping_item_table.dart';
+import '../../features/ai/data/local/ai_profiles_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Vegetables, Recipes, PlannedMeals, ShoppingItems])
+@DriftDatabase(tables: [Vegetables, Recipes, PlannedMeals, ShoppingItems, AIProfiles])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -79,6 +80,10 @@ class AppDatabase extends _$AppDatabase {
         if (from < 6) {
           // Schema v6: Shopping List
           await m.createTable(shoppingItems);
+        }
+        if (from < 7) {
+          // Schema v7: AI Profiles (Premium)
+          await m.createTable(aIProfiles);
         }
       },
     );

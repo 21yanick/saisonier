@@ -5,9 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:saisonier/core/config/app_config.dart';
 import 'package:saisonier/core/database/app_database.dart';
+import 'package:saisonier/core/theme/app_theme.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
 import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
+import 'package:saisonier/features/ai/presentation/widgets/ai_fab.dart';
+import 'package:saisonier/features/ai/presentation/widgets/recipe_generation_modal.dart';
+import 'package:saisonier/features/ai/presentation/screens/recipe_review_screen.dart';
 
 /// Filter options for the recipe list
 enum RecipeFilter { all, mine, curated }
@@ -100,10 +104,54 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
       floatingActionButton: userId != null
           ? Padding(
               padding: const EdgeInsets.only(bottom: 90), // Platz für Pills
-              child: FloatingActionButton.extended(
-                onPressed: () => context.push('/recipes/new'),
-                icon: const Icon(Icons.add),
-                label: const Text('Neues Rezept'),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // AI Recipe Generator FAB
+                  AIFab(
+                    label: 'AI Rezept',
+                    onPressed: () {
+                      showRecipeGenerationModal(
+                        context,
+                        onRecipeGenerated: (recipe) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RecipeReviewScreen(
+                                generatedRecipe: recipe,
+                                onRegenerate: () {
+                                  showRecipeGenerationModal(
+                                    context,
+                                    onRecipeGenerated: (r) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RecipeReviewScreen(
+                                            generatedRecipe: r,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  // Manual Recipe FAB
+                  FloatingActionButton.extended(
+                    heroTag: 'manual_recipe',
+                    onPressed: () => context.push('/recipes/new'),
+                    backgroundColor: AppColors.primaryGreen,
+                    foregroundColor: Colors.white,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Neues Rezept'),
+                  ),
+                ],
               ),
             )
           : null,
@@ -385,9 +433,9 @@ class _RecipeListTile extends StatelessWidget {
                           ),
                         // Vegetarisch/Vegan
                         if (recipe.isVegan)
-                          _InfoChip(label: 'Vegan', color: Colors.green)
+                          const _InfoChip(label: 'Vegan', color: Colors.green)
                         else if (recipe.isVegetarian)
-                          _InfoChip(label: 'Vegetarisch', color: Colors.green),
+                          const _InfoChip(label: 'Vegetarisch', color: Colors.green),
                       ],
                     ),
                   ],

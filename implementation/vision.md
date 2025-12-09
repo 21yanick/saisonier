@@ -1,7 +1,7 @@
-# Saisonier – Product Vision
+# Saisonier - Product Vision
 
-**Version:** 2.0  
-**Status:** Strategic Roadmap  
+**Version:** 3.0
+**Status:** Strategic Roadmap (AI Integration)
 **Datum:** Dezember 2025
 
 ---
@@ -11,774 +11,589 @@
 Saisonier entwickelt sich vom **Saisonkalender** zum **intelligenten Meal-Planning-Hub** für die Schweiz. Die App kombiniert saisonale Ernährung mit KI-gestützter Wochenplanung und nahtloser Einkaufsintegration.
 
 **Vision Statement:**
-> *"Saisonier macht saisonales Kochen so einfach, dass es zur Gewohnheit wird – von der Inspiration bis zur Einkaufsliste."*
+> *"Saisonier macht saisonales Kochen so einfach, dass es zur Gewohnheit wird - von der Inspiration bis zur Einkaufsliste."*
 
-**Kernprinzip:** Alles funktioniert auch ohne KI. Premium-User erhalten intelligente Automatisierung.
+**Kernprinzip:** Alles funktioniert auch ohne KI. Premium-User erhalten intelligente Automatisierung, die sich an ihre Präferenzen anpasst und mit der Zeit lernt.
+
+**AI-Philosophie:**
+> *"Kein Chat-Bot, sondern kontextueller Assistent. Die AI kennt dich, deine Familie, deine Saison - und liefert Ergebnisse direkt in deinen Plan."*
 
 ---
 
-## 2. Aktueller Stand (MVP v1.0)
+## 2. Aktueller Stand (MVP Complete + Phase 12)
 
 ### 2.1 Implementierte Features
 
 | Feature | Beschreibung | Status |
 |---------|--------------|--------|
-| Seasonal Feed | Immersiver vertikaler Feed mit saisonalen "Heroes" | ✅ Done |
-| Katalog Grid | Effiziente Übersicht mit Echtzeit-Suche | ✅ Done |
-| Detail View | Rezepte, Saison-Visualisierung, Gyroscope-Cards | ✅ Done |
-| Offline-First | Drift (SQLite) + PocketBase Sync | ✅ Done |
-| User Auth | Guest Mode + Account mit Cloud-Sync | ✅ Done |
-| Favoriten | Lokal + Cloud-Synchronisation | ✅ Done |
+| Seasonal Feed | Immersiver vertikaler Feed mit saisonalen "Heroes" | Done |
+| Katalog Grid | Effiziente Übersicht mit Echtzeit-Suche | Done |
+| Detail View | Rezepte, Saison-Visualisierung, Gyroscope-Cards | Done |
+| Offline-First | Drift (SQLite) + PocketBase Sync | Done |
+| User Auth | Guest Mode + Account mit Cloud-Sync | Done |
+| Favoriten | Lokal + Cloud-Synchronisation | Done |
+| User Profile | Haushalt, Allergien, Diät, Kochskill | Done |
+| Bring! Integration | Einkaufsliste sync | Done |
+| User Recipes | CRUD für eigene Rezepte | Done |
+| Wochenplan | Manuelles Meal Planning | Done |
 
 ### 2.2 Technischer Stack
 
 - **Frontend:** Flutter (Cross-Platform)
 - **State:** Riverpod (AsyncNotifier, Code Generation)
-- **Backend:** PocketBase (Auth, Database, Files)
+- **Backend:** PocketBase (Auth, Database, Files, AI Proxy)
 - **Local DB:** Drift (SQLite, Offline-First)
 - **Routing:** GoRouter (Type-Safe, Deep Links)
 - **Models:** Freezed (Immutable Data Classes)
+- **AI:** Gemini API via PocketBase Proxy
 
 ---
 
-## 3. Produkt-Vision: Das Ökosystem
+## 3. AI Integration Konzept
+
+### 3.1 Warum nicht einfach ChatGPT?
+
+| ChatGPT | Saisonier AI |
+|---------|--------------|
+| "Gib mir einen Wochenplan" | Kennt deinen Haushalt, Allergien, was Saison hat |
+| Ergebnis: Text-Wall | Ergebnis: Direkt im Wochenplan |
+| Copy-Paste Zutaten | Ein Tap -> Bring! Export |
+| Jedes Mal neu erklären | Lernt aus deinem Verhalten |
+| Generic global | Swiss-focused (Wirz, Rüebli, Nüsslisalat) |
+
+**Der Mehrwert:** Kontextuelle Integration. Die AI ist kein separates Tool, sondern versteht den User und seine Daten.
+
+### 3.2 AI Interaction Paradigma: Contextual FAB
+
+**Entscheidung:** Kein Chat-Interface, sondern kontextuelle AI-Actions via Floating Action Button (FAB).
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            USER PROFILE                                      │
-│     Allergien │ Diät │ Haushalt │ Kinder │ Kochskill │ Bring! Account       │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                    │
-          ┌─────────────────────────┼─────────────────────────┐
-          ▼                         ▼                         ▼
-┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
-│      REZEPTE        │   │     WOCHENPLAN      │   │      EINKAUF        │
-│                     │   │                     │   │                     │
-│  • Kuratiert        │──▶│  • 7-Tage Ansicht   │──▶│  • Bring! Sync      │
-│  • Eigene erstellen │   │  • Manuell planen   │   │  • Mengen addieren  │
-│  • AI generiert     │   │  • AI Vorschläge    │   │  • Kategorisiert    │
-│  • Familie teilen   │   │  • Filter/Constraints│   │                     │
-└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
-          ▲                         ▲                         
-          │                         │                         
-          └───────────┬─────────────┘                         
-                      │                                       
-             ┌────────▼────────┐                              
-             │   SAISONIER AI  │                              
-             │                 │                              
-             │  • Wochenplaner │                              
-             │  • Rezept-Gen   │                              
-             │  • Bild-Gen     │                              
-             └─────────────────┘                              
+┌─────────────────────────────────────────────────────────────────┐
+│                        AI FAB KONZEPT                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Screen: Wochenplan          Screen: Rezepte                     │
+│  ┌─────────────────┐         ┌─────────────────┐                │
+│  │                 │         │                 │                │
+│  │   [Plan Grid]   │         │  [Recipe List]  │                │
+│  │                 │         │                 │                │
+│  │           [FAB] │         │           [FAB] │                │
+│  └─────────────────┘         └─────────────────┘                │
+│         │                           │                           │
+│         ▼                           ▼                           │
+│  ┌─────────────────┐         ┌─────────────────┐                │
+│  │ Plan-Assistent  │         │ Rezept-Ideen    │                │
+│  │                 │         │                 │                │
+│  │ • Welche Tage?  │         │ • Saison-Gemüse │                │
+│  │ • Mahlzeiten?   │         │ • Was hast du?  │                │
+│  │ • Extras?       │         │ • Art?          │                │
+│  │                 │         │                 │                │
+│  │ [Generieren]    │         │ [Generieren]    │                │
+│  └─────────────────┘         └─────────────────┘                │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## 4. Feature-Spezifikation
-
-### 4.1 Erweitertes User Profile
-
-**Zweck:** Personalisierung aller Empfehlungen und AI-Outputs.
-
-```dart
-@freezed
-class UserProfile with _$UserProfile {
-  const factory UserProfile({
-    required String userId,
-    
-    // Haushalt
-    required int householdSize,
-    required int childrenCount,
-    List<int>? childrenAges,
-    
-    // Ernährung
-    required List<Allergen> allergens,
-    required DietType diet,
-    List<String>? dislikes,
-    
-    // Kochen
-    required CookingSkill skill,
-    required int maxCookingTimeMin,
-    
-    // Externe Dienste
-    String? bringEmail,
-    String? bringListUuid,
-  }) = _UserProfile;
-}
-
-enum Allergen { gluten, lactose, nuts, eggs, soy, shellfish, fish }
-enum DietType { omnivore, vegetarian, vegan, pescatarian, flexitarian }
-enum CookingSkill { beginner, intermediate, advanced }
-```
-
-**UI-Komponenten:**
-- Onboarding-Flow für Ersteinrichtung
-- Settings-Screen für Anpassungen
-- Quick-Edit in der Wochenplan-Ansicht
-
----
-
-### 4.2 Rezept-System
-
-**Drei Rezept-Quellen:**
-
-| Quelle | Beschreibung | Verfügbarkeit |
-|--------|--------------|---------------|
-| **Kuratiert** | Von Saisonier, qualitätsgeprüft | Free |
-| **User** | Selbst erstellt oder importiert | Free |
-| **AI-generiert** | Von Gemini erstellt, user-approved | Premium |
-
-**Erweitertes Datenmodell:**
-
-```dart
-@freezed
-class Recipe with _$Recipe {
-  const factory Recipe({
-    required String id,
-    required String title,
-    String? subtitle,
-    
-    // Verknüpfungen
-    required List<String> vegetableIds,
-    
-    // Metadaten
-    required RecipeSource source,
-    String? userId,
-    String? familyId,
-    required bool isPublic,
-    
-    // Zubereitung
-    required int timeMin,
-    required int servings,
-    required Difficulty difficulty,
-    required List<Ingredient> ingredients,
-    required List<String> steps,
-    String? tips,
-    
-    // Eignung
-    required bool isKidFriendly,
-    required bool isQuickMeal,
-    required List<Allergen> containsAllergens,
-    required DietType suitableFor,
-    List<String>? tags,
-    
-    // Bilder
-    String? imageUrl,
-    String? aiGeneratedImageUrl,
-  }) = _Recipe;
-}
-
-enum RecipeSource { curated, user, ai }
-enum Difficulty { easy, medium, hard }
-```
-
----
-
-### 4.3 Wochenplanung
-
-**Datenmodell:**
-
-```dart
-@freezed
-class WeekPlan with _$WeekPlan {
-  const factory WeekPlan({
-    required String id,
-    required String viserId,
-    required DateTime weekStart,
-    required List<DayPlan> days,
-  }) = _WeekPlan;
-}
-
-@freezed
-class DayPlan with _$DayPlan {
-  const factory DayPlan({
-    required DateTime date,
-    required Map<MealSlot, PlannedMeal?> meals,
-  }) = _DayPlan;
-}
-
-@freezed
-class PlannedMeal with _$PlannedMeal {
-  const factory PlannedMeal({
-    required String recipeId,
-    required int servings,
-    String? note,
-  }) = _PlannedMeal;
-}
-
-enum MealSlot { breakfast, lunch, dinner }
-```
-
-**Funktionen:**
-
-| Funktion | Free | Premium |
-|----------|------|---------|
-| Manuelles Drag & Drop | ✅ | ✅ |
-| Rezept-Suche mit Filtern | ✅ | ✅ |
-| "Nur Saisonales" Filter | ✅ | ✅ |
-| AI "Plane meine Woche" | ❌ | ✅ |
-| Meal-Prep Vorschläge | ❌ | ✅ |
-
----
-
-### 4.4 Bring! Integration
-
-**Technische Basis:** Inoffizielle REST API (https://api.getbring.com/rest/)
-
-**Implementierung:**
-
-```dart
-class BringApiClient {
-  static const _baseUrl = 'https://api.getbring.com/rest';
-  
-  String? _bearerToken;
-  String? _userUuid;
-  
-  Future<void> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/v2/bringauth'),
-      body: {'email': email, 'password': password},
-    );
-    final data = jsonDecode(response.body);
-    _bearerToken = data['access_token'];
-    _userUuid = data['uuid'];
-  }
-  
-  Future<List<BringList>> loadLists() async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/bringusers/$_userUuid/lists'),
-      headers: {'Authorization': 'Bearer $_bearerToken'},
-    );
-    return (jsonDecode(response.body)['lists'] as List)
-        .map((e) => BringList.fromJson(e))
-        .toList();
-  }
-  
-  Future<void> saveItem(String listUuid, String item, String? spec) async {
-    await http.put(
-      Uri.parse('$_baseUrl/v2/bringlists/$listUuid'),
-      headers: {
-        'Authorization': 'Bearer $_bearerToken',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'uuid=${Uuid().v4()}&itemId=$item&spec=${spec ?? ""}',
-    );
-  }
-  
-  Future<void> batchAddItems(String listUuid, List<ShoppingItem> items) async {
-    // Batch-API für mehrere Items gleichzeitig
-  }
-}
-```
-
-**Smart Aggregation (Premium):**
-
-```
-Wochenplan enthält:
-├─ Montag: Rüebli-Risotto (200g Rüebli)
-├─ Mittwoch: Rüebli-Suppe (300g Rüebli)
-├─ Donnerstag: Pasta (2 Zwiebeln)
-└─ Freitag: Salat (1 Zwiebel)
-
-→ Bring! Einkaufsliste:
-  • Rüebli: 500g
-  • Zwiebeln: 3 Stück
-```
-
----
-
-### 4.5 AI-Features (Premium)
-
-#### 4.5.1 AI Wochenplaner
-
-**Input:**
-- User Profile (Allergien, Diät, Haushalt)
-- Constraints (Zeit, Budget, Skill)
-- Saisonale Verfügbarkeit
-- Bisherige Favoriten
-
-**Prompt-Strategie:**
-
-```dart
-String buildWeekPlanPrompt(WeekPlanRequest request) => '''
-Du bist ein Schweizer Ernährungsexperte und Meal-Planner.
-
-KONTEXT:
-- Haushalt: ${request.profile.householdSize} Personen
-- Kinder: ${request.profile.childrenCount} (Alter: ${request.profile.childrenAges?.join(', ')})
-- Allergien: ${request.profile.allergens.join(', ')}
-- Diät: ${request.profile.diet}
-- Max. Kochzeit: ${request.profile.maxCookingTimeMin} Minuten
-- Kochskill: ${request.profile.skill}
-
-SAISONALES GEMÜSE (Dezember, Schweiz):
-${request.seasonalVegetables.map((v) => '- ${v.name}').join('\n')}
-
-AUFGABE:
-Erstelle einen Wochenplan für ${request.meals.join(', ')} von ${request.startDate} bis ${request.endDate}.
-
-ANFORDERUNGEN:
-- Nur saisonales Gemüse verwenden
-- Kinderfreundliche Optionen wenn Kinder vorhanden
-- Allergien strikt beachten
-- Abwechslung über die Woche
-- Zutaten wiederverwenden wo sinnvoll (Meal-Prep)
-
-OUTPUT FORMAT (JSON):
-{
-  "days": [
-    {
-      "date": "2025-12-09",
-      "meals": {
-        "lunch": {"recipeTitle": "...", "servings": 4, "mainVegetable": "..."},
-        "dinner": {"recipeTitle": "...", "servings": 4, "mainVegetable": "..."}
-      }
-    }
-  ],
-  "shoppingList": [...],
-  "mealPrepTips": [...]
-}
-''';
-```
-
-#### 4.5.2 AI Rezept-Generator
-
-**Use Cases:**
-- "Gib mir ein schnelles Rezept mit Lauch"
-- "Kinderfreundliches Abendessen ohne Milch"
-- "Was kann ich mit Wirz und Kartoffeln machen?"
-
-#### 4.5.3 AI Bildgenerierung
-
-**Modell:** Nano Banana Pro (Gemini 3 Pro Image)
 
 **Vorteile:**
-- Hochwertige Food-Photography
-- Akkurates Text-Rendering (für Overlays)
-- 2K/4K Auflösung
+- Strukturierter Input (Checkboxen + optionaler Freitext)
+- Kontext ist vorausgefüllt (Profil, Saison)
+- Ergebnis landet direkt in der App (kein Copy-Paste)
+- Klare Actions statt offener Chat
 
-**Prompt-Template:**
+### 3.3 AI Persönlichkeit
 
-```dart
-String buildRecipeImagePrompt(Recipe recipe) => '''
-Professional food photography of: ${recipe.title}
+**Ton:** Neutral-freundlich mit Swiss Touch, leicht Coach-artig
 
-Style: appetizing, natural lighting, shallow depth of field
-Setting: rustic Swiss kitchen, wooden table, fresh herbs
-Composition: hero shot, 45-degree angle, garnished
-Mood: warm, inviting, homemade
+- **Nicht:** "Hier ist dein Plan." (zu kalt)
+- **Nicht:** "OMG das wird so lecker!!!" (zu übertrieben)
+- **Richtig:** "Ich hab dir einen Plan mit viel saisonalem Gemüse zusammengestellt. Lauch und Wirz sind gerade mega frisch!"
 
-Main ingredients visible: ${recipe.ingredients.take(3).map((i) => i.item).join(', ')}
-''';
+### 3.4 Reaktiv vs. Proaktiv
+
+**Entscheidung:** Primär reaktiv (kostensparender, weniger nervig)
+
+| Verhalten | Implementierung |
+|-----------|-----------------|
+| **Reaktiv** | AI nur wenn User FAB tippt |
+| **Passiv-Hint** | "Dein Plan ist leer" Badge (kein AI-Call) |
+| **Kein Push** | Keine proaktiven Notifications mit AI-Content |
+
+---
+
+## 4. User Profile Architektur
+
+### 4.1 Zwei-Tier Profil System
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  user_profiles (Free + Premium)                                  │
+├─────────────────────────────────────────────────────────────────┤
+│  • householdSize, childrenCount, childrenAges                   │
+│  • allergens (STRICT)                                           │
+│  • diet (vegetarian, vegan, etc.)                               │
+│  • dislikes                                                      │
+│  • skill, maxCookingTimeMin                                     │
+│  • bringListUuid                                                │
+└─────────────────────────────────────────────────────────────────┘
+                              +
+┌─────────────────────────────────────────────────────────────────┐
+│  ai_profiles (Premium Only - separate Collection)                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  EXPLIZIT (User gibt ein via Premium Onboarding):               │
+│  • cuisinePreferences: [Italienisch, Asiatisch, Schweizer]      │
+│  • flavorProfile: [würzig, cremig, herzhaft]                    │
+│  • likes: ["Pasta", "Suppen", "Eintöpfe"]                       │
+│  • proteinPreferences: [Poulet, Fisch, Tofu]                    │
+│  • budgetLevel: sparsam / normal / premium                      │
+│  • mealPrepStyle: täglich / meal-prep / mix                     │
+│  • cookingDaysPerWeek: 4                                        │
+│  • healthGoals: [mehr Energie, gesund essen]                    │
+│  • nutritionFocus: balanced / high-protein / low-carb           │
+│  • equipment: [Ofen, Mixer, Airfryer]                           │
+│                                                                  │
+│  IMPLIZIT (System lernt automatisch):                           │
+│  • learningContext.topIngredients                               │
+│  • learningContext.categoryUsage                                │
+│  • learningContext.acceptedSuggestions                          │
+│  • learningContext.rejectedSuggestions                          │
+│  • learningContext.activeCookingDays                            │
+│  • learningContext.avgServings                                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 4.2 Warum separate ai_profiles Collection?
+
+1. **Clean Separation** - AI-Daten isoliert
+2. **Free User Overhead** - Kein leerer Premium-Ballast
+3. **Premium-Check einfach** - Eintrag existiert = Premium aktiv
+4. **GDPR-freundlich** - "AI-Daten löschen" ohne Profilverlust
+5. **Evolution** - AI-Schema kann sich unabhängig entwickeln
+
+---
+
+## 5. Premium Onboarding Flow
+
+Wenn User Premium kauft, wird der "AI Chef Setup" gestartet:
+
+### Screen 1: Welcome
+```
+┌─────────────────────────────────┐
+│                                 │
+│  🎉 Willkommen bei Premium!     │
+│                                 │
+│  Lass uns deinen persönlichen   │
+│  AI Chef einrichten.            │
+│                                 │
+│  Je mehr ich über dich weiss,   │
+│  desto besser werden meine      │
+│  Vorschläge.                    │
+│                                 │
+│  [Los geht's]    [Später]       │
+│                                 │
+└─────────────────────────────────┘
+```
+
+### Screen 2: Küche & Geschmack
+```
+┌─────────────────────────────────┐
+│  Was isst du am liebsten?       │
+│  (Mehrfachauswahl)              │
+│                                 │
+│  [Italienisch]  [Schweizer]     │
+│  [Asiatisch]    [Mexikanisch]   │
+│  [Indisch]      [Mediterran]    │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  Geschmacksprofil:              │
+│  [Würzig] [Mild] [Cremig]       │
+│  [Knusprig] [Herzhaft]          │
+│                                 │
+│                      [Weiter]   │
+└─────────────────────────────────┘
+```
+
+### Screen 3: Budget & Stil
+```
+┌─────────────────────────────────┐
+│  Wie kochst du am liebsten?     │
+│                                 │
+│  Budget:                        │
+│  ○ Sparsam (Basics, günstig)    │
+│  ● Normal (gute Zutaten)        │
+│  ○ Premium (Spezialitäten ok)   │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  Kochstil:                      │
+│  ○ Täglich frisch kochen        │
+│  ○ Meal Prep (vorkochen)        │
+│  ● Mix aus beidem               │
+│                                 │
+│  Wie oft pro Woche?             │
+│  [−]  4 Tage  [+]               │
+│                                 │
+│                      [Weiter]   │
+└─────────────────────────────────┘
+```
+
+### Screen 4: Ziele (Optional)
+```
+┌─────────────────────────────────┐
+│  Hast du besondere Ziele?       │
+│  (Optional)                     │
+│                                 │
+│  [ ] Abnehmen                   │
+│  [ ] Mehr Energie               │
+│  [ ] Muskelaufbau               │
+│  [✓] Einfach gesund essen       │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  Ernährungs-Fokus:              │
+│  ○ High Protein                 │
+│  ○ Low Carb                     │
+│  ● Ausgewogen                   │
+│                                 │
+│  [Skip]              [Weiter]   │
+└─────────────────────────────────┘
+```
+
+### Screen 5: Fertig!
+```
+┌─────────────────────────────────┐
+│                                 │
+│         🧑‍🍳                      │
+│                                 │
+│  Perfekt! Ich kenne dich jetzt: │
+│                                 │
+│  • 2-Personen Haushalt          │
+│  • Vegetarisch, keine Nüsse     │
+│  • Liebst Italienisch & Asien   │
+│  • Budget: Normal               │
+│  • 4x pro Woche kochen          │
+│                                 │
+│  Ich bin bereit!                │
+│                                 │
+│       [Zum Wochenplan]          │
+│                                 │
+└─────────────────────────────────┘
 ```
 
 ---
 
-## 5. Technische Architektur
+## 6. AI Features (Premium)
 
-### 5.1 AI Provider Abstraction (PocketBase Proxy)
+### 6.1 Wochenplan AI (Phase 15)
 
-**Architektur:**
-App -> PocketBase (API Client) -> Google Gemini API.
-Der API Key liegt sicher auf dem Server (PocketBase Umgebungsvariablen).
+**Trigger:** FAB im Wochenplan-Screen
 
-**App Logic:**
-
-```dart
-// Die App ruft nur noch PocketBase auf
-final result = await pb.collection('ai_generation').create({
-  'prompt': '...',
-  'type': 'recipe_gen',
-});
+**Modal UI:**
+```
+┌─────────────────────────────────┐
+│  🧑‍🍳 Wochenplan-Assistent        │
+├─────────────────────────────────┤
+│                                 │
+│  Ich kenn dich:                 │
+│  • 2 Personen, vegetarisch      │
+│  • Max 30min Kochzeit           │
+│  • Keine Nüsse                  │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  Welche Tage?                   │
+│  [Mo✓] [Di✓] [Mi✓] [Do ] [Fr✓] │
+│                                 │
+│  Mahlzeiten:                    │
+│  [✓ Mittag] [✓ Abendessen]     │
+│                                 │
+│  Extras? (optional)             │
+│  ┌─────────────────────────────┐│
+│  │ viel Protein diese Woche   ││
+│  └─────────────────────────────┘│
+│                                 │
+│        [🧑‍🍳 Plan erstellen]       │
+│                                 │
+└─────────────────────────────────┘
 ```
 
-**PocketBase Logic (Hooks):**
-Ein serverseitiger Hook (JS/Go) fängt den Create-Request ab, validiert ihn, ruft Gemini auf und speichert das Ergebnis.
+**Output:** Strukturierter Plan direkt in PlannedMeals gespeichert.
+
+### 6.2 Rezept-Generator AI (Phase 14)
+
+**Trigger:** FAB im Rezepte-Screen
+
+**Modal UI:**
+```
+┌─────────────────────────────────┐
+│  🧑‍🍳 Rezept-Ideen                │
+├─────────────────────────────────┤
+│                                 │
+│  Aktuell Saison:                │
+│  [Lauch] [Wirz] [Randen] [+3]   │
+│                                 │
+│  Was hast du da? (optional)     │
+│  ┌─────────────────────────────┐│
+│  │ Kartoffeln, Zwiebeln        ││
+│  └─────────────────────────────┘│
+│                                 │
+│  Art:                           │
+│  [Schnell] [Comfort] [Gesund]   │
+│                                 │
+│        [🧑‍🍳 Rezept generieren]   │
+│                                 │
+└─────────────────────────────────┘
+```
+
+**Output:** Vollständiges Rezept zum Review, dann als `source: ai` speichern.
+
+### 6.3 AI Bildgenerierung (Phase 16)
+
+**Trigger:** Im Rezept-Editor für AI-generierte Rezepte
+
+**Quota:** 10 Bilder/Monat (Premium), Unlimited (Pro)
+
+---
+
+## 7. Technische Architektur
+
+### 7.1 AI Provider (PocketBase Proxy)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│   Flutter App                                                    │
+│   ┌──────────────────────────────────────────────────────────┐  │
+│   │  AIService                                                │  │
+│   │  • generateWeekPlan(context, options)                     │  │
+│   │  • generateRecipe(context, options)                       │  │
+│   │  • generateImage(recipe)                                  │  │
+│   └──────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│                              ▼                                   │
+│   ┌──────────────────────────────────────────────────────────┐  │
+│   │  PocketBase Client                                        │  │
+│   │  pb.collection('ai_requests').create({...})              │  │
+│   └──────────────────────────────────────────────────────────┘  │
+│                                                                  │
+└──────────────────────────────│───────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  PocketBase Server                                               │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  pb_hooks/ai_handler.js                                   │   │
+│  │                                                           │   │
+│  │  onRecordBeforeCreate('ai_requests'):                     │   │
+│  │  1. Validate user is Premium (check ai_profiles exists)   │   │
+│  │  2. Check quota (ai_requests count this month)            │   │
+│  │  3. Build prompt with full context                        │   │
+│  │  4. Call Gemini API                                       │   │
+│  │  5. Parse & validate response                             │   │
+│  │  6. Return structured result                              │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Gemini API (gemini-2.0-flash / gemini-pro)              │   │
+│  │  GEMINI_API_KEY in Environment                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **Vorteile:**
-- Kein Firebase nötig.
-- API Key sicher.
-- Volle Kontrolle über ratelimits.
+- API Key sicher auf Server
+- Rate Limiting server-side
+- Premium-Check server-side (kein Client-Bypass)
+- Logging & Analytics zentral
 
-### 5.2 Subscription Management
-
-**Provider:** RevenueCat
-
-**Entitlements:**
-
-| Entitlement ID | Beschreibung |
-|----------------|--------------|
-| `premium` | Premium-Plan aktiv |
-| `pro` | Pro-Plan aktiv |
-
-**Implementation:**
+### 7.2 Context Building
 
 ```dart
-@riverpod
-class SubscriptionService extends _$SubscriptionService {
-  @override
-  Future<SubscriptionState> build() async {
-    final customerInfo = await Purchases.getCustomerInfo();
-    return SubscriptionState(
-      isPremium: customerInfo.entitlements.active.containsKey('premium'),
-      isPro: customerInfo.entitlements.active.containsKey('pro'),
-      expirationDate: customerInfo.entitlements.active['premium']?.expirationDate,
+class AIContextBuilder {
+  Future<AIContext> build(String userId) async {
+    final userProfile = await userProfileRepo.get(userId);
+    final aiProfile = await aiProfileRepo.get(userId);
+    final seasonalVegetables = await vegetableRepo.getSeasonal(DateTime.now().month);
+    final favorites = await vegetableRepo.getFavorites(userId);
+    final existingPlan = await weekplanRepo.getCurrentWeek(userId);
+
+    return AIContext(
+      // Safety (never violate)
+      allergens: userProfile.allergens,
+      diet: userProfile.diet,
+      dislikes: userProfile.dislikes,
+
+      // Household
+      householdSize: userProfile.householdSize,
+      childrenCount: userProfile.childrenCount,
+
+      // Constraints
+      maxCookingTime: userProfile.maxCookingTimeMin,
+      skill: userProfile.skill,
+
+      // Premium preferences
+      cuisines: aiProfile?.cuisinePreferences ?? [],
+      flavors: aiProfile?.flavorProfile ?? [],
+      budget: aiProfile?.budgetLevel ?? BudgetLevel.normal,
+
+      // Learned
+      topIngredients: aiProfile?.learningContext.topIngredients ?? [],
+      rejectedSuggestions: aiProfile?.learningContext.rejectedSuggestions ?? [],
+
+      // Current data
+      seasonalVegetables: seasonalVegetables,
+      favorites: favorites,
+      existingPlan: existingPlan,
     );
-  }
-  
-  Future<bool> canUseAiFeature() async {
-    final state = await future;
-    return state.isPremium || state.isPro;
-  }
-  
-  Future<int> getMonthlyImageLimit() async {
-    final state = await future;
-    if (state.isPro) return -1; // Unbegrenzt
-    if (state.isPremium) return 10;
-    return 0;
   }
 }
 ```
 
 ---
 
-## 6. Monetarisierung
+## 8. Monetarisierung
 
-### 6.1 Pricing-Modell
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                                                                             │
-│  🆓 FREE                             │  ⭐ PREMIUM                          │
-│  CHF 0.–                             │  CHF 5.90 / Monat                    │
-│                                      │  (CHF 59.– / Jahr)                   │
-│  ─────────────────────────────────   │  ─────────────────────────────────   │
-│                                      │                                      │
-│  ✓ Saisonkalender (Feed + Grid)     │  ✓ Alles aus Free                    │
-│  ✓ Alle Gemüse-Details              │                                      │
-│  ✓ Kuratierte Rezepte               │  ✨ AI Wochenplaner                  │
-│  ✓ Eigene Rezepte erstellen         │  ✨ AI Rezept-Generator              │
-│  ✓ Favoriten (Sync)                 │  ✨ 10 AI-Bilder / Monat (2K)        │
-│  ✓ User Profile                     │  ✨ Smart Einkaufslisten-Aggregation │
-│  ✓ Bring! Verbindung                │  ✨ Meal-Prep Vorschläge             │
-│  ✓ Manueller Wochenplan             │                                      │
-│  ✓ Einzelne Rezepte → Bring!        │                                      │
-│                                      │                                      │
-├──────────────────────────────────────┼──────────────────────────────────────┤
-│                                      │                                      │
-│                                      │  💎 PRO                              │
-│                                      │  CHF 12.90 / Monat                   │
-│                                      │  (CHF 119.– / Jahr)                  │
-│                                      │  ─────────────────────────────────   │
-│                                      │                                      │
-│                                      │  ✓ Alles aus Premium                 │
-│                                      │                                      │
-│                                      │  ✨ Unbegrenzte AI-Bilder (4K)       │
-│                                      │  ✨ Familien-Profile (bis 5)         │
-│                                      │  ✨ Geteilte Wochenpläne             │
-│                                      │  ✨ Ernährungs-Insights              │
-│                                      │  ✨ PDF Export                       │
-│                                      │  ✨ Priority Support                 │
-│                                      │                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### 6.2 Kosten-Kalkulation
-
-**API-Kosten pro User/Monat:**
-
-| Feature | Premium | Pro |
-|---------|---------|-----|
-| Text AI (Wochenpläne, Rezepte) | ~$0.05 | ~$0.10 |
-| Bilder (10x 2K vs. 20x 4K avg.) | ~$1.34 | ~$4.80 |
-| **Total API** | **~$1.39** | **~$4.90** |
-
-**Marge:**
-
-| | Premium (CHF 5.90) | Pro (CHF 12.90) |
-|---|---|---|
-| Einnahmen (USD) | ~$6.60 | ~$14.45 |
-| API-Kosten | -$1.39 | -$4.90 |
-| Store Fee (30%) | -$1.98 | -$4.34 |
-| RevenueCat (~1%) | -$0.07 | -$0.14 |
-| **Netto-Marge** | **$3.16** | **$5.07** |
-| **Marge %** | **48%** | **35%** |
-
-### 6.3 Paywall UX
+### 8.1 Pricing
 
 ```
-┌─────────────────────────────────────────┐
-│                                         │
-│  ✨ Premium Feature                     │
-│                                         │
-│  Der AI-Wochenplaner erstellt dir      │
-│  automatisch einen Plan basierend auf:  │
-│                                         │
-│  🥬 Was gerade Saison hat              │
-│  👨‍👩‍👧 Deinem Haushalt                    │
-│  🚫 Deinen Allergien                   │
-│  ⏱️ Deiner verfügbaren Zeit            │
-│                                         │
-│  ───────────────────────────────────    │
-│                                         │
-│  ⭐ Premium: CHF 5.90/Monat            │
-│  💎 Pro: CHF 12.90/Monat               │
-│                                         │
-│  [🎁 7 Tage gratis testen]             │
-│                                         │
-│  [Manuell planen (Free)]               │
-│                                         │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│  🆓 FREE                           ⭐ PREMIUM                    │
+│  CHF 0.–                           CHF 5.90 / Monat             │
+│                                    (CHF 59.– / Jahr)            │
+│  ─────────────────────────────     ─────────────────────────    │
+│                                                                  │
+│  ✓ Saisonkalender                  ✓ Alles aus Free             │
+│  ✓ Alle Rezepte (kuratiert)                                     │
+│  ✓ Eigene Rezepte erstellen        ✨ Premium AI Onboarding     │
+│  ✓ Favoriten (Sync)                ✨ AI Wochenplaner           │
+│  ✓ User Profile (Basis)            ✨ AI Rezept-Generator       │
+│  ✓ Bring! Verbindung               ✨ 10 AI-Bilder / Monat      │
+│  ✓ Manueller Wochenplan            ✨ Smart Einkaufsaggregation │
+│  ✓ Einzelne Rezepte -> Bring!      ✨ Implizites Lernen         │
+│                                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│                               💎 PRO                             │
+│                               CHF 12.90 / Monat                  │
+│                               (CHF 119.– / Jahr)                 │
+│                               ─────────────────────────         │
+│                                                                  │
+│                               ✓ Alles aus Premium               │
+│                                                                  │
+│                               ✨ Unbegrenzte AI-Bilder (4K)     │
+│                               ✨ Familien-Profile (bis 5)       │
+│                               ✨ Geteilte Wochenpläne           │
+│                               ✨ Ernährungs-Insights            │
+│                               ✨ Priority Support               │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
+### 8.2 API-Kosten Kalkulation
 
-## 7. Implementierungs-Roadmap
+| Feature | Premium (~10 req/mo) | Pro (~25 req/mo) |
+|---------|----------------------|------------------|
+| Text AI (Plans, Recipes) | ~$0.05 | ~$0.12 |
+| Image AI (10x 2K vs 25x 4K) | ~$1.34 | ~$4.80 |
+| **Total API** | **~$1.39** | **~$4.92** |
 
-### Phase 9: Profile+ (Erweitertes User Profile)
-
-**Status:** Done
-
-**Scope:**
-- [x] UserProfile Datenmodell erweitern
-- [x] Onboarding-Flow für Profilsetup
-- [x] Settings-Screen mit allen Optionen
-- [x] PocketBase Schema Update
-
----
-
-### Phase 10: Bring! Integration
-
-**Status:** Done
-
-**Scope:**
-- [x] BringApiClient implementieren (mit API-Key Headers)
-- [x] Login-Flow in Settings (inkl. Social-Login Hilfe)
-- [x] Auto-Auswahl der Default-Liste
-- [x] "Auf Einkaufsliste" Button bei Rezepten
-- [x] Credential Storage (flutter_secure_storage)
+**Marge bei Premium (CHF 5.90 / ~$6.60):**
+- API: -$1.39
+- Store Fee (30%): -$1.98
+- RevenueCat (~1%): -$0.07
+- **Netto: ~$3.16 (48%)**
 
 ---
 
-### Phase 11: User Rezepte
-
-**Status:** Done
-
-**Scope:**
-- [x] Recipe Datenmodell erweitern (source, userId, servings, difficulty)
-- [x] Rezept-Editor UI (dynamische Zutaten/Schritte)
-- [x] Bild-Upload (image_picker)
-- [x] "Meine Rezepte" Tab (3. Tab in Navigation)
-- [x] CRUD-Operationen (Create, Update, Delete)
-
----
-
-### Phase 12: Wochenplan Basic
-
-**Status:** Done
-
-**Scope:**
-- [x] WeekPlan Datenmodell (flache PlannedMeals Tabelle)
-- [x] Kalender-UI (7-Tage-Ansicht mit Wochen-Navigation)
-- [x] Rezepte zum Plan hinzufügen (via Dialog)
-- [x] Manuelle Einträge erstellen
-- [x] Portionen anpassen
-- [x] 4. Tab in Navigation
-
----
+## 9. Implementierungs-Roadmap
 
 ### Phase 13: Einkaufslisten-Export
+**Status:** Geplant
 
-**Status:** Geplant  
-**Aufwand:** 1 Woche
-
-**Scope:**
 - [ ] Zutaten aus Wochenplan aggregieren
-- [ ] Mengen addieren (gleiche Zutaten)
-- [ ] Kategorisierung
+- [ ] Mengen intelligent addieren
 - [ ] Batch-Export zu Bring!
 
----
+### Phase 14: AI Rezept-Generator
+**Status:** Geplant
+**Prerequisite:** Premium Onboarding
 
-### Phase 14: AI Rezept-Generator (Premium)
+- [ ] ai_profiles Collection & Repository
+- [ ] Premium Onboarding Flow
+- [ ] AI FAB Component
+- [ ] Recipe Generation Modal
+- [ ] PocketBase Hook für Gemini
+- [ ] Rezept Review & Save Flow
 
-**Status:** Geplant  
-**Aufwand:** 2 Wochen
+### Phase 15: AI Wochenplaner
+**Status:** Geplant
+**Prerequisite:** Phase 14
 
-**Scope:**
-- [ ] Firebase AI Logic Setup
-- [ ] Gemini Provider implementieren
-- [ ] Prompt Engineering
-- [ ] UI für Rezept-Generierung
-- [ ] Review & Speichern Flow
-- [ ] Entitlement Check
-
----
-
-### Phase 15: AI Wochenplaner (Premium)
-
-**Status:** Geplant  
-**Aufwand:** 2-3 Wochen
-
-**Scope:**
-- [ ] Wochenplan-Prompt Builder
+- [ ] Weekplan AI Modal
+- [ ] Context Builder Service
 - [ ] Structured Output Parsing
-- [ ] Constraint-UI
-- [ ] Vorschau & Anpassen
-- [ ] Meal-Prep Suggestions
+- [ ] Direct-to-Plan Integration
+- [ ] "Regenerate Day" Feature
 
----
+### Phase 16: AI Bildgenerierung
+**Status:** Geplant
 
-### Phase 16: AI Bildgenerierung (Premium)
-
-**Status:** Geplant  
-**Aufwand:** 1-2 Wochen
-
-**Scope:**
-- [ ] Nano Banana Pro Integration
-- [ ] Food Photography Prompts
-- [ ] Image Caching
-- [ ] Usage Tracking & Limits
-- [ ] Fallback zu Placeholder
-
----
+- [ ] Image Generation Hook
+- [ ] Quota Tracking
+- [ ] Image Selection UI
+- [ ] PocketBase File Storage
 
 ### Phase 17: Familien-Features (Pro)
+**Status:** Geplant
 
-**Status:** Geplant  
-**Aufwand:** 3-4 Wochen
-
-**Scope:**
 - [ ] Multi-Profile Support
-- [ ] Familien-Gruppe in PocketBase
-- [ ] Geteilte Rezeptsammlung
-- [ ] Geteilter Wochenplan
-- [ ] Kinder-spezifische Einstellungen
-- [ ] Ernährungs-Insights
-
----
+- [ ] Shared Weekplans
+- [ ] Family Groups
 
 ### Phase 18: Monetarisierung
+**Status:** Geplant
 
-**Status:** Geplant  
-**Aufwand:** 2 Wochen
-
-**Scope:**
 - [ ] RevenueCat Integration
-- [ ] App Store / Play Store Produkte
 - [ ] Paywall UI
 - [ ] Entitlement Guards
-- [ ] Free Trial (7 Tage)
-- [ ] Analytics & Conversion Tracking
-
----
-
-## 8. Technische Voraussetzungen
-
-### 8.1 Neue Dependencies
-
-```yaml
-dependencies:
-  # AI (via PocketBase - no extra dep needed)
-  
-  # Subscriptions
-  purchases_flutter: ^9.x
-  
-  # HTTP (für Bring! API)
-  http: ^1.x
-  
-  # Storage (für Credentials)
-  flutter_secure_storage: ^9.x
-```
-
-### 8.2 PocketBase Setup
-1. `GEMINI_API_KEY` als Environment Variable setzen.
-2. `pb_hooks` Ordner erstellen.
-3. JavaScript Hook `ai instructions.pb.js` anlegen.
-
-### 8.3 RevenueCat Setup
-
-1. RevenueCat Account erstellen
-2. App Store Connect Produkte anlegen
-3. Google Play Console Produkte anlegen
-4. Entitlements konfigurieren
-5. API Keys in App integrieren
-
----
-
-## 9. Risiken & Mitigationen
-
-| Risiko | Wahrscheinlichkeit | Impact | Mitigation |
-|--------|-------------------|--------|------------|
-| Bring! API bricht | Mittel | Hoch | Fallback zu manueller Liste, eigene Listen-Funktion |
-| AI-Kosten explodieren | Niedrig | Hoch | Usage Limits, Monitoring, günstigere Modelle als Fallback |
-| Gemini Downtime | Niedrig | Mittel | Graceful Degradation, Caching, Offline-Fallback |
-| Store Rejection | Niedrig | Hoch | Guidelines befolgen, Soft Launch |
-| Geringe Conversion | Mittel | Mittel | Paywall A/B Testing, Feature-Iteration |
+- [ ] 7-Day Free Trial
 
 ---
 
 ## 10. Erfolgsmetriken
 
-### 10.1 Engagement
+### Engagement
 
 | Metrik | Ziel (6 Monate) |
 |--------|-----------------|
 | WAU (Weekly Active Users) | 5'000 |
-| Rezepte erstellt / User | 3 |
+| AI Requests / Premium User / Woche | 3 |
 | Wochenpläne erstellt / Woche | 1.5 |
 | Bring! Exports / Woche | 2 |
 
-### 10.2 Monetarisierung
+### Monetarisierung
 
 | Metrik | Ziel (6 Monate) |
 |--------|-----------------|
-| Free → Premium Conversion | 5% |
-| Premium → Pro Upsell | 15% |
+| Free -> Premium Conversion | 5% |
+| Premium -> Pro Upsell | 15% |
 | Monthly Churn | < 8% |
-| ARPU (Average Revenue Per User) | CHF 1.20 |
+| ARPU | CHF 1.20 |
 
-### 10.3 Qualität
+### AI Quality
 
 | Metrik | Ziel |
 |--------|------|
-| App Store Rating | ≥ 4.5 ⭐ |
-| Crash-Free Rate | ≥ 99.5% |
-| AI-Zufriedenheit (Thumbs up) | ≥ 80% |
+| AI Satisfaction (Thumbs up) | >= 80% |
+| Recipe Save Rate | >= 60% |
+| Plan Acceptance Rate | >= 70% |
 
 ---
 
-## 11. Anhang
-
-### A. Wettbewerbs-Analyse
-
-| App | Stärken | Schwächen | Differenzierung Saisonier |
-|-----|---------|-----------|---------------------------|
-| Eat This Much | AI Meal Planning | Kein CH-Fokus, keine Saisonalität | Schweizer Saisonkalender |
-| Mealime | Schöne UI, Rezepte | Keine AI, kein Offline | Offline-First, AI-powered |
-| Bring! | Beste Einkaufsliste | Keine Rezepte/Planung | Integration statt Konkurrenz |
-
-### B. User Personas
-
-**Persona 1: Sarah (32), berufstätige Mutter**
-- 2 Kinder (4 und 7 Jahre)
-- Wenig Zeit zum Planen
-- Möchte gesund und saisonal kochen
-- → Pro Plan (Familien-Features)
-
-**Persona 2: Marco (28), Hobbykoch**
-- Single-Haushalt
-- Experimentierfreudig
-- Sucht Inspiration
-- → Premium Plan
-
-**Persona 3: Elena (45), Gesundheitsbewusst**
-- Laktoseintoleranz
-- Plant gerne voraus
-- Nutzt Bring! bereits
-- → Premium Plan
-
----
-
-*Dokument erstellt: Dezember 2025*  
-*Nächste Review: Q1 2026*
+*Dokument Version 3.0 - Dezember 2025*
+*Nächste Review: Nach Phase 14 Implementation*

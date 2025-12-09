@@ -68,8 +68,10 @@ void main() {
     // Pump to settle any animations or microtasks
     await tester.pumpAndSettle();
 
-    // Verify Core Navigation (TogglePill text)
+    // Verify Core Navigation (TogglePill labels)
     expect(find.text('Saison'), findsOneWidget);
-    expect(find.text('Katalog'), findsOneWidget);
+    expect(find.text('Rezepte'), findsOneWidget);
+    expect(find.text('Plan'), findsOneWidget);
+    expect(find.text('Einkauf'), findsOneWidget);
   });
 }

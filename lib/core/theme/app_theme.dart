@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// App color constants
+class AppColors {
+  static const Color primaryGreen = Color(0xFF4A6C48); // Deep Green
+  static const Color lightGreen = Color(0xFFA6C48A);
+  static const Color cream = Color(0xFFFAFAF9);
+  static const Color textPrimary = Color(0xFF1C1C1E);
+}
+
 class AppTheme {
   static const Color primaryGreen = Color(0xFFA6C48A);
   static const Color cream = Color(0xFFFAFAF9);
