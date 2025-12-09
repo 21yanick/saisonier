@@ -29,7 +29,7 @@ mixin _$ShoppingItemDto {
   String? get note => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_checked')
   bool get isChecked => throw _privateConstructorUsedError;
-  @JsonKey(name: 'source_recipe_id')
+  @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
   String? get sourceRecipeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created', fromJson: _parseCreated)
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -58,7 +58,8 @@ abstract class $ShoppingItemDtoCopyWith<$Res> {
       String? unit,
       String? note,
       @JsonKey(name: 'is_checked') bool isChecked,
-      @JsonKey(name: 'source_recipe_id') String? sourceRecipeId,
+      @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
+      String? sourceRecipeId,
       @JsonKey(name: 'created', fromJson: _parseCreated) DateTime createdAt});
 }
 
@@ -144,7 +145,8 @@ abstract class _$$ShoppingItemDtoImplCopyWith<$Res>
       String? unit,
       String? note,
       @JsonKey(name: 'is_checked') bool isChecked,
-      @JsonKey(name: 'source_recipe_id') String? sourceRecipeId,
+      @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
+      String? sourceRecipeId,
       @JsonKey(name: 'created', fromJson: _parseCreated) DateTime createdAt});
 }
 
@@ -223,7 +225,8 @@ class _$ShoppingItemDtoImpl implements _ShoppingItemDto {
       this.unit,
       this.note,
       @JsonKey(name: 'is_checked') this.isChecked = false,
-      @JsonKey(name: 'source_recipe_id') this.sourceRecipeId,
+      @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
+      this.sourceRecipeId,
       @JsonKey(name: 'created', fromJson: _parseCreated)
       required this.createdAt});
 
@@ -247,7 +250,7 @@ class _$ShoppingItemDtoImpl implements _ShoppingItemDto {
   @JsonKey(name: 'is_checked')
   final bool isChecked;
   @override
-  @JsonKey(name: 'source_recipe_id')
+  @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
   final String? sourceRecipeId;
   @override
   @JsonKey(name: 'created', fromJson: _parseCreated)
@@ -308,7 +311,8 @@ abstract class _ShoppingItemDto implements ShoppingItemDto {
       final String? unit,
       final String? note,
       @JsonKey(name: 'is_checked') final bool isChecked,
-      @JsonKey(name: 'source_recipe_id') final String? sourceRecipeId,
+      @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
+      final String? sourceRecipeId,
       @JsonKey(name: 'created', fromJson: _parseCreated)
       required final DateTime createdAt}) = _$ShoppingItemDtoImpl;
 
@@ -332,7 +336,7 @@ abstract class _ShoppingItemDto implements ShoppingItemDto {
   @JsonKey(name: 'is_checked')
   bool get isChecked;
   @override
-  @JsonKey(name: 'source_recipe_id')
+  @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull)
   String? get sourceRecipeId;
   @override
   @JsonKey(name: 'created', fromJson: _parseCreated)

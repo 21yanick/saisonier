@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/network/pocketbase_helpers.dart';
+
 part 'shopping_item_dto.freezed.dart';
 part 'shopping_item_dto.g.dart';
 
@@ -13,7 +15,7 @@ class ShoppingItemDto with _$ShoppingItemDto {
     String? unit,
     String? note,
     @JsonKey(name: 'is_checked') @Default(false) bool isChecked,
-    @JsonKey(name: 'source_recipe_id') String? sourceRecipeId,
+    @JsonKey(name: 'source_recipe_id', fromJson: emptyToNull) String? sourceRecipeId,
     @JsonKey(name: 'created', fromJson: _parseCreated) required DateTime createdAt,
   }) = _ShoppingItemDto;
 

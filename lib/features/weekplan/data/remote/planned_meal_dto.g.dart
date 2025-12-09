@@ -12,7 +12,7 @@ _$PlannedMealDtoImpl _$$PlannedMealDtoImplFromJson(Map<String, dynamic> json) =>
       userId: json['user_id'] as String,
       date: DateTime.parse(json['date'] as String),
       slot: json['slot'] as String,
-      recipeId: json['recipe_id'] as String?,
+      recipeId: emptyToNull(json['recipe_id']),
       customTitle: json['custom_title'] as String?,
       servings: (json['servings'] as num?)?.toInt() ?? 2,
     );

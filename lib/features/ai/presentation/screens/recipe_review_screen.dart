@@ -7,6 +7,7 @@ import 'package:saisonier/features/ai/domain/models/generated_recipe.dart';
 import 'package:saisonier/features/ai/presentation/controllers/ai_profile_controller.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
+import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart';
 
 /// Screen to review and save/reject an AI-generated recipe.
 class RecipeReviewScreen extends ConsumerStatefulWidget {
@@ -80,6 +81,14 @@ class _RecipeReviewScreenState extends ConsumerState<RecipeReviewScreen> {
               })
           .toList();
 
+      // Map mainVegetable name to vegetableId for linking
+      String? vegetableId;
+      if (widget.generatedRecipe.mainVegetable != null) {
+        vegetableId = await ref
+            .read(vegetableRepositoryProvider)
+            .findIdByName(widget.generatedRecipe.mainVegetable!);
+      }
+
       await ref.read(recipeRepositoryProvider).createUserRecipe(
             userId: user.id,
             title: _titleController.text,
@@ -94,6 +103,7 @@ class _RecipeReviewScreenState extends ConsumerState<RecipeReviewScreen> {
             tags: widget.generatedRecipe.tags,
             isVegetarian: widget.generatedRecipe.isVegetarian,
             isVegan: widget.generatedRecipe.isVegan,
+            vegetableId: vegetableId,
           );
 
       // Update learning context
@@ -225,21 +235,49 @@ class _RecipeReviewScreenState extends ConsumerState<RecipeReviewScreen> {
 
             const SizedBox(height: 16),
 
-            // Meta info
-            Row(
+            // Meta info (Zeit aufgeteilt wie in RecipeDetailScreen)
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                _MetaChip(
-                  icon: Icons.schedule,
-                  label:
-                      '${recipe.prepTimeMin + recipe.cookTimeMin} Min',
-                ),
-                const SizedBox(width: 8),
+                // Vorbereitungszeit
+                if (recipe.prepTimeMin > 0)
+                  _MetaChip(
+                    icon: Icons.content_cut,
+                    label: 'Vorb: ${recipe.prepTimeMin} Min',
+                  ),
+
+                // Kochzeit
+                if (recipe.cookTimeMin > 0)
+                  _MetaChip(
+                    icon: Icons.local_fire_department_outlined,
+                    label: 'Kochen: ${recipe.cookTimeMin} Min',
+                  ),
+
+                // Gesamtzeit (nur wenn beide > 0)
+                if (recipe.prepTimeMin > 0 && recipe.cookTimeMin > 0)
+                  _MetaChip(
+                    icon: Icons.timer_outlined,
+                    label: 'Gesamt: ${recipe.prepTimeMin + recipe.cookTimeMin} Min',
+                  ),
+
+                // Fallback: Nur Gesamtzeit wenn nur eines > 0
+                if ((recipe.prepTimeMin == 0) != (recipe.cookTimeMin == 0))
+                  _MetaChip(
+                    icon: Icons.timer_outlined,
+                    label: '${recipe.prepTimeMin + recipe.cookTimeMin} Min',
+                  ),
+
+                // Schwierigkeit
                 _MetaChip(
                   icon: Icons.signal_cellular_alt,
                   label: _getDifficultyLabel(recipe.difficulty),
                 ),
-                const SizedBox(width: 8),
-                if (recipe.isVegetarian)
+
+                // Vegetarisch/Vegan
+                if (recipe.isVegan)
+                  const _MetaChip(icon: Icons.eco, label: 'Vegan')
+                else if (recipe.isVegetarian)
                   const _MetaChip(icon: Icons.eco, label: 'Vegi'),
               ],
             ),

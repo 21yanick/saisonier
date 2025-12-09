@@ -76,7 +76,6 @@ class _DayDetailViewState extends ConsumerState<DayDetailView> {
               return _DayContent(
                 date: date,
                 meals: widget.meals,
-                onBack: widget.onBack,
               );
             },
           ),
@@ -172,12 +171,10 @@ class _DayTabBar extends StatelessWidget {
 class _DayContent extends StatelessWidget {
   final DateTime date;
   final List<PlannedMeal> meals;
-  final VoidCallback onBack;
 
   const _DayContent({
     required this.date,
     required this.meals,
-    required this.onBack,
   });
 
   List<PlannedMeal> get _dayMeals => meals
@@ -207,25 +204,17 @@ class _DayContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back button and date
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: onBack,
-                tooltip: 'Zurück zur Übersicht',
+          // Date header
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              _formatFullDate(date),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(width: 8),
-              Text(
-                _formatFullDate(date),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 24),
           // Meal slots
           ...MealSlot.values.map((slot) {
             return _MealSlotSection(

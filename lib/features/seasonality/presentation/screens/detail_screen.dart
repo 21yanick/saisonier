@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:saisonier/core/database/app_database.dart';
+import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
 import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart';
 import 'package:saisonier/features/seasonality/presentation/widgets/gyroscope_card.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:saisonier/core/config/app_config.dart';
 
 // Helper Provider to find a vegetable by ID from the full list
@@ -22,7 +22,11 @@ final vegetableProvider = StreamProvider.family.autoDispose<Vegetable?, String>(
 });
 
 final recipesProvider = StreamProvider.family.autoDispose<List<Recipe>, String>((ref, vegetableId) {
-  return ref.watch(recipeRepositoryProvider).watchRecipesForVegetable(vegetableId);
+  final currentUserId = ref.watch(currentUserProvider).valueOrNull?.id;
+  return ref.watch(recipeRepositoryProvider).watchRecipesForVegetable(
+    vegetableId,
+    currentUserId: currentUserId,
+  );
 });
 
 class DetailScreen extends ConsumerStatefulWidget {
@@ -35,28 +39,6 @@ class DetailScreen extends ConsumerStatefulWidget {
 }
 
 class _DetailScreenState extends ConsumerState<DetailScreen> {
-  bool _cookingMode = false;
-
-  void _toggleCookingMode() {
-    setState(() {
-      _cookingMode = !_cookingMode;
-    });
-    if (_cookingMode) {
-      WakelockPlus.enable();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cooking Mode Active: Screen will stay on.')),
-      );
-    } else {
-      WakelockPlus.disable();
-    }
-  }
-
-  @override
-  void dispose() {
-    WakelockPlus.disable(); // Safety first
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final vegAsync = ref.watch(vegetableProvider(widget.vegetableId));
@@ -112,11 +94,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    icon: Icon(_cookingMode ? Icons.wb_sunny : Icons.wb_sunny_outlined),
-                    tooltip: 'Cooking Mode',
-                    onPressed: _toggleCookingMode,
-                  ),
                   IconButton(
                     icon: Icon(vegetable.isFavorite ? Icons.favorite : Icons.favorite_border),
                     color: vegetable.isFavorite ? Colors.red : Colors.white,

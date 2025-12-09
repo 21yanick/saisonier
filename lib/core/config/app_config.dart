@@ -26,7 +26,7 @@ class AppConfig {
   /// Check if we're running against the live PocketBase server.
   static bool get isLiveMode {
     const pbUrl = String.fromEnvironment('PB_URL');
-    return pbUrl.contains('saisonier-api.21home.ch');
+    return pbUrl.startsWith(_livePocketBaseUrl);
   }
 
   /// Base URL for the AI Service (Gemini Proxy).

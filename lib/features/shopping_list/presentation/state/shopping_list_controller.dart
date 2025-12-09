@@ -114,9 +114,10 @@ class NativeShoppingController extends _$NativeShoppingController {
     final recipeRepo = ref.read(recipeRepositoryProvider);
     final weekStart = ref.read(selectedWeekStartProvider);
 
-    // Clear if replacing
-    if (replace) {
-      await repo.clearAll(user.id);
+    // Load existing items for merging (only when not replacing)
+    List<ShoppingItem>? existingItems;
+    if (!replace) {
+      existingItems = await ref.read(shoppingItemsProvider.future);
     }
 
     // Get week's planned meals from weekplan
@@ -134,11 +135,21 @@ class NativeShoppingController extends _$NativeShoppingController {
       }
     }
 
-    if (mealsWithRecipes.isEmpty) return 0;
+    // Early return if nothing to add and replacing
+    if (mealsWithRecipes.isEmpty && replace) return 0;
 
-    // Aggregate ingredients
+    // Early return if nothing to merge
+    if (mealsWithRecipes.isEmpty && (existingItems == null || existingItems.isEmpty)) return 0;
+
+    // Aggregate ingredients (merges existing + new)
     final aggregator = ShoppingAggregator();
-    final aggregated = aggregator.aggregateFromMeals(mealsWithRecipes);
+    final aggregated = aggregator.aggregateFromMeals(
+      mealsWithRecipes,
+      existingItems: existingItems,
+    );
+
+    // Clear all items (we'll re-add the aggregated ones)
+    await repo.clearAll(user.id);
 
     // Create DTOs for batch insert
     final items = aggregated.map((agg) => ShoppingItemDto(

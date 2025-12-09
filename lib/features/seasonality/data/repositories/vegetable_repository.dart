@@ -222,4 +222,13 @@ class VegetableRepository {
       const VegetablesCompanion(isFavorite: Value(false)),
     );
   }
+
+  /// Find vegetable ID by name (exact match)
+  /// Used to link AI-generated recipes to vegetables
+  Future<String?> findIdByName(String name) async {
+    final veg = await (_db.select(_db.vegetables)
+          ..where((t) => t.name.equals(name)))
+        .getSingleOrNull();
+    return veg?.id;
+  }
 }

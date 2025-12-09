@@ -1467,6 +1467,15 @@ class MockVegetableRepository extends _i1.Mock
         returnValue: _i20.Future<void>.value(),
         returnValueForMissingStub: _i20.Future<void>.value(),
       ) as _i20.Future<void>);
+
+  @override
+  _i20.Future<String?> findIdByName(String? name) => (super.noSuchMethod(
+        Invocation.method(
+          #findIdByName,
+          [name],
+        ),
+        returnValue: _i20.Future<String?>.value(),
+      ) as _i20.Future<String?>);
 }
 
 /// A class which mocks [RecipeRepository].
@@ -1479,11 +1488,14 @@ class MockRecipeRepository extends _i1.Mock implements _i25.RecipeRepository {
 
   @override
   _i20.Stream<List<_i23.Recipe>> watchRecipesForVegetable(
-          String? vegetableId) =>
+    String? vegetableId, {
+    String? currentUserId,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #watchRecipesForVegetable,
           [vegetableId],
+          {#currentUserId: currentUserId},
         ),
         returnValue: _i20.Stream<List<_i23.Recipe>>.empty(),
       ) as _i20.Stream<List<_i23.Recipe>>);

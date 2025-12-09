@@ -16,7 +16,7 @@ _$ShoppingItemDtoImpl _$$ShoppingItemDtoImplFromJson(
       unit: json['unit'] as String?,
       note: json['note'] as String?,
       isChecked: json['is_checked'] as bool? ?? false,
-      sourceRecipeId: json['source_recipe_id'] as String?,
+      sourceRecipeId: emptyToNull(json['source_recipe_id']),
       createdAt: _parseCreated(json['created']),
     );
 

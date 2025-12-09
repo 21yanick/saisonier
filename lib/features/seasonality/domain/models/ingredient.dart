@@ -18,20 +18,29 @@ class Ingredient with _$Ingredient {
 
 /// Verfügbare Einheiten für Zutaten
 const availableUnits = [
+  // Gewicht
   'g',
   'kg',
+  // Volumen
   'ml',
+  'dl',
   'l',
+  'Liter',
+  'Deziliter',
+  // Löffel
   'EL',
   'TL',
+  // Stückzahl
   'Stück',
   'Scheibe',
+  'Zehe',
   'Prise',
   'Bund',
   'Dose',
   'Packung',
   'Becher',
   'Glas',
+  'Tasse',
 ];
 
 /// Skaliert Zutaten basierend auf Portionen

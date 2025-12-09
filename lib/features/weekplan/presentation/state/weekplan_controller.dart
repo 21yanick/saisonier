@@ -49,6 +49,24 @@ Stream<List<PlannedMeal>> weekPlannedMeals(Ref ref) {
   return ref.watch(weekplanRepositoryProvider).watchWeek(user.id, weekStart);
 }
 
+/// Provider for planned meals over a date range (used by AddToPlanDialog)
+/// Watches from today for specified number of days
+@riverpod
+Stream<List<PlannedMeal>> dialogPlannedMeals(Ref ref, {int days = 21}) {
+  final user = ref.watch(currentUserProvider).valueOrNull;
+  if (user == null) {
+    return Stream.value([]);
+  }
+
+  final today = DateTime.now();
+  final normalizedToday = DateTime(today.year, today.month, today.day);
+  return ref.watch(weekplanRepositoryProvider).watchDateRange(
+    user.id,
+    normalizedToday,
+    days,
+  );
+}
+
 /// Controller for week plan actions
 @riverpod
 class WeekplanController extends _$WeekplanController {

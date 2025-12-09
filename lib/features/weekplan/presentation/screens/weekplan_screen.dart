@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../seasonality/presentation/screens/main_screen.dart';
 import '../state/weekplan_controller.dart';
 import '../views/week_overview_view.dart';
 import '../views/day_detail_view.dart';
@@ -34,54 +33,49 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Wochenplan'),
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-          ),
-          leading: _selectedDayIndex != null
-              ? null  // Back button is in day detail view
-              : null,
-          actions: [
-            if (_selectedDayIndex == null)
+    return PopScope(
+      canPop: _selectedDayIndex == null, // Only pop if in overview
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _selectedDayIndex != null) {
+          _backToOverview();
+        }
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Wochenplan'),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+            ),
+            leading: _selectedDayIndex != null
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: _backToOverview,
+                  )
+                : null,
+            actions: [
               IconButton(
-                icon: const Icon(Icons.today),
-                tooltip: 'Heute',
-                onPressed: () {
-                  ref.read(selectedWeekStartProvider.notifier).goToToday();
-                },
+                icon: const Icon(Icons.person_outline),
+                onPressed: () => context.push('/profile'),
               ),
-            IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined),
-              tooltip: 'Einkaufsliste',
-              onPressed: () {
-                // Navigiere zum Einkauf-Tab (Index 4)
-                ref.read(mainPageIndexProvider.notifier).state = 4;
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.person_outline),
-              onPressed: () => context.push('/profile'),
-            ),
-          ],
-        ),
-      body: userAsync.when(
-        data: (user) {
-          if (user == null) {
-            return _buildLoginPrompt(context);
-          }
-          return _WeekplanContent(
-            selectedDayIndex: _selectedDayIndex,
-            onDayTap: _showDayDetail,
-            onBack: _backToOverview,
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
-        ),
+            ],
+          ),
+        body: userAsync.when(
+          data: (user) {
+            if (user == null) {
+              return _buildLoginPrompt(context);
+            }
+            return _WeekplanContent(
+              selectedDayIndex: _selectedDayIndex,
+              onDayTap: _showDayDetail,
+              onBack: _backToOverview,
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Fehler: $e')),
+          ),
+      ),
     );
   }
 

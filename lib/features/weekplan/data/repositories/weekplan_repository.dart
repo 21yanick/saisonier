@@ -39,6 +39,20 @@ class WeekplanRepository {
         .watch();
   }
 
+  /// Watch all planned meals for a date range (e.g. for AddToPlanDialog)
+  Stream<List<PlannedMeal>> watchDateRange(String userId, DateTime start, int days) {
+    final startUtc = DateTime.utc(start.year, start.month, start.day);
+    final endUtc = startUtc.add(Duration(days: days));
+
+    return (_db.select(_db.plannedMeals)
+          ..where((t) =>
+              t.userId.equals(userId) &
+              t.date.isBiggerOrEqualValue(startUtc) &
+              t.date.isSmallerThanValue(endUtc))
+          ..orderBy([(t) => OrderingTerm.asc(t.date)]))
+        .watch();
+  }
+
   /// Get planned meal for a specific date and slot
   Future<PlannedMeal?> getMeal(String userId, DateTime date, MealSlot slot) {
     final dayStart = DateTime.utc(date.year, date.month, date.day);
@@ -52,7 +66,7 @@ class WeekplanRepository {
         .getSingleOrNull();
   }
 
-  /// Add a recipe to the plan
+  /// Add a recipe to the plan (replaces existing entry if slot is occupied)
   Future<PlannedMeal?> addRecipeToSlot({
     required String userId,
     required DateTime date,
@@ -61,6 +75,13 @@ class WeekplanRepository {
     int servings = 2,
   }) async {
     final normalizedDate = DateTime.utc(date.year, date.month, date.day);
+
+    // Check if slot is already occupied and remove existing entry
+    final existing = await getMeal(userId, date, slot);
+    if (existing != null) {
+      await _pb.collection('planned_meals').delete(existing.id);
+      await (_db.delete(_db.plannedMeals)..where((t) => t.id.equals(existing.id))).go();
+    }
 
     final record = await _pb.collection('planned_meals').create(body: {
       'user_id': userId,
@@ -77,7 +98,7 @@ class WeekplanRepository {
         .getSingleOrNull();
   }
 
-  /// Add a custom entry (no recipe)
+  /// Add a custom entry (no recipe, replaces existing entry if slot is occupied)
   Future<PlannedMeal?> addCustomEntry({
     required String userId,
     required DateTime date,
@@ -86,6 +107,13 @@ class WeekplanRepository {
     int servings = 2,
   }) async {
     final normalizedDate = DateTime.utc(date.year, date.month, date.day);
+
+    // Check if slot is already occupied and remove existing entry
+    final existing = await getMeal(userId, date, slot);
+    if (existing != null) {
+      await _pb.collection('planned_meals').delete(existing.id);
+      await (_db.delete(_db.plannedMeals)..where((t) => t.id.equals(existing.id))).go();
+    }
 
     final record = await _pb.collection('planned_meals').create(body: {
       'user_id': userId,

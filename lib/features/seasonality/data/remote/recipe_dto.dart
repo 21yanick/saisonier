@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/network/pocketbase_helpers.dart';
+
 part 'recipe_dto.freezed.dart';
 part 'recipe_dto.g.dart';
 
@@ -28,11 +30,11 @@ class RecipeDto with _$RecipeDto {
     @Default([]) List<dynamic> tags, // Array: ["schnell", "günstig"]
 
     // === Beziehungen ===
-    @JsonKey(name: 'vegetable_id') String? vegetableId,
+    @JsonKey(name: 'vegetable_id', fromJson: emptyToNull) String? vegetableId,
 
     // === Ownership ===
     @Default('curated') String source, // 'curated' | 'user'
-    @JsonKey(name: 'user_id') String? userId,
+    @JsonKey(name: 'user_id', fromJson: emptyToNull) String? userId,
     @JsonKey(name: 'is_public') @Default(false) bool isPublic,
 
     // === Ernährung ===

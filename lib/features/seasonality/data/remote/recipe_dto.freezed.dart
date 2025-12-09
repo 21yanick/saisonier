@@ -44,11 +44,11 @@ mixin _$RecipeDto {
   List<dynamic> get tags =>
       throw _privateConstructorUsedError; // Array: ["schnell", "günstig"]
 // === Beziehungen ===
-  @JsonKey(name: 'vegetable_id')
+  @JsonKey(name: 'vegetable_id', fromJson: emptyToNull)
   String? get vegetableId =>
       throw _privateConstructorUsedError; // === Ownership ===
   String get source => throw _privateConstructorUsedError; // 'curated' | 'user'
-  @JsonKey(name: 'user_id')
+  @JsonKey(name: 'user_id', fromJson: emptyToNull)
   String? get userId => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_public')
   bool get isPublic => throw _privateConstructorUsedError; // === Ernährung ===
@@ -100,9 +100,9 @@ abstract class $RecipeDtoCopyWith<$Res> {
       List<dynamic> ingredients,
       List<dynamic> steps,
       List<dynamic> tags,
-      @JsonKey(name: 'vegetable_id') String? vegetableId,
+      @JsonKey(name: 'vegetable_id', fromJson: emptyToNull) String? vegetableId,
       String source,
-      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'user_id', fromJson: emptyToNull) String? userId,
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'is_vegetarian') bool isVegetarian,
       @JsonKey(name: 'is_vegan') bool isVegan,
@@ -282,9 +282,9 @@ abstract class _$$RecipeDtoImplCopyWith<$Res>
       List<dynamic> ingredients,
       List<dynamic> steps,
       List<dynamic> tags,
-      @JsonKey(name: 'vegetable_id') String? vegetableId,
+      @JsonKey(name: 'vegetable_id', fromJson: emptyToNull) String? vegetableId,
       String source,
-      @JsonKey(name: 'user_id') String? userId,
+      @JsonKey(name: 'user_id', fromJson: emptyToNull) String? userId,
       @JsonKey(name: 'is_public') bool isPublic,
       @JsonKey(name: 'is_vegetarian') bool isVegetarian,
       @JsonKey(name: 'is_vegan') bool isVegan,
@@ -457,9 +457,9 @@ class _$RecipeDtoImpl implements _RecipeDto {
       final List<dynamic> ingredients = const [],
       final List<dynamic> steps = const [],
       final List<dynamic> tags = const [],
-      @JsonKey(name: 'vegetable_id') this.vegetableId,
+      @JsonKey(name: 'vegetable_id', fromJson: emptyToNull) this.vegetableId,
       this.source = 'curated',
-      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'user_id', fromJson: emptyToNull) this.userId,
       @JsonKey(name: 'is_public') this.isPublic = false,
       @JsonKey(name: 'is_vegetarian') this.isVegetarian = false,
       @JsonKey(name: 'is_vegan') this.isVegan = false,
@@ -543,7 +543,7 @@ class _$RecipeDtoImpl implements _RecipeDto {
 // Array: ["schnell", "günstig"]
 // === Beziehungen ===
   @override
-  @JsonKey(name: 'vegetable_id')
+  @JsonKey(name: 'vegetable_id', fromJson: emptyToNull)
   final String? vegetableId;
 // === Ownership ===
   @override
@@ -551,7 +551,7 @@ class _$RecipeDtoImpl implements _RecipeDto {
   final String source;
 // 'curated' | 'user'
   @override
-  @JsonKey(name: 'user_id')
+  @JsonKey(name: 'user_id', fromJson: emptyToNull)
   final String? userId;
   @override
   @JsonKey(name: 'is_public')
@@ -701,9 +701,10 @@ abstract class _RecipeDto implements RecipeDto {
           final List<dynamic> ingredients,
           final List<dynamic> steps,
           final List<dynamic> tags,
-          @JsonKey(name: 'vegetable_id') final String? vegetableId,
+          @JsonKey(name: 'vegetable_id', fromJson: emptyToNull)
+          final String? vegetableId,
           final String source,
-          @JsonKey(name: 'user_id') final String? userId,
+          @JsonKey(name: 'user_id', fromJson: emptyToNull) final String? userId,
           @JsonKey(name: 'is_public') final bool isPublic,
           @JsonKey(name: 'is_vegetarian') final bool isVegetarian,
           @JsonKey(name: 'is_vegan') final bool isVegan,
@@ -750,12 +751,12 @@ abstract class _RecipeDto implements RecipeDto {
   List<dynamic> get tags; // Array: ["schnell", "günstig"]
 // === Beziehungen ===
   @override
-  @JsonKey(name: 'vegetable_id')
+  @JsonKey(name: 'vegetable_id', fromJson: emptyToNull)
   String? get vegetableId; // === Ownership ===
   @override
   String get source; // 'curated' | 'user'
   @override
-  @JsonKey(name: 'user_id')
+  @JsonKey(name: 'user_id', fromJson: emptyToNull)
   String? get userId;
   @override
   @JsonKey(name: 'is_public')

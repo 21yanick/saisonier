@@ -26,6 +26,178 @@ final weekPlannedMealsProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WeekPlannedMealsRef = AutoDisposeStreamProviderRef<List<PlannedMeal>>;
+String _$dialogPlannedMealsHash() =>
+    r'a266c042499bbf08651f3c0736bd5948dfe5c548';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// Provider for planned meals over a date range (used by AddToPlanDialog)
+/// Watches from today for specified number of days
+///
+/// Copied from [dialogPlannedMeals].
+@ProviderFor(dialogPlannedMeals)
+const dialogPlannedMealsProvider = DialogPlannedMealsFamily();
+
+/// Provider for planned meals over a date range (used by AddToPlanDialog)
+/// Watches from today for specified number of days
+///
+/// Copied from [dialogPlannedMeals].
+class DialogPlannedMealsFamily extends Family<AsyncValue<List<PlannedMeal>>> {
+  /// Provider for planned meals over a date range (used by AddToPlanDialog)
+  /// Watches from today for specified number of days
+  ///
+  /// Copied from [dialogPlannedMeals].
+  const DialogPlannedMealsFamily();
+
+  /// Provider for planned meals over a date range (used by AddToPlanDialog)
+  /// Watches from today for specified number of days
+  ///
+  /// Copied from [dialogPlannedMeals].
+  DialogPlannedMealsProvider call({
+    int days = 21,
+  }) {
+    return DialogPlannedMealsProvider(
+      days: days,
+    );
+  }
+
+  @override
+  DialogPlannedMealsProvider getProviderOverride(
+    covariant DialogPlannedMealsProvider provider,
+  ) {
+    return call(
+      days: provider.days,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'dialogPlannedMealsProvider';
+}
+
+/// Provider for planned meals over a date range (used by AddToPlanDialog)
+/// Watches from today for specified number of days
+///
+/// Copied from [dialogPlannedMeals].
+class DialogPlannedMealsProvider
+    extends AutoDisposeStreamProvider<List<PlannedMeal>> {
+  /// Provider for planned meals over a date range (used by AddToPlanDialog)
+  /// Watches from today for specified number of days
+  ///
+  /// Copied from [dialogPlannedMeals].
+  DialogPlannedMealsProvider({
+    int days = 21,
+  }) : this._internal(
+          (ref) => dialogPlannedMeals(
+            ref as DialogPlannedMealsRef,
+            days: days,
+          ),
+          from: dialogPlannedMealsProvider,
+          name: r'dialogPlannedMealsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$dialogPlannedMealsHash,
+          dependencies: DialogPlannedMealsFamily._dependencies,
+          allTransitiveDependencies:
+              DialogPlannedMealsFamily._allTransitiveDependencies,
+          days: days,
+        );
+
+  DialogPlannedMealsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.days,
+  }) : super.internal();
+
+  final int days;
+
+  @override
+  Override overrideWith(
+    Stream<List<PlannedMeal>> Function(DialogPlannedMealsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DialogPlannedMealsProvider._internal(
+        (ref) => create(ref as DialogPlannedMealsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        days: days,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<PlannedMeal>> createElement() {
+    return _DialogPlannedMealsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DialogPlannedMealsProvider && other.days == days;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, days.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin DialogPlannedMealsRef on AutoDisposeStreamProviderRef<List<PlannedMeal>> {
+  /// The parameter `days` of this provider.
+  int get days;
+}
+
+class _DialogPlannedMealsProviderElement
+    extends AutoDisposeStreamProviderElement<List<PlannedMeal>>
+    with DialogPlannedMealsRef {
+  _DialogPlannedMealsProviderElement(super.provider);
+
+  @override
+  int get days => (origin as DialogPlannedMealsProvider).days;
+}
+
 String _$selectedWeekStartHash() => r'95b26be845014614ae1392a4cdbf10d90e18636e';
 
 /// Provider for the currently selected week's start date (Monday)

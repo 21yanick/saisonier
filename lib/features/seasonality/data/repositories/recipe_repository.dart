@@ -42,10 +42,23 @@ class RecipeRepository {
 
   RecipeRepository(this._db, this._pb);
 
-  /// Get recipes for a specific vegetable (curated only)
-  Stream<List<Recipe>> watchRecipesForVegetable(String vegetableId) {
+  /// Get recipes for a specific vegetable
+  /// Shows: curated + user's own + public user recipes
+  Stream<List<Recipe>> watchRecipesForVegetable(
+    String vegetableId, {
+    String? currentUserId,
+  }) {
     return (_db.select(_db.recipes)
-          ..where((t) => t.vegetableId.equals(vegetableId) & t.source.equals('curated')))
+          ..where((t) {
+            final matchesVegetable = t.vegetableId.equals(vegetableId);
+            final isCurated = t.source.equals('curated');
+            final isOwn = currentUserId != null
+                ? t.userId.equals(currentUserId)
+                : const Constant(false);
+            final isPublic = t.isPublic.equals(true);
+
+            return matchesVegetable & (isCurated | isOwn | isPublic);
+          }))
         .watch();
   }
 

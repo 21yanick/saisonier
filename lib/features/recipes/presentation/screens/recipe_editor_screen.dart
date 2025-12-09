@@ -5,8 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:saisonier/core/database/app_database.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
+import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart';
 import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
 import 'package:saisonier/features/seasonality/domain/models/ingredient.dart';
 
@@ -29,6 +31,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
 
   RecipeDifficulty _difficulty = RecipeDifficulty.easy;
   RecipeCategory? _category;
+  String? _vegetableId;
   bool _isVegetarian = false;
   bool _isVegan = false;
 
@@ -85,6 +88,8 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     }
 
     _category = RecipeCategory.fromValue(recipe.category);
+    // PocketBase returns "" instead of null for empty relations
+    _vegetableId = (recipe.vegetableId?.isEmpty ?? true) ? null : recipe.vegetableId;
     _isVegetarian = recipe.isVegetarian;
     _isVegan = recipe.isVegan;
 
@@ -209,6 +214,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
           category: _category?.value,
+          vegetableId: _vegetableId,
           isVegetarian: _isVegetarian,
           isVegan: _isVegan,
           imageFile: _imageFile,
@@ -225,6 +231,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           servings: int.tryParse(_servingsController.text) ?? 4,
           difficulty: _difficulty.name,
           category: _category?.value,
+          vegetableId: _vegetableId,
           isVegetarian: _isVegetarian,
           isVegan: _isVegan,
           imageFile: _imageFile,
@@ -408,18 +415,32 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                   const SizedBox(height: 16),
 
                   // === Kategorie ===
-                  DropdownButtonFormField<RecipeCategory?>(
-                    initialValue: _category,
+                  InputDecorator(
                     decoration: const InputDecoration(
                       labelText: 'Kategorie',
                       border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
-                    items: [
-                      const DropdownMenuItem(value: null, child: Text('Keine Kategorie')),
-                      ...RecipeCategory.values
-                          .map((c) => DropdownMenuItem(value: c, child: Text(c.label))),
-                    ],
-                    onChanged: (v) => setState(() => _category = v),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<RecipeCategory?>(
+                        value: _category,
+                        isExpanded: true,
+                        isDense: true,
+                        items: [
+                          const DropdownMenuItem(value: null, child: Text('Keine Kategorie')),
+                          ...RecipeCategory.values
+                              .map((c) => DropdownMenuItem(value: c, child: Text(c.label))),
+                        ],
+                        onChanged: (v) => setState(() => _category = v),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // === Saisonales Gemüse (suchbar) ===
+                  _VegetableSelector(
+                    selectedId: _vegetableId,
+                    onChanged: (id) => setState(() => _vegetableId = id),
                   ),
                   const SizedBox(height: 20),
 
@@ -462,21 +483,32 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                   _buildSectionHeader('Zubereitung', onAdd: _addStep),
                   const SizedBox(height: 8),
                   ..._stepControllers.asMap().entries.map((e) => _buildStepRow(e.key)),
-                  const SizedBox(height: 32),
-
-                  // === Speichern ===
-                  FilledButton.icon(
-                    onPressed: _isLoading ? null : _save,
-                    icon: const Icon(Icons.save),
-                    label: Text(isEditing ? 'Speichern' : 'Rezept erstellen'),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                  ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 100), // Space for sticky button
                 ],
               ),
             ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: FilledButton.icon(
+            onPressed: _isLoading ? null : _save,
+            icon: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.save),
+            label: Text(isEditing ? 'Speichern' : 'Rezept erstellen'),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -536,27 +568,28 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
         children: [
           Row(
             children: [
-              // Menge
+              // Menge - fixe Breite (Zahlen sind kurz)
               SizedBox(
-                width: 64,
+                width: 56,
                 child: TextField(
                   controller: entry.amountController,
                   decoration: const InputDecoration(
                     hintText: 'Menge',
                     isDense: true,
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 ),
               ),
-              const SizedBox(width: 8),
-              // Einheit
-              SizedBox(
-                width: 80,
+              const SizedBox(width: 6),
+              // Einheit - flexible mit Minimum
+              Flexible(
+                flex: 2,
                 child: DropdownButtonFormField<String?>(
                   initialValue: entry.unit,
+                  isExpanded: true,
                   decoration: const InputDecoration(
-                    hintText: 'Einheit',
                     isDense: true,
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -566,51 +599,56 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                     ...availableUnits.map(
                       (u) => DropdownMenuItem(value: u, child: Text(u)),
                     ),
+                    // Falls gespeicherte Einheit nicht in Liste, dynamisch hinzufügen
+                    if (entry.unit != null && !availableUnits.contains(entry.unit))
+                      DropdownMenuItem(value: entry.unit, child: Text(entry.unit!)),
                   ],
                   onChanged: (v) => setState(() => entry.unit = v),
                 ),
               ),
-              const SizedBox(width: 8),
-              // Zutat
+              const SizedBox(width: 6),
+              // Zutat - nimmt restlichen Platz
               Expanded(
+                flex: 4,
                 child: TextField(
                   controller: entry.itemController,
                   decoration: const InputDecoration(
                     hintText: 'Zutat *',
                     isDense: true,
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                   ),
                   textCapitalization: TextCapitalization.sentences,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                onPressed: () => _removeIngredient(index),
-                visualDensity: VisualDensity.compact,
+              // Remove Button
+              SizedBox(
+                width: 40,
+                child: IconButton(
+                  icon: const Icon(Icons.remove_circle_outline, color: Colors.red, size: 20),
+                  onPressed: () => _removeIngredient(index),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          // Notiz (optional)
-          Row(
-            children: [
-              const SizedBox(width: 152), // Platzhalter für Menge + Einheit
-              Expanded(
-                child: TextField(
-                  controller: entry.noteController,
-                  decoration: InputDecoration(
-                    hintText: 'Notiz (optional)',
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-                    isDense: true,
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  style: const TextStyle(fontSize: 13),
-                  textCapitalization: TextCapitalization.sentences,
-                ),
+          // Notiz (optional) - volle Breite mit Einrückung
+          Padding(
+            padding: const EdgeInsets.only(right: 40), // Gleiche Breite wie Remove-Button
+            child: TextField(
+              controller: entry.noteController,
+              decoration: InputDecoration(
+                hintText: 'Notiz (optional, z.B. "fein gehackt")',
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 12),
+                isDense: true,
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               ),
-              const SizedBox(width: 48), // Platzhalter für Remove-Button
-            ],
+              style: const TextStyle(fontSize: 13),
+              textCapitalization: TextCapitalization.sentences,
+            ),
           ),
         ],
       ),
@@ -677,5 +715,209 @@ class IngredientEntry {
     itemController.dispose();
     amountController.dispose();
     noteController.dispose();
+  }
+}
+
+/// Searchable vegetable selector widget
+class _VegetableSelector extends ConsumerWidget {
+  final String? selectedId;
+  final ValueChanged<String?> onChanged;
+
+  const _VegetableSelector({
+    required this.selectedId,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return StreamBuilder<List<Vegetable>>(
+      stream: ref.watch(vegetableRepositoryProvider).watchAll(),
+      builder: (context, snapshot) {
+        final vegetables = snapshot.data ?? [];
+
+        // Normalize empty string to null (PocketBase quirk)
+        final normalizedId = (selectedId?.isEmpty ?? true) ? null : selectedId;
+
+        // Find selected vegetable name
+        final selectedVeg = normalizedId != null
+            ? vegetables.where((v) => v.id == normalizedId).firstOrNull
+            : null;
+
+        return InkWell(
+          onTap: () => _showSearchModal(context, vegetables),
+          borderRadius: BorderRadius.circular(4),
+          child: InputDecorator(
+            decoration: const InputDecoration(
+              labelText: 'Saisonales Gemüse (optional)',
+              helperText: 'Verknüpft das Rezept mit diesem Gemüse',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedVeg?.name ?? 'Nicht verknüpft',
+                    style: TextStyle(
+                      color: selectedVeg != null ? null : Colors.grey[600],
+                    ),
+                  ),
+                ),
+                Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSearchModal(BuildContext context, List<Vegetable> vegetables) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => _VegetableSearchModal(
+        vegetables: vegetables,
+        selectedId: selectedId,
+        onSelected: (id) {
+          onChanged(id);
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
+
+/// Modal with search field and vegetable list
+class _VegetableSearchModal extends StatefulWidget {
+  final List<Vegetable> vegetables;
+  final String? selectedId;
+  final ValueChanged<String?> onSelected;
+
+  const _VegetableSearchModal({
+    required this.vegetables,
+    required this.selectedId,
+    required this.onSelected,
+  });
+
+  @override
+  State<_VegetableSearchModal> createState() => _VegetableSearchModalState();
+}
+
+class _VegetableSearchModalState extends State<_VegetableSearchModal> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Vegetable> get _filteredVegetables {
+    if (_searchQuery.isEmpty) return widget.vegetables;
+    final query = _searchQuery.toLowerCase();
+    return widget.vegetables
+        .where((v) => v.name.toLowerCase().contains(query))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) {
+        return Column(
+          children: [
+            // Handle
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+
+            // Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Gemüse auswählen',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  if (widget.selectedId != null)
+                    TextButton(
+                      onPressed: () => widget.onSelected(null),
+                      child: const Text('Entfernen'),
+                    ),
+                ],
+              ),
+            ),
+
+            // Search field
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Suchen...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                onChanged: (value) => setState(() => _searchQuery = value),
+              ),
+            ),
+
+            // List
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: _filteredVegetables.length,
+                itemBuilder: (context, index) {
+                  final veg = _filteredVegetables[index];
+                  final isSelected = veg.id == widget.selectedId;
+
+                  return ListTile(
+                    title: Text(veg.name),
+                    trailing: isSelected
+                        ? Icon(Icons.check, color: Theme.of(context).primaryColor)
+                        : null,
+                    selected: isSelected,
+                    onTap: () => widget.onSelected(veg.id),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

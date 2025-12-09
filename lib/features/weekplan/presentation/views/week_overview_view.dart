@@ -93,8 +93,27 @@ class _WeekNavigationHeader extends ConsumerWidget {
 
   const _WeekNavigationHeader({required this.weekStart});
 
+  /// Prüft ob die angezeigte Woche die aktuelle Woche ist
+  bool _isCurrentWeek() {
+    final today = DateTime.now();
+    // Berechne den Montag der aktuellen Woche
+    final currentWeekMonday = today.subtract(Duration(days: today.weekday - 1));
+    // Normalisiere auf Mitternacht für Vergleich
+    final normalizedCurrentMonday = DateTime(
+      currentWeekMonday.year,
+      currentWeekMonday.month,
+      currentWeekMonday.day,
+    );
+
+    return weekStart.year == normalizedCurrentMonday.year &&
+        weekStart.month == normalizedCurrentMonday.month &&
+        weekStart.day == normalizedCurrentMonday.day;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isCurrentWeek = _isCurrentWeek();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -119,6 +138,28 @@ class _WeekNavigationHeader extends ConsumerWidget {
             ref.read(selectedWeekStartProvider.notifier).nextWeek();
           },
         ),
+        // "Heute" Button - nur sichtbar wenn nicht in aktueller Woche
+        if (!isCurrentWeek) ...[
+          const SizedBox(width: 4),
+          TextButton(
+            onPressed: () {
+              ref.read(selectedWeekStartProvider.notifier).goToToday();
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text(
+              'Heute',
+              style: TextStyle(
+                color: Color(0xFF4A6C48),
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

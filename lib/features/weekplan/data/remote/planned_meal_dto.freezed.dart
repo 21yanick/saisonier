@@ -26,7 +26,7 @@ mixin _$PlannedMealDto {
   DateTime get date => throw _privateConstructorUsedError;
   String get slot =>
       throw _privateConstructorUsedError; // 'breakfast', 'lunch', 'dinner'
-  @JsonKey(name: 'recipe_id')
+  @JsonKey(name: 'recipe_id', fromJson: emptyToNull)
   String? get recipeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'custom_title')
   String? get customTitle => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $PlannedMealDtoCopyWith<$Res> {
       @JsonKey(name: 'user_id') String userId,
       DateTime date,
       String slot,
-      @JsonKey(name: 'recipe_id') String? recipeId,
+      @JsonKey(name: 'recipe_id', fromJson: emptyToNull) String? recipeId,
       @JsonKey(name: 'custom_title') String? customTitle,
       int servings});
 }
@@ -127,7 +127,7 @@ abstract class _$$PlannedMealDtoImplCopyWith<$Res>
       @JsonKey(name: 'user_id') String userId,
       DateTime date,
       String slot,
-      @JsonKey(name: 'recipe_id') String? recipeId,
+      @JsonKey(name: 'recipe_id', fromJson: emptyToNull) String? recipeId,
       @JsonKey(name: 'custom_title') String? customTitle,
       int servings});
 }
@@ -194,7 +194,7 @@ class _$PlannedMealDtoImpl implements _PlannedMealDto {
       @JsonKey(name: 'user_id') required this.userId,
       required this.date,
       required this.slot,
-      @JsonKey(name: 'recipe_id') this.recipeId,
+      @JsonKey(name: 'recipe_id', fromJson: emptyToNull) this.recipeId,
       @JsonKey(name: 'custom_title') this.customTitle,
       this.servings = 2});
 
@@ -212,7 +212,7 @@ class _$PlannedMealDtoImpl implements _PlannedMealDto {
   final String slot;
 // 'breakfast', 'lunch', 'dinner'
   @override
-  @JsonKey(name: 'recipe_id')
+  @JsonKey(name: 'recipe_id', fromJson: emptyToNull)
   final String? recipeId;
   @override
   @JsonKey(name: 'custom_title')
@@ -271,7 +271,7 @@ abstract class _PlannedMealDto implements PlannedMealDto {
       @JsonKey(name: 'user_id') required final String userId,
       required final DateTime date,
       required final String slot,
-      @JsonKey(name: 'recipe_id') final String? recipeId,
+      @JsonKey(name: 'recipe_id', fromJson: emptyToNull) final String? recipeId,
       @JsonKey(name: 'custom_title') final String? customTitle,
       final int servings}) = _$PlannedMealDtoImpl;
 
@@ -288,7 +288,7 @@ abstract class _PlannedMealDto implements PlannedMealDto {
   @override
   String get slot; // 'breakfast', 'lunch', 'dinner'
   @override
-  @JsonKey(name: 'recipe_id')
+  @JsonKey(name: 'recipe_id', fromJson: emptyToNull)
   String? get recipeId;
   @override
   @JsonKey(name: 'custom_title')
