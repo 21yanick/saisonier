@@ -8,6 +8,7 @@ import 'package:saisonier/features/auth/presentation/controllers/auth_controller
 import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
 import 'package:saisonier/features/shopping_list/presentation/widgets/shopping_item_tile.dart';
 import 'package:saisonier/features/shopping_list/presentation/widgets/generate_dialog.dart';
+import 'package:saisonier/features/shopping_list/presentation/widgets/edit_item_dialog.dart';
 import 'package:saisonier/features/profile/presentation/widgets/bring_auth_dialog.dart';
 
 class ShoppingListScreen extends ConsumerStatefulWidget {
@@ -144,6 +145,7 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
                           item: item,
                           onToggle: () => _toggleItem(item.id, !item.isChecked),
                           onDelete: () => _removeItem(item.id),
+                          onEdit: () => _editItem(item),
                         );
                       },
                     ),
@@ -320,6 +322,23 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
 
   void _removeItem(String id) {
     ref.read(nativeShoppingControllerProvider.notifier).removeItem(id);
+  }
+
+  void _editItem(ShoppingItem item) async {
+    final result = await showDialog<({String item, double? amount, String? unit, String? note})>(
+      context: context,
+      builder: (context) => EditItemDialog(item: item),
+    );
+
+    if (result == null) return;
+
+    await ref.read(nativeShoppingControllerProvider.notifier).updateItem(
+      id: item.id,
+      item: result.item,
+      amount: result.amount,
+      unit: result.unit,
+      note: result.note,
+    );
   }
 
   void _addManualItem() async {

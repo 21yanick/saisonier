@@ -88,6 +88,23 @@ class NativeShoppingController extends _$NativeShoppingController {
     await ref.read(shoppingListRepositoryProvider).removeItem(id);
   }
 
+  /// Update item details
+  Future<void> updateItem({
+    required String id,
+    required String item,
+    double? amount,
+    String? unit,
+    String? note,
+  }) async {
+    await ref.read(shoppingListRepositoryProvider).updateItem(
+      id: id,
+      item: item,
+      amount: amount,
+      unit: unit,
+      note: note,
+    );
+  }
+
   /// Remove all checked items
   Future<void> removeChecked() async {
     final user = ref.read(currentUserProvider).valueOrNull;

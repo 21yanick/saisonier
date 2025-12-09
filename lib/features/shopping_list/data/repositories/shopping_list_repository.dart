@@ -106,6 +106,31 @@ class ShoppingListRepository {
         .write(ShoppingItemsCompanion(isChecked: Value(isChecked)));
   }
 
+  /// Update item details
+  Future<void> updateItem({
+    required String id,
+    required String item,
+    double? amount,
+    String? unit,
+    String? note,
+  }) async {
+    await _pb.collection('shopping_list_items').update(id, body: {
+      'item': item,
+      'amount': amount,
+      'unit': unit,
+      'note': note,
+    });
+
+    await (_db.update(_db.shoppingItems)..where((t) => t.id.equals(id))).write(
+      ShoppingItemsCompanion(
+        item: Value(item),
+        amount: Value(amount),
+        unit: Value(unit),
+        note: Value(note),
+      ),
+    );
+  }
+
   /// Remove single item
   Future<void> removeItem(String id) async {
     await _pb.collection('shopping_list_items').delete(id);

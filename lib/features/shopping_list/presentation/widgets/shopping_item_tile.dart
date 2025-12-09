@@ -5,12 +5,14 @@ class ShoppingItemTile extends StatelessWidget {
   final ShoppingItem item;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
+  final VoidCallback? onEdit;
 
   const ShoppingItemTile({
     super.key,
     required this.item,
     required this.onToggle,
     required this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -50,7 +52,14 @@ class ShoppingItemTile extends StatelessWidget {
                 ),
               )
             : null,
+        trailing: onEdit != null
+            ? IconButton(
+                icon: Icon(Icons.edit_outlined, color: Colors.grey[400], size: 20),
+                onPressed: onEdit,
+              )
+            : null,
         onTap: onToggle,
+        onLongPress: onEdit,
       ),
     );
   }
