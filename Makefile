@@ -20,9 +20,24 @@ linux:
 web:
 	flutter run -d chrome
 
-# Build
+# Build (Debug APK - Local)
 build:
 	flutter build apk --debug
+
+# Build Release APK für Live Server
+apk:
+	flutter build apk --release \
+		--dart-define=PB_URL=https://saisonier-api.21home.ch
+
+# Build Debug APK für Live Server (zum Testen)
+apk-debug:
+	flutter build apk --debug \
+		--dart-define=PB_URL=https://saisonier-api.21home.ch
+
+# Build App Bundle für Play Store
+aab:
+	flutter build appbundle --release \
+		--dart-define=PB_URL=https://saisonier-api.21home.ch
 
 # Clean
 clean:
@@ -51,14 +66,24 @@ seed:
 # Hilfe
 help:
 	@echo "Saisonier Development Commands:"
-	@echo "  make run      - Startet App auf Android Emulator (default)"
-	@echo "  make android  - Startet App auf Android Emulator"
-	@echo "  make emulator - Startet nur den Emulator"
-	@echo "  make linux    - Startet App auf Linux Desktop"
-	@echo "  make web      - Startet App im Chrome Browser"
-	@echo "  make build    - Baut Debug APK"
-	@echo "  make clean    - Bereinigt Build-Artefakte"
-	@echo "  make test     - Führt Tests aus"
-	@echo "  make generate - Generiert Code (Riverpod, Freezed)"
-	@echo "  make deps     - Holt Dependencies"
-	@echo "  make seed     - PocketBase Schema + Seed-Daten"
+	@echo ""
+	@echo "  Development:"
+	@echo "    make run       - Startet App auf Android Emulator (lokale DB)"
+	@echo "    make android   - Startet App auf Android Emulator"
+	@echo "    make emulator  - Startet nur den Emulator"
+	@echo "    make linux     - Startet App auf Linux Desktop"
+	@echo "    make web       - Startet App im Chrome Browser"
+	@echo ""
+	@echo "  Build (Production):"
+	@echo "    make apk       - Release APK für Live Server"
+	@echo "    make apk-debug - Debug APK für Live Server (zum Testen)"
+	@echo "    make aab       - App Bundle für Play Store"
+	@echo "    make build     - Debug APK (lokale DB)"
+	@echo ""
+	@echo "  Utilities:"
+	@echo "    make generate  - Code Generation (Riverpod, Freezed)"
+	@echo "    make watch     - Watch mode für Code Generation"
+	@echo "    make deps      - Dependencies holen"
+	@echo "    make clean     - Build-Artefakte bereinigen"
+	@echo "    make test      - Tests ausführen"
+	@echo "    make seed      - PocketBase Schema + Seed-Daten"
