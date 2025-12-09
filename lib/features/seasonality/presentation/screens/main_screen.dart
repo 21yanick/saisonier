@@ -30,7 +30,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 0);
+    // Read initial page from provider (allows deep-linking back to specific page)
+    _pageController = PageController(initialPage: ref.read(mainPageIndexProvider));
 
     // Trigger Sync on app start
     WidgetsBinding.instance.addPostFrameCallback((_) {

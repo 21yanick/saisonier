@@ -10,6 +10,7 @@ import 'package:saisonier/features/auth/presentation/controllers/auth_controller
 import 'package:saisonier/features/seasonality/data/repositories/recipe_repository.dart';
 import 'package:saisonier/features/seasonality/data/repositories/vegetable_repository.dart';
 import 'package:saisonier/features/seasonality/domain/enums/recipe_enums.dart';
+import 'package:saisonier/features/seasonality/presentation/screens/main_screen.dart';
 import 'package:saisonier/features/seasonality/domain/models/ingredient.dart';
 
 class RecipeEditorScreen extends ConsumerStatefulWidget {
@@ -294,7 +295,9 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Rezept gelöscht')),
           );
-          context.go('/my-recipes');
+          // Navigate back to MyRecipesScreen (PageView index 2)
+          ref.read(mainPageIndexProvider.notifier).state = 2;
+          context.go('/');
         }
       } catch (e) {
         if (mounted) {
