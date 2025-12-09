@@ -398,22 +398,34 @@ function buildRecipeSummaries(recipes) {
 
 // Build the smart weekplan prompt with context analysis
 function buildSmartWeekplanPrompt(context, recipeSummaries) {
-  const dayNames = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-  const selectedDaysStr = (context.selectedDays || []).map(d => dayNames[d]).join(', ');
+  const dayNamesDE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+
+  // Parse selected dates and build day info
+  const selectedDates = context.selectedDates || [];
+  console.log('Selected dates received:', selectedDates);
+
+  const dayInfos = selectedDates
+    .filter(dateStr => dateStr && typeof dateStr === 'string')
+    .map(dateStr => {
+      const date = new Date(dateStr + 'T00:00:00');
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid date string:', dateStr);
+        return null;
+      }
+      return {
+        date: dateStr,
+        dayName: dayNamesDE[date.getDay()],
+      };
+    })
+    .filter(Boolean);
+
+  const selectedDaysStr = dayInfos.map(d => `${d.dayName} (${d.date})`).join(', ');
+  const dayDates = Object.fromEntries(dayInfos.map(d => [d.dayName, d.date]));
 
   // Format existing meals
   const existingMealsInfo = context.existingMeals?.length > 0
     ? context.existingMeals.map(m => `- ${m.date} ${m.slot}: ${m.title}`).join('\n')
     : 'Keine';
-
-  // Build dates for the selected days
-  const weekStart = new Date(context.weekStartDate);
-  const dayDates = {};
-  for (const dayNum of (context.selectedDays || [])) {
-    const date = new Date(weekStart);
-    date.setDate(weekStart.getDate() + (dayNum - 1)); // dayNum 1 = Monday
-    dayDates[dayNames[dayNum]] = date.toISOString().split('T')[0];
-  }
 
   return `
 Du bist ein persönlicher Schweizer Meal-Planner der STRATEGISCH denkt.
@@ -478,18 +490,21 @@ Für JEDEN Tag, überlege:
 5. SAISON: Was ist gerade frisch?
    - Saisonale Rezepte (🌿) bevorzugen
 
-## BEREITS GEPLANT (NICHT ÜBERSCHREIBEN)
-
-${existingMealsInfo}
-
 ## ANFRAGE
 
 - Tage: ${selectedDaysStr}
 - Mahlzeiten: ${context.selectedSlots?.join(', ') || 'dinner'}
-- Woche startet: ${context.weekStartDate}
 
 Verwende diese Datums-Zuordnung:
 ${Object.entries(dayDates).map(([day, date]) => `- ${day}: ${date}`).join('\n')}
+
+## BEREITS GEPLANT (ÜBERSPRINGEN!)
+
+${existingMealsInfo}
+${context.existingMeals?.length > 0 ? `
+WICHTIG: Für die oben gelisteten Tag/Slot-Kombinationen existiert BEREITS ein Rezept!
+→ Erstelle KEINEN Eintrag im "meals" Objekt für diese Slots!
+→ Der User will nur die LEEREN Slots füllen.` : ''}
 
 ## VERFÜGBARE REZEPTE
 
@@ -893,10 +908,19 @@ app.post('/api/ai/generate-weekplan', authMiddleware, premiumMiddleware, async (
 // Smart weekplan generation (DB-based with context analysis)
 app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, async (req, res) => {
   console.log('=== SMART WEEKPLAN GENERATION START ===');
+  console.log('Request body:', JSON.stringify(req.body, null, 2));
 
   try {
     const userId = req.userId;
     const request = req.body;
+
+    // Validate required fields
+    if (!request.selected_dates || !Array.isArray(request.selected_dates) || request.selected_dates.length === 0) {
+      return res.status(400).json({
+        error: 'invalid_request',
+        message: 'Keine Tage ausgewählt. Bitte wähle mindestens einen Tag.',
+      });
+    }
 
     // 1. Get user profile
     const userProfile = await getUserProfile(userId);
@@ -925,10 +949,9 @@ app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, a
 
     // 4. Build context for prompt
     const context = {
-      selectedDays: request.selected_days || [1, 2, 3, 4, 5],
+      selectedDates: request.selected_dates || [],
       selectedSlots: request.selected_slots || ['dinner'],
       weekContext: request.week_context || '',
-      weekStartDate: request.week_start_date,
       existingMeals: request.existing_meals || [],
       inspiration: request.inspiration,
       boostFavorites: request.boost_favorites,
