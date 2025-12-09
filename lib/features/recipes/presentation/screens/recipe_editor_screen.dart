@@ -34,6 +34,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
   String? _vegetableId;
   bool _isVegetarian = false;
   bool _isVegan = false;
+  List<String> _selectedTags = [];
 
   File? _imageFile;
   bool _isLoading = false;
@@ -92,6 +93,14 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     _vegetableId = (recipe.vegetableId?.isEmpty ?? true) ? null : recipe.vegetableId;
     _isVegetarian = recipe.isVegetarian;
     _isVegan = recipe.isVegan;
+
+    // Load tags
+    try {
+      final tagList = jsonDecode(recipe.tags) as List;
+      _selectedTags = tagList.map((e) => e.toString()).toList();
+    } catch (_) {
+      _selectedTags = [];
+    }
 
     // Load ingredients
     _ingredients.clear();
@@ -217,6 +226,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           vegetableId: _vegetableId,
           isVegetarian: _isVegetarian,
           isVegan: _isVegan,
+          tags: _selectedTags.isNotEmpty ? _selectedTags : null,
           imageFile: _imageFile,
         );
       } else {
@@ -234,6 +244,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
           vegetableId: _vegetableId,
           isVegetarian: _isVegetarian,
           isVegan: _isVegan,
+          tags: _selectedTags.isNotEmpty ? _selectedTags : null,
           imageFile: _imageFile,
         );
       }
@@ -470,6 +481,32 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                         }),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // === Tags ===
+                  const Text(
+                    'Tags',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: availableTags.map((tag) {
+                      final isSelected = _selectedTags.contains(tag);
+                      return FilterChip(
+                        label: Text(tag),
+                        selected: isSelected,
+                        onSelected: (v) => setState(() {
+                          if (v) {
+                            _selectedTags.add(tag);
+                          } else {
+                            _selectedTags.remove(tag);
+                          }
+                        }),
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: 24),
 

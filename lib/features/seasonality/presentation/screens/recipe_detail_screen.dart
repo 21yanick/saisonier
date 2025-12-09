@@ -11,9 +11,18 @@ import 'package:saisonier/core/config/app_config.dart';
 import 'package:saisonier/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:saisonier/features/shopping_list/presentation/state/shopping_list_controller.dart';
 import 'package:saisonier/features/weekplan/presentation/widgets/add_to_plan_dialog.dart';
+import 'package:saisonier/features/profile/domain/enums/profile_enums.dart';
+import 'package:go_router/go_router.dart';
 
 final recipeProvider = StreamProvider.family.autoDispose<Recipe?, String>((ref, id) {
   return ref.watch(recipeRepositoryProvider).watchRecipe(id);
+});
+
+/// Provider for the linked vegetable (if any)
+final linkedVegetableProvider = StreamProvider.family.autoDispose<Vegetable?, String>((ref, id) {
+  if (id.isEmpty) return Stream.value(null);
+  final db = ref.watch(appDatabaseProvider);
+  return (db.select(db.vegetables)..where((t) => t.id.equals(id))).watchSingleOrNull();
 });
 
 class RecipeDetailScreen extends ConsumerStatefulWidget {
@@ -110,7 +119,16 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 
                       // Meta-Info Row
                       _buildMetaRow(recipe, theme),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
+
+                      // Allergen-Hinweis (falls vorhanden)
+                      _buildAllergenInfo(recipe),
+
+                      // Tags (falls vorhanden)
+                      _buildTagsSection(recipe),
+
+                      // Linked Vegetable (falls vorhanden)
+                      _buildLinkedVegetable(recipe),
 
                       // Action Buttons
                       _buildActionButtons(recipe, scaledIngredients),
@@ -200,12 +218,16 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final difficulty = recipe.difficulty != null
         ? RecipeDifficulty.values.where((d) => d.name == recipe.difficulty).firstOrNull
         : null;
+    final category = RecipeCategory.fromValue(recipe.category);
 
     return Wrap(
       spacing: 16,
       runSpacing: 8,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
+        // Kategorie (prominent am Anfang)
+        if (category != null) _CategoryBadge(category: category),
+
         // Vorbereitungszeit
         if (recipe.prepTimeMin > 0)
           _MetaChip(
@@ -252,6 +274,173 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
             color: Colors.green,
           ),
       ],
+    );
+  }
+
+  // === ALLERGEN INFO ===
+  Widget _buildAllergenInfo(Recipe recipe) {
+    // Collect allergens that are present
+    final allergens = <Allergen>[];
+    if (recipe.containsGluten) allergens.add(Allergen.gluten);
+    if (recipe.containsLactose) allergens.add(Allergen.lactose);
+    if (recipe.containsNuts) allergens.add(Allergen.nuts);
+    if (recipe.containsEggs) allergens.add(Allergen.eggs);
+    if (recipe.containsSoy) allergens.add(Allergen.soy);
+    if (recipe.containsFish) allergens.add(Allergen.fish);
+    if (recipe.containsShellfish) allergens.add(Allergen.shellfish);
+
+    if (allergens.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.orange.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange[700], size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Enthält:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.orange[800],
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    allergens.map((a) => a.label).join(', '),
+                    style: TextStyle(
+                      color: Colors.orange[900],
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // === TAGS SECTION ===
+  Widget _buildTagsSection(Recipe recipe) {
+    final tags = _parseTags(recipe.tags);
+    if (tags.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: tags.map((tag) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Text(
+              '#$tag',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[700],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  List<String> _parseTags(String json) {
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list.map((e) => e.toString()).where((s) => s.isNotEmpty).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  // === LINKED VEGETABLE ===
+  Widget _buildLinkedVegetable(Recipe recipe) {
+    // PocketBase returns "" instead of null for empty relations
+    final vegId = recipe.vegetableId;
+    if (vegId == null || vegId.isEmpty) return const SizedBox.shrink();
+
+    final vegAsync = ref.watch(linkedVegetableProvider(vegId));
+
+    return vegAsync.when(
+      data: (vegetable) {
+        if (vegetable == null) return const SizedBox.shrink();
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: InkWell(
+            onTap: () => context.push('/details/${vegetable.id}'),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.eco,
+                    color: Theme.of(context).primaryColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Passt zu:',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        Text(
+                          vegetable.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 
@@ -596,7 +785,7 @@ class _DifficultyBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = _parseColor(difficulty.color);
+    final color = _parseHexColor(difficulty.color);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -613,9 +802,54 @@ class _DifficultyBadge extends StatelessWidget {
       ),
     );
   }
+}
 
-  Color _parseColor(String hex) {
-    final hexCode = hex.replaceAll('#', '');
-    return Color(int.parse('FF$hexCode', radix: 16));
+class _CategoryBadge extends StatelessWidget {
+  final RecipeCategory category;
+
+  const _CategoryBadge({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseHexColor(category.color);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(_getCategoryIcon(category), size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            category.label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
   }
+
+  IconData _getCategoryIcon(RecipeCategory cat) {
+    return switch (cat) {
+      RecipeCategory.main => Icons.restaurant,
+      RecipeCategory.side => Icons.rice_bowl,
+      RecipeCategory.dessert => Icons.cake,
+      RecipeCategory.snack => Icons.cookie,
+      RecipeCategory.breakfast => Icons.free_breakfast,
+      RecipeCategory.soup => Icons.soup_kitchen,
+      RecipeCategory.salad => Icons.eco,
+    };
+  }
+}
+
+Color _parseHexColor(String hex) {
+  final hexCode = hex.replaceAll('#', '');
+  return Color(int.parse('FF$hexCode', radix: 16));
 }

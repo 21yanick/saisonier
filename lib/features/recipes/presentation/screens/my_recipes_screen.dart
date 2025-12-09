@@ -16,6 +16,17 @@ import 'package:saisonier/features/ai/presentation/screens/recipe_review_screen.
 /// Filter options for the recipe list
 enum RecipeFilter { all, mine, curated }
 
+/// Sort options for the recipe list
+enum RecipeSort {
+  alphabetical('A-Z'),
+  alphabeticalReverse('Z-A'),
+  fastest('Schnellste'),
+  easiest('Einfachste');
+
+  final String label;
+  const RecipeSort(this.label);
+}
+
 class MyRecipesScreen extends ConsumerStatefulWidget {
   const MyRecipesScreen({super.key});
 
@@ -25,6 +36,8 @@ class MyRecipesScreen extends ConsumerStatefulWidget {
 
 class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
   RecipeFilter _filter = RecipeFilter.all;
+  RecipeCategory? _categoryFilter; // null = alle Kategorien
+  RecipeSort _sort = RecipeSort.alphabetical;
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -49,6 +62,27 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
             statusBarBrightness: Brightness.light,
           ),
           actions: [
+            // Sort dropdown
+            PopupMenuButton<RecipeSort>(
+              icon: const Icon(Icons.sort),
+              tooltip: 'Sortieren',
+              onSelected: (sort) => setState(() => _sort = sort),
+              itemBuilder: (context) => RecipeSort.values
+                  .map((sort) => PopupMenuItem(
+                        value: sort,
+                        child: Row(
+                          children: [
+                            if (_sort == sort)
+                              Icon(Icons.check, size: 18, color: Theme.of(context).primaryColor)
+                            else
+                              const SizedBox(width: 18),
+                            const SizedBox(width: 8),
+                            Text(sort.label),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
             IconButton(
               icon: const Icon(Icons.person_outline),
               onPressed: () => context.push('/profile'),
@@ -89,7 +123,42 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+
+          // Category Filter Chips
+          SizedBox(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                // "Alle" Chip
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: FilterChip(
+                    label: const Text('Alle'),
+                    selected: _categoryFilter == null,
+                    onSelected: (_) => setState(() => _categoryFilter = null),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+                // Category Chips
+                ...RecipeCategory.values.map((cat) => Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: FilterChip(
+                        label: Text(cat.label),
+                        selected: _categoryFilter == cat,
+                        onSelected: (_) => setState(() {
+                          _categoryFilter = _categoryFilter == cat ? null : cat;
+                        }),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    )),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
 
           // Recipe List
           Expanded(
@@ -189,6 +258,11 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
           if (r.source != 'curated') return false;
       }
 
+      // Filter by category
+      if (_categoryFilter != null) {
+        if (r.category != _categoryFilter!.value) return false;
+      }
+
       // Filter by search
       if (_searchQuery.isNotEmpty) {
         if (!r.title.toLowerCase().contains(_searchQuery.toLowerCase())) {
@@ -198,6 +272,24 @@ class _MyRecipesScreenState extends ConsumerState<MyRecipesScreen> {
 
       return true;
     }).toList();
+
+    // Apply sorting
+    switch (_sort) {
+      case RecipeSort.alphabetical:
+        filtered.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+      case RecipeSort.alphabeticalReverse:
+        filtered.sort((a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()));
+      case RecipeSort.fastest:
+        filtered.sort((a, b) =>
+            (a.prepTimeMin + a.cookTimeMin).compareTo(b.prepTimeMin + b.cookTimeMin));
+      case RecipeSort.easiest:
+        filtered.sort((a, b) {
+          const order = {'easy': 0, 'medium': 1, 'hard': 2};
+          final aVal = order[a.difficulty] ?? 1;
+          final bVal = order[b.difficulty] ?? 1;
+          return aVal.compareTo(bVal);
+        });
+    }
 
     // Empty states
     if (filtered.isEmpty) {
@@ -335,6 +427,7 @@ class _RecipeListTile extends StatelessWidget {
     final difficulty = recipe.difficulty != null
         ? RecipeDifficulty.values.where((d) => d.name == recipe.difficulty).firstOrNull
         : null;
+    final category = RecipeCategory.fromValue(recipe.category);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -411,6 +504,8 @@ class _RecipeListTile extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
+                        // Kategorie Badge (prominent am Anfang)
+                        if (category != null) _CategoryChip(category: category),
                         // Difficulty Badge
                         if (difficulty != null)
                           _DifficultyChip(difficulty: difficulty),
@@ -516,5 +611,55 @@ class _InfoChip extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  final RecipeCategory category;
+
+  const _CategoryChip({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseHexColor(category.color);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(_getCategoryIcon(category), size: 10, color: color),
+          const SizedBox(width: 3),
+          Text(
+            category.label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getCategoryIcon(RecipeCategory cat) {
+    return switch (cat) {
+      RecipeCategory.main => Icons.restaurant,
+      RecipeCategory.side => Icons.rice_bowl,
+      RecipeCategory.dessert => Icons.cake,
+      RecipeCategory.snack => Icons.cookie,
+      RecipeCategory.breakfast => Icons.free_breakfast,
+      RecipeCategory.soup => Icons.soup_kitchen,
+      RecipeCategory.salad => Icons.eco,
+    };
+  }
+
+  static Color _parseHexColor(String hex) {
+    final hexCode = hex.replaceAll('#', '');
+    return Color(int.parse('FF$hexCode', radix: 16));
   }
 }
