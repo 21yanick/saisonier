@@ -510,10 +510,10 @@ class RecipeDto with _$RecipeDto {
 - [x] Vegetarisch/Vegan Badges
 
 ### Step 8: DetailScreen (Gemüse)
-- [ ] Cooking Mode entfernen (optional)
+- [x] Cooking Mode entfernen (optional)
 
 ### Step 9: User Profile Integration
-- [ ] Portionen-Default aus `householdSize`
+- [x] Portionen-Default aus `householdSize`
 - [ ] Optional: Automatische Filterung
 
 ---

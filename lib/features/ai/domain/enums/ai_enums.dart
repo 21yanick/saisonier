@@ -356,3 +356,57 @@ enum RecipeInspiration {
     }
   }
 }
+
+/// Inspiration chips for smart weekplan generation.
+enum WeekplanInspiration {
+  surprise,
+  quickWeek,
+  budgetWeek,
+  lightWeek,
+  comfortWeek;
+
+  String get label {
+    switch (this) {
+      case WeekplanInspiration.surprise:
+        return 'Überrasch mich';
+      case WeekplanInspiration.quickWeek:
+        return 'Schnelle Woche';
+      case WeekplanInspiration.budgetWeek:
+        return 'Budget-Woche';
+      case WeekplanInspiration.lightWeek:
+        return 'Leichte Woche';
+      case WeekplanInspiration.comfortWeek:
+        return 'Comfort-Woche';
+    }
+  }
+
+  String get emoji {
+    switch (this) {
+      case WeekplanInspiration.surprise:
+        return '🎲';
+      case WeekplanInspiration.quickWeek:
+        return '⚡';
+      case WeekplanInspiration.budgetWeek:
+        return '💰';
+      case WeekplanInspiration.lightWeek:
+        return '🥗';
+      case WeekplanInspiration.comfortWeek:
+        return '🍝';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case WeekplanInspiration.surprise:
+        return 'Abwechslungsreich';
+      case WeekplanInspiration.quickWeek:
+        return 'Alle max 30min';
+      case WeekplanInspiration.budgetWeek:
+        return 'Günstige Zutaten';
+      case WeekplanInspiration.lightWeek:
+        return 'Gesund & frisch';
+      case WeekplanInspiration.comfortWeek:
+        return 'Herzhaft & wärmend';
+    }
+  }
+}

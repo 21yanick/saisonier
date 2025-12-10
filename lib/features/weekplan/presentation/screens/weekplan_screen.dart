@@ -4,9 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../ai/presentation/widgets/ai_fab.dart';
+import '../../../ai/presentation/widgets/weekplan_ai_modal.dart';
+import '../../../ai/presentation/screens/smart_weekplan_screen.dart';
+import '../../domain/enums.dart';
+import '../screens/add_meal_sheet.dart';
 import '../state/weekplan_controller.dart';
 import '../views/week_overview_view.dart';
-import '../views/day_detail_view.dart';
+import '../widgets/day_detail_sheet.dart';
 
 class WeekplanScreen extends ConsumerStatefulWidget {
   const WeekplanScreen({super.key});
@@ -16,65 +21,101 @@ class WeekplanScreen extends ConsumerStatefulWidget {
 }
 
 class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
-  // null = overview, otherwise = day index (0-6) for detail view
-  int? _selectedDayIndex;
-
   void _showDayDetail(DateTime date) {
-    final weekStart = ref.read(selectedWeekStartProvider);
-    final dayIndex = date.difference(weekStart).inDays;
-    setState(() => _selectedDayIndex = dayIndex.clamp(0, 6));
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DayDetailSheet(
+        initialDate: date,
+      ),
+    );
   }
 
-  void _backToOverview() {
-    setState(() => _selectedDayIndex = null);
+  void _openAddMealSheet(DateTime date, MealSlot slot) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AddMealSheet(
+        date: date,
+        slot: slot,
+      ),
+    );
+  }
+
+  void _openAIModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => WeekplanAIModal(
+        onPlanGenerated: (response) {
+          Navigator.of(context).pop();
+          _showPreviewScreen(response);
+        },
+      ),
+    );
+  }
+
+  void _showPreviewScreen(dynamic response) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SmartWeekplanScreen(
+          response: response,
+          onRegenerate: () {
+            Navigator.of(context).pop();
+            _openAIModal();
+          },
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
 
-    return PopScope(
-      canPop: _selectedDayIndex == null, // Only pop if in overview
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && _selectedDayIndex != null) {
-          _backToOverview();
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Wochenplan'),
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Wochenplan'),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => context.push('/profile'),
+          ),
+        ],
+      ),
+      body: userAsync.when(
+        data: (user) {
+          if (user == null) {
+            return _buildLoginPrompt(context);
+          }
+          return _WeekplanContent(
+            onDayTap: _showDayDetail,
+            onAddMeal: _openAddMealSheet,
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Fehler: $e')),
+      ),
+      floatingActionButton: userAsync.maybeWhen(
+        data: (user) {
+          if (user == null) return null;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 72),
+            child: AIFab(
+              onPressed: _openAIModal,
+              label: 'AI Planer',
             ),
-            leading: _selectedDayIndex != null
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: _backToOverview,
-                  )
-                : null,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.person_outline),
-                onPressed: () => context.push('/profile'),
-              ),
-            ],
-          ),
-        body: userAsync.when(
-          data: (user) {
-            if (user == null) {
-              return _buildLoginPrompt(context);
-            }
-            return _WeekplanContent(
-              selectedDayIndex: _selectedDayIndex,
-              onDayTap: _showDayDetail,
-              onBack: _backToOverview,
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Fehler: $e')),
-          ),
+          );
+        },
+        orElse: () => null,
       ),
     );
   }
@@ -115,40 +156,24 @@ class _WeekplanScreenState extends ConsumerState<WeekplanScreen> {
 }
 
 class _WeekplanContent extends ConsumerWidget {
-  final int? selectedDayIndex;
   final void Function(DateTime date) onDayTap;
-  final VoidCallback onBack;
+  final void Function(DateTime date, MealSlot slot) onAddMeal;
 
   const _WeekplanContent({
-    required this.selectedDayIndex,
     required this.onDayTap,
-    required this.onBack,
+    required this.onAddMeal,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final weekStart = ref.watch(selectedWeekStartProvider);
-    final mealsAsync = ref.watch(weekPlannedMealsProvider);
+    final mealsAsync = ref.watch(scrollCalendarMealsProvider);
 
     return mealsAsync.when(
-      data: (meals) {
-        // Detail view
-        if (selectedDayIndex != null) {
-          return DayDetailView(
-            weekStart: weekStart,
-            initialDayIndex: selectedDayIndex!,
-            meals: meals,
-            onBack: onBack,
-          );
-        }
-
-        // Overview
-        return WeekOverviewView(
-          weekStart: weekStart,
-          meals: meals,
-          onDayTap: onDayTap,
-        );
-      },
+      data: (meals) => WeekOverviewView(
+        meals: meals,
+        onDayTap: onDayTap,
+        onAddMeal: onAddMeal,
+      ),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Fehler: $e')),
     );

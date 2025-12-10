@@ -9,6 +9,8 @@ import 'package:saisonier/core/config/app_config.dart';
 import 'package:saisonier/core/network/pocketbase_provider.dart';
 import 'package:saisonier/features/ai/domain/enums/ai_enums.dart';
 import 'package:saisonier/features/ai/domain/models/generated_recipe.dart';
+import 'package:saisonier/features/ai/domain/models/smart_weekplan_response.dart';
+import 'package:saisonier/features/ai/domain/models/refine_meal_response.dart';
 
 part 'ai_service.g.dart';
 
@@ -116,7 +118,7 @@ class AIService {
     return GeneratedRecipe.fromJson(recipeJson);
   }
 
-  /// Generate a weekly meal plan.
+  /// Generate a weekly meal plan (legacy - generates recipes).
   Future<GeneratedWeekplan> generateWeekplan({
     required List<int> selectedDays,
     required List<String> selectedSlots,
@@ -129,6 +131,77 @@ class AIService {
     });
 
     return GeneratedWeekplan.fromJson(response);
+  }
+
+  /// Generate a smart weekly meal plan with context analysis (DB-based).
+  Future<SmartWeekplanResponse> generateSmartWeekplan({
+    required List<DateTime> selectedDates,
+    required List<String> selectedSlots,
+    String? weekContext,
+    WeekplanInspiration? inspiration,
+    bool boostFavorites = false,
+    bool boostOwnRecipes = false,
+    bool forceVegetarian = false,
+    bool forceVegan = false,
+    bool forceQuick = false,
+    List<Map<String, String>>? existingMeals,
+    List<Map<String, dynamic>>? fixedRecipes,
+  }) async {
+    // Convert DateTimes to ISO date strings
+    final dateStrings = selectedDates
+        .map((d) =>
+            '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}')
+        .toList();
+
+    final response = await _post('/api/ai/generate-smart-weekplan', {
+      'selected_dates': dateStrings,
+      'selected_slots': selectedSlots,
+      'week_context': weekContext ?? '',
+      'inspiration': inspiration?.name,
+      'boost_favorites': boostFavorites,
+      'boost_own_recipes': boostOwnRecipes,
+      'force_vegetarian': forceVegetarian,
+      'force_vegan': forceVegan,
+      'force_quick': forceQuick,
+      'existing_meals': existingMeals ?? [],
+      'fixed_recipes': fixedRecipes ?? [],
+    });
+
+    return SmartWeekplanResponse.fromJson(response);
+  }
+
+  /// Refine a single meal through conversation.
+  Future<RefineMealResponse> refineMeal({
+    required List<PlannedDay> currentPlan,
+    required String day,
+    required String slot,
+    required String userMessage,
+    String? dayContext,
+  }) async {
+    final response = await _post('/api/ai/refine-meal', {
+      'current_plan': currentPlan.map((d) => d.toJson()).toList(),
+      'day': day,
+      'slot': slot,
+      'user_message': userMessage,
+      'day_context': dayContext,
+    });
+
+    return RefineMealResponse.fromJson(response);
+  }
+
+  /// Get count of eligible recipes for given filters.
+  Future<int> getEligibleRecipeCount({
+    bool forceVegetarian = false,
+    bool forceVegan = false,
+    bool forceQuick = false,
+  }) async {
+    final response = await _post('/api/ai/eligible-recipe-count', {
+      'force_vegetarian': forceVegetarian,
+      'force_vegan': forceVegan,
+      'force_quick': forceQuick,
+    });
+
+    return response['count'] as int? ?? 0;
   }
 
   /// Generate images for a recipe.

@@ -67,6 +67,24 @@ Stream<List<PlannedMeal>> dialogPlannedMeals(Ref ref, {int days = 21}) {
   );
 }
 
+/// Provider for scroll calendar meals (28 days: 7 past + today + 20 future)
+@riverpod
+Stream<List<PlannedMeal>> scrollCalendarMeals(Ref ref) {
+  final user = ref.watch(currentUserProvider).valueOrNull;
+  if (user == null) {
+    return Stream.value([]);
+  }
+
+  final today = DateTime.now();
+  final normalizedToday = DateTime(today.year, today.month, today.day);
+  final startDate = normalizedToday.subtract(const Duration(days: 7));
+  return ref.watch(weekplanRepositoryProvider).watchDateRange(
+    user.id,
+    startDate,
+    28, // 7 past + today + 20 future
+  );
+}
+
 /// Controller for week plan actions
 @riverpod
 class WeekplanController extends _$WeekplanController {

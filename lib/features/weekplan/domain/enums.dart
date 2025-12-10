@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// Meal slots for daily planning
 enum MealSlot {
   breakfast,
@@ -23,6 +25,18 @@ enum MealSlot {
         return 'Mittag';
       case MealSlot.dinner:
         return 'Abend';
+    }
+  }
+
+  /// Material icon for this slot
+  IconData get icon {
+    switch (this) {
+      case MealSlot.breakfast:
+        return Icons.wb_twilight_outlined;
+      case MealSlot.lunch:
+        return Icons.light_mode_outlined;
+      case MealSlot.dinner:
+        return Icons.dark_mode_outlined;
     }
   }
 }

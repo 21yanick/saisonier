@@ -198,6 +198,28 @@ class _DialogPlannedMealsProviderElement
   int get days => (origin as DialogPlannedMealsProvider).days;
 }
 
+String _$scrollCalendarMealsHash() =>
+    r'b0d36b8876295106095bd92dfec85b797c894560';
+
+/// Provider for scroll calendar meals (28 days: 7 past + today + 20 future)
+///
+/// Copied from [scrollCalendarMeals].
+@ProviderFor(scrollCalendarMeals)
+final scrollCalendarMealsProvider =
+    AutoDisposeStreamProvider<List<PlannedMeal>>.internal(
+  scrollCalendarMeals,
+  name: r'scrollCalendarMealsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scrollCalendarMealsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ScrollCalendarMealsRef
+    = AutoDisposeStreamProviderRef<List<PlannedMeal>>;
 String _$selectedWeekStartHash() => r'95b26be845014614ae1392a4cdbf10d90e18636e';
 
 /// Provider for the currently selected week's start date (Monday)

@@ -46,7 +46,7 @@ final shoppingListControllerProvider =
 
 typedef _$ShoppingListController = AutoDisposeAsyncNotifier<bool>;
 String _$nativeShoppingControllerHash() =>
-    r'b194de1b073eb74aec903706010d148518a81e5c';
+    r'33a713553b69af4518f66a5f8e9e3fb5bb526d47';
 
 /// Controller for native shopping list operations
 ///

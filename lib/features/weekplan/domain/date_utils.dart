@@ -3,6 +3,10 @@ class WeekplanDateUtils {
   WeekplanDateUtils._();
 
   static const weekdayNamesShort = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  static const weekdayNamesFull = [
+    'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
+    'Freitag', 'Samstag', 'Sonntag'
+  ];
   static const monthNamesShort = [
     'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',
     'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'
