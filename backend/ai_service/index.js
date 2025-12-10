@@ -506,6 +506,16 @@ WICHTIG: Für die oben gelisteten Tag/Slot-Kombinationen existiert BEREITS ein R
 → Erstelle KEINEN Eintrag im "meals" Objekt für diese Slots!
 → Der User will nur die LEEREN Slots füllen.` : ''}
 
+## FESTE REZEPTE (ÜBERSPRINGEN!)
+
+${context.fixedRecipes?.length > 0
+  ? context.fixedRecipes.map(fr => fr.dates.map(d => `- ${d} ${fr.slot}: ${fr.recipe_title} (FIX)`).join('\n')).join('\n')
+  : 'Keine'}
+${context.fixedRecipes?.length > 0 ? `
+WICHTIG: Der User hat diese Rezepte EXPLIZIT fixiert!
+→ Erstelle KEINEN Eintrag im "meals" Objekt für diese Tag/Slot-Kombinationen!
+→ Diese werden separat eingefügt.` : ''}
+
 ## VERFÜGBARE REZEPTE
 
 Legende: ⭐=Favorit, 👤=Eigenes Rezept, 🌿=Saisonal
@@ -948,11 +958,13 @@ app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, a
     const recipeSummaries = buildRecipeSummaries(eligibleRecipes);
 
     // 4. Build context for prompt
+    const fixedRecipes = request.fixed_recipes || [];
     const context = {
       selectedDates: request.selected_dates || [],
       selectedSlots: request.selected_slots || ['dinner'],
       weekContext: request.week_context || '',
       existingMeals: request.existing_meals || [],
+      fixedRecipes: fixedRecipes,
       inspiration: request.inspiration,
       boostFavorites: request.boost_favorites,
       boostOwnRecipes: request.boost_own_recipes,
@@ -980,7 +992,41 @@ app.post('/api/ai/generate-smart-weekplan', authMiddleware, premiumMiddleware, a
 
     const result = geminiResponse.result;
 
-    // 6. Load full recipe data for selected recipes
+    // 6. Inject fixed recipes into weekplan
+    // We do this programmatically rather than trusting the AI
+    for (const fixedRecipe of fixedRecipes) {
+      for (const dateStr of (fixedRecipe.dates || [])) {
+        // Find or create the day entry
+        let dayEntry = result.weekplan?.find(d => d.date === dateStr);
+        if (!dayEntry) {
+          // Create day entry if AI didn't include it
+          const date = new Date(dateStr + 'T00:00:00');
+          const dayNamesDE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+          dayEntry = {
+            date: dateStr,
+            dayName: dayNamesDE[date.getDay()],
+            meals: {},
+          };
+          result.weekplan = result.weekplan || [];
+          result.weekplan.push(dayEntry);
+        }
+
+        // Insert the fixed recipe
+        dayEntry.meals = dayEntry.meals || {};
+        dayEntry.meals[fixedRecipe.slot] = {
+          recipeId: fixedRecipe.recipe_id,
+          reasoning: 'Von dir fix eingeplant',
+          isFixed: true,
+        };
+      }
+    }
+
+    // Sort weekplan by date
+    if (result.weekplan) {
+      result.weekplan.sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    // 7. Load full recipe data for selected recipes (including fixed ones)
     const recipeIds = new Set();
     for (const day of (result.weekplan || [])) {
       for (const meal of Object.values(day.meals || {})) {
