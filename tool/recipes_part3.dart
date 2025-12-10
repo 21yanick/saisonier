@@ -1,5 +1,7 @@
 // Recipe Data Part 3: Fruits (Aprikosen to Kirschen)
 
+part of 'recipe_seed_complete.dart';
+
 final recipesPartThree = <Map<String, dynamic>>[
   // APRIKOSEN
   {'vegetable': 'Aprikosen', 'title': 'Aprikosenwähe', 'description': 'Sommerliche Früchtewähe.', 'prep_time_min': 20, 'cook_time_min': 35, 'servings': 8, 'difficulty': 'medium', 'category': 'dessert', 'tags': ['party'], 'is_vegetarian': true, 'contains_gluten': true, 'contains_lactose': true, 'contains_eggs': true,

@@ -1,5 +1,7 @@
 // Recipe Data Part 2: Erbsen to Kohlrabi
 
+part of 'recipe_seed_complete.dart';
+
 final recipesPartTwo = <Map<String, dynamic>>[
   // ═══════════════════════════════════════════════════════════════════════════
   // ERBSEN

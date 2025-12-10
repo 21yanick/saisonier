@@ -1,5 +1,7 @@
 // Recipe Data Part 4: Salads, Herbs, and Meat
 
+part of 'recipe_seed_complete.dart';
+
 final recipesPartFour = <Map<String, dynamic>>[
   // ═══════════════════════════════════════════════════════════════════════════
   // SALATE
